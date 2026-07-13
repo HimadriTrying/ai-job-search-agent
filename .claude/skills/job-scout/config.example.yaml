@@ -1,0 +1,20 @@
+# Machine-readable rubric knobs for the Job Scout. Mirrors profile/04-job-evaluation.md.
+# Copy to config.yaml and edit. The scout reads config.yaml if present, else this example.
+
+candidate_years: 5          # your real years of PM experience (drives the experience gate)
+min_seniority: "senior"     # DROP below this (inverted floor). intern|entry|mid|senior|lead|staff|principal|group|director|vp|exec
+max_seniority: null         # optional ceiling, e.g. "director" to exclude VP+
+keep_ambiguous: false       # if true, a bare "Product Manager" survives the Senior floor
+
+required_locations: []      # e.g. ["Berlin", "Remote"]  (empty = no location gate)
+excluded_industries: []     # e.g. ["gambling", "defense"]
+must_have_keywords: []      # title must hit one of these (empty = allow all titles)
+nice_to_have_keywords: ["platform", "0 to 1", "growth", "b2b"]
+unfamiliar_stack: []        # stacks that cost you a ramp, e.g. ["salesforce apex"]
+ai_terms: ["ai", "ml", "llm", "genai", "machine learning"]
+
+comp_floor: null            # e.g. 95000  (penalty only applies if a job discloses comp)
+
+# Bucket thresholds
+apply_first_at: 2
+worth_a_look_at: 0

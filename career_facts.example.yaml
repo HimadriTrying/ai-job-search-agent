@@ -1,0 +1,52 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# career_facts.yaml — THE FROZEN SOURCE OF TRUTH
+#
+# This is the single anchor the honesty gate checks generated documents against.
+# The AI is allowed to REORDER, REFRAME, and SELECT from these facts. It is never
+# allowed to add an employer, a title, a credential, or a metric that is not here.
+#
+# Fill this in from your real history. Be precise with numbers — the gate treats a
+# metric that does not appear here (or is not derivable from here) as a fabrication.
+#
+# Rule of thumb: if you would not say it under oath in a reference check, it does
+# not belong in this file.
+# ─────────────────────────────────────────────────────────────────────────────
+
+candidate:
+  name: ""
+  location: ""
+  work_authorization: ""        # e.g. "EU citizen; no sponsorship needed"
+  contact:
+    email: ""
+    phone: ""                   # kept here, NOT in any committed doc
+    linkedin: ""
+
+employers:
+  - company: ""
+    title: ""
+    start: ""                   # YYYY-MM
+    end: ""                     # YYYY-MM or "present"
+    # Only list metrics that are literally true and defensible.
+    metrics:
+      - ""                      # e.g. "Grew activation 18% over two quarters"
+    scope:
+      - ""                      # e.g. "Owned roadmap for 3 squads, ~25 engineers"
+
+education:
+  - institution: ""
+    credential: ""
+    year: ""
+
+certifications:
+  - name: ""
+    issuer: ""
+    year: ""
+
+# Skills you can genuinely evidence with a story from an employer above.
+# The gate will flag a skill claimed in a document that is not listed here.
+skills:
+  - ""
+
+# Public artifacts that back your claims (GitHub, portfolio, papers, this repo).
+evidence_links:
+  - ""

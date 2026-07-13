@@ -1,0 +1,10 @@
+# One "ats:token" per line. Lines starting with # are ignored.
+# Find a company's token from its careers URL:
+#   boards.greenhouse.io/<token>      -> greenhouse:<token>
+#   jobs.lever.co/<token>             -> lever:<token>
+#   jobs.ashbyhq.com/<token>          -> ashby:<token>
+#   jobs.smartrecruiters.com/<token>  -> smartrecruiters:<token>
+# Examples (verify the slug is still live):
+greenhouse:stripe
+lever:palantir
+ashby:ramp

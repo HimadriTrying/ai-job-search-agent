@@ -1,0 +1,45 @@
+# Personal data — never commit
+data/connections/*.csv
+data/answer_bank.yaml
+# who you're applying to — private
+data/tracker.csv
+# your live discovery results — private
+data/digests/*.md
+# ...but keep an example header public
+!data/tracker.example.csv
+
+# YOUR real brain — private by default. Commit the *.example versions instead so the
+# repo stays forkable without leaking your history. To publish a redacted showcase,
+# copy a scrubbed version to profile/… .public.md and un-ignore that specific file.
+career_facts.yaml
+profile/01-candidate-profile.md
+profile/02-behavioral-profile.md
+profile/03-writing-style.md
+profile/04-job-evaluation.md
+profile/05-cv-source.md
+profile/06-cover-letter-notes.md
+profile/07-interview-prep.md
+
+# ...but DO keep the templates + the README so the repo is usable by others.
+!profile/00-README.md
+!career_facts.example.yaml
+!profile/*.example.md
+
+# Compiled artifacts
+*.pdf
+*.aux
+*.log
+*.out
+
+# Env / secrets
+.env
+.claude/settings.local.json
+
+# Keep empty dirs
+!data/connections/.gitkeep
+!data/digests/.gitkeep
+
+# NOTE: profile/*.md and career_facts.yaml ARE committed by default — they are the brain and
+# (redacted) the first public artifact. If you'd rather keep personal reflections private,
+# uncomment:
+# profile/02-behavioral-profile.md
