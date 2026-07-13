@@ -37,6 +37,14 @@ profile/07-interview-prep.md
 # Private token list read by the pre-commit guard (scripts/check-private.sh) — never commit
 .private-guard
 
+# Job-scout WHO/WHAT — your real target companies and filters are private (public repo!).
+# The *.example versions stay public so others can fork.
+.claude/skills/job-scout/config.yaml
+.claude/skills/job-scout/watchlist.txt
+
+# Generated application docs (tailored CVs, cover letters) — your real history, keep private
+applications/
+
 # Keep empty dirs
 !data/connections/.gitkeep
 !data/digests/.gitkeep

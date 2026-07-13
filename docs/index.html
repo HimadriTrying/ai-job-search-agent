@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucy — one agent for the whole job search</title>
+<meta name="description" content="Lucy is a conversational multi-agent system that runs the entire job-search funnel — discovery, tailoring, warm intros, interview prep. Built on Claude Code, open source.">
+<meta property="og:title" content="Lucy — one agent for the whole job search">
+<meta property="og:description" content="A conversational agent that runs the entire job-search funnel. Open source, built on Claude Code.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#161512; --ink-2:#3f3b34; --ink-3:#6b665c;
+    --paper:#fbfaf7; --paper-2:#f2efe8; --line:#e4ded1;
+    --pine:#1b4d3e; --pine-soft:#eaf1ed; --ember:#c8624a;
+    --display:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+    font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 32px}
+  @media(max-width:640px){.wrap{padding:0 22px}body{font-size:16px}}
+  a{color:var(--pine);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .eyebrow{font-family:var(--sans);font-size:.74rem;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--pine)}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(251,250,247,.85);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .logo{font-family:var(--display);font-size:1.55rem;font-weight:500;color:var(--ink);
+    letter-spacing:-.015em}
+  .logo:hover{text-decoration:none}
+  .nav-cta{font-family:var(--sans);font-size:.9rem;font-weight:500;padding:9px 18px;
+    border:1px solid var(--ink);border-radius:8px;color:var(--ink);transition:.15s}
+  .nav-cta:hover{background:var(--ink);color:var(--paper);text-decoration:none}
+
+  .hero{padding:88px 0 30px}
+  @media(max-width:640px){.hero{padding:52px 0 20px}}
+  .tag{display:inline-flex;align-items:center;gap:8px;font-size:.8rem;color:var(--ink-3);
+    border:1px solid var(--line);border-radius:999px;padding:6px 14px;background:#fff;margin-bottom:30px}
+  .tag .d{width:7px;height:7px;border-radius:50%;background:var(--pine)}
+  h1{font-family:var(--display);font-weight:400;font-size:clamp(2.5rem,6.5vw,4.4rem);
+    line-height:1.04;letter-spacing:-.025em;margin-bottom:26px;max-width:16ch}
+  h1 em{font-style:italic;color:var(--pine)}
+  .sub{font-size:clamp(1.05rem,2.2vw,1.3rem);color:var(--ink-2);max-width:600px;
+    line-height:1.55;margin-bottom:34px}
+  .row{display:flex;gap:13px;flex-wrap:wrap}
+  .btn{font-family:var(--sans);font-weight:500;font-size:.98rem;padding:14px 24px;
+    border-radius:9px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);
+    transition:.15s;display:inline-flex;align-items:center;gap:8px}
+  .btn:hover{text-decoration:none;transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--ink);transform:translateY(-1px)}
+
+  .story{padding:76px 0 40px;border-top:1px solid var(--line);margin-top:64px}
+  .story .wrap{max-width:720px}
+  .story p{font-size:clamp(1.15rem,2.4vw,1.4rem);line-height:1.6;color:var(--ink);
+    margin-bottom:1.5rem;font-family:var(--display);font-weight:400;letter-spacing:-.01em}
+  .story p.small{font-family:var(--sans);font-size:1.05rem;color:var(--ink-2);line-height:1.7}
+  .story .turn{color:var(--pine);font-style:italic}
+  .pull{border-left:2px solid var(--ember);padding-left:22px;margin:34px 0;border-radius:0}
+  .pull span{font-family:var(--display);font-size:1.5rem;line-height:1.4;color:var(--ink);font-weight:500}
+
+  section{padding:70px 0}
+  .head{max-width:640px;margin-bottom:44px}
+  .head h2{font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,4.2vw,2.7rem);
+    letter-spacing:-.022em;line-height:1.1;margin:12px 0 14px}
+  .head p{color:var(--ink-2);font-size:1.08rem}
+
+  .funnel{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stages{display:flex;flex-direction:column;gap:12px;max-width:760px;margin:0 auto}
+  .stg{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 26px;
+    display:grid;grid-template-columns:38px 1fr;gap:20px;align-items:start;
+    opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+  .stg.in{opacity:1;transform:none}
+  .stg .idx{font-family:var(--sans);font-weight:600;font-size:.82rem;color:var(--pine);
+    border:1.5px solid var(--pine);border-radius:8px;width:38px;height:38px;
+    display:flex;align-items:center;justify-content:center}
+  .stg.warm .idx{color:var(--ember);border-color:var(--ember)}
+  .stg h3{font-family:var(--display);font-weight:500;font-size:1.28rem;letter-spacing:-.01em;margin-bottom:5px}
+  .stg p{font-size:.98rem;color:var(--ink-2);line-height:1.55}
+  .stg .say{display:inline-block;margin-top:13px;font-size:.85rem;color:var(--pine);
+    background:var(--pine-soft);border-radius:7px;padding:5px 11px}
+  .stg .say b{font-weight:600}
+  .flag{display:inline-block;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ember);border:1px solid var(--ember);border-radius:6px;padding:2px 8px;margin-bottom:9px}
+  @media(max-width:640px){.stg{padding:20px;gap:15px}}
+
+  .orch{background:var(--ink);color:var(--paper);border-radius:20px;padding:46px 34px}
+  @media(max-width:640px){.orch{padding:32px 22px}}
+  .orch .eyebrow{color:#8fc4b1}
+  .orch h2{font-family:var(--display);font-weight:400;color:#fff;
+    font-size:clamp(1.7rem,3.6vw,2.3rem);margin:12px 0 10px;letter-spacing:-.015em}
+  .orch>.inner>p{color:#c4bfb4;max-width:580px;margin-bottom:32px}
+  .hub{display:flex;flex-direction:column;align-items:center}
+  .hub .lucy-node{background:var(--pine);color:#fff;font-family:var(--display);font-weight:500;
+    font-size:1.25rem;padding:13px 30px;border-radius:11px;display:flex;align-items:center;gap:10px}
+  .hub .stem{width:2px;height:24px;background:#40564d}
+  .chips{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;max-width:700px}
+  .chip{font-family:var(--sans);font-size:.8rem;background:#231f19;border:1px solid #383129;
+    color:#d6d0c4;padding:8px 13px;border-radius:8px}
+  .chip.w{border-color:var(--ember);color:#efab92}
+  .orch .foot{font-size:.82rem;color:#8b8578;text-align:center;margin-top:26px;line-height:1.9}
+  .orch .foot code{color:#b9d8cc;font-family:var(--sans)}
+
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){.grid3{grid-template-columns:1fr}}
+  .card{border:1px solid var(--line);border-radius:14px;padding:28px 24px;background:#fff}
+  .card .n{font-family:var(--sans);font-weight:600;font-size:.8rem;color:var(--pine);margin-bottom:16px}
+  .card h4{font-family:var(--display);font-weight:500;font-size:1.2rem;margin-bottom:9px}
+  .card p{font-size:.96rem;color:var(--ink-2);line-height:1.55}
+
+  .day{max-width:680px}
+  .tl{border-left:2px solid var(--line);padding-left:28px;margin-left:4px}
+  .mo{position:relative;padding-bottom:30px}
+  .mo::before{content:'';position:absolute;left:-35px;top:5px;width:12px;height:12px;border-radius:50%;
+    background:var(--paper);border:2px solid var(--pine)}
+  .mo.auto::before{border-color:var(--ember)}
+  .mo .t{font-size:.8rem;font-weight:600;color:var(--pine);letter-spacing:.04em}
+  .mo.auto .t{color:var(--ember)}
+  .mo h4{font-family:var(--display);font-weight:500;font-size:1.15rem;margin:4px 0 5px}
+  .mo p{font-size:.96rem;color:var(--ink-2)}
+  .pill{font-size:.64rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    padding:2px 8px;border-radius:5px;margin-left:8px;vertical-align:middle}
+  .pill.a{background:#f7e3da;color:var(--ember)}
+  .pill.o{background:var(--pine-soft);color:var(--pine)}
+
+  .fill{background:repeating-linear-gradient(45deg,#faf5ec,#faf5ec 11px,#f4eddf 11px,#f4eddf 22px);
+    border:1px dashed var(--ember);border-radius:12px;padding:24px 26px;margin-top:22px}
+  .fill .eyebrow{color:var(--ember)}
+  .fill p{font-size:.96rem;color:var(--ink-2);margin-top:9px;line-height:1.6}
+
+  /* getting started */
+  .start{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .steps{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:820px;margin:0 auto}
+  @media(max-width:720px){.steps{grid-template-columns:1fr}}
+  .step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px 26px}
+  .step .sn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+    border-radius:8px;background:var(--pine);color:#fff;font-family:var(--sans);font-weight:600;
+    font-size:.9rem;margin-bottom:14px}
+  .step h4{font-family:var(--display);font-weight:500;font-size:1.22rem;margin-bottom:7px}
+  .step p{font-size:.96rem;color:var(--ink-2);line-height:1.55}
+  .step code{font-family:var(--sans);font-size:.86rem;background:var(--paper-2);
+    border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--pine)}
+  .step .ex{display:block;margin-top:12px;font-size:.9rem;color:var(--pine);
+    background:var(--pine-soft);border-radius:8px;padding:10px 13px;line-height:1.5}
+  .step .ex b{font-weight:600}
+  .start-note{max-width:820px;margin:26px auto 0;text-align:center;font-size:.95rem;color:var(--ink-3)}
+
+  /* credibility */
+  .cred .wrap{max-width:760px}
+  .cred .lead{font-family:var(--display);font-weight:400;font-size:clamp(1.3rem,2.8vw,1.7rem);
+    line-height:1.45;letter-spacing:-.01em;color:var(--ink);margin-bottom:16px}
+  .cred .lead em{font-style:italic;color:var(--pine)}
+  .cred .body{font-size:1.05rem;color:var(--ink-2);line-height:1.7;margin-bottom:8px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+  @media(max-width:640px){.stats{grid-template-columns:1fr;gap:12px}}
+  .stat{border:1px solid var(--line);border-radius:14px;padding:26px 22px;background:#fff}
+  .stat .big{font-family:var(--display);font-weight:500;font-size:2.6rem;line-height:1;
+    color:var(--pine);letter-spacing:-.02em}
+  .stat .lbl{font-size:.92rem;color:var(--ink-2);margin-top:9px;line-height:1.4}
+  .stat.ph{border-style:dashed;border-color:var(--ember)}
+  .stat.ph .big{color:var(--ember)}
+  .stat.ph .lbl::after{content:' — fill in';font-size:.72rem;color:var(--ember);
+    text-transform:uppercase;letter-spacing:.08em;display:block;margin-top:4px}
+
+  /* logo strip */
+  .logos{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--paper-2)}
+  .logos .wrap{text-align:center}
+  .logos .cap{font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-3);margin-bottom:30px}
+  .logo-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:18px}
+  .logo-slot{width:150px;height:66px;border:1px dashed var(--line);border-radius:10px;
+    display:flex;align-items:center;justify-content:center;background:#fff;
+    font-family:var(--sans);font-size:.8rem;color:var(--ink-3)}
+  .logos .hint{margin-top:24px;font-size:.85rem;color:var(--ink-3)}
+
+  footer{border-top:1px solid var(--line);padding:48px 0 72px;margin-top:20px}
+  footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+  footer .credits{font-size:.86rem;color:var(--ink-3);max-width:460px;line-height:1.6}
+  footer .foot-logo{font-family:var(--display);font-size:1.3rem;margin-bottom:6px}
+  footer .lic{font-size:.8rem;color:var(--ink-3)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top">Lucy</a>
+    <a class="nav-cta" href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="tag"><span class="d"></span> Open source · built on Claude Code</div>
+    <h1>One agent for the <em>whole</em> job search.</h1>
+    <p class="sub">Most tools automate a single step. Lucy runs the entire funnel as a conversation —
+      finding roles, tailoring your story, opening warm doors, and prepping you for the room.</p>
+    <div class="row">
+      <a class="btn" href="#start">Get started</a>
+      <a class="btn ghost" href="#how">See how it works</a>
+    </div>
+  </div>
+</header>
+
+<div class="story">
+  <div class="wrap">
+    <span class="eyebrow">Why this exists</span>
+    <p>Applying to a job is the easy half. Everyone can see the posting; everyone sends the same tailored CV.</p>
+    <p>The half that actually moves the needle is quieter: <span class="turn">knowing someone on the inside.</span>
+      A warm introduction changes your odds more than any keyword ever will — and it's the part no tool would touch.</p>
+    <div class="pull"><span>So the job search isn't one problem. It's a funnel of six — and most tools solve exactly one.</span></div>
+    <p class="small">Discovery. Fit. Tailoring. The warm path in. The interview. The offer. Each stage needs different
+      work, and stitching them together by hand is where good candidates lose momentum. Lucy holds the whole
+      funnel in one place, so you spend your energy on judgment, not logistics.</p>
+  </div>
+</div>
+
+<section class="cred">
+  <div class="wrap">
+    <span class="eyebrow">Why me</span>
+    <p class="lead" style="margin-top:12px">I didn't build this because AI agents are having a moment. I built it because
+      I've spent years on the other side of this problem — <em>coaching people through their job search</em> and
+      watching where they get stuck.</p>
+    <p class="body">Before Lucy, I was a coach at Pragmatic Builders, ran resume and interview sessions,
+      and mentored people through career moves — friends, colleagues, strangers who found me. The same
+      patterns came up every time: strong candidates freezing on what to say, great fits never heard back
+      from, and the quiet truth that a warm introduction beats a perfect application. Lucy is that hard-won
+      knowledge, turned into a system.</p>
+    <div class="stats">
+      <div class="stat ph"><div class="big">##</div><div class="lbl">people coached through their job search</div></div>
+      <div class="stat ph"><div class="big">##</div><div class="lbl">resume &amp; interview sessions run</div></div>
+      <div class="stat ph"><div class="big">##</div><div class="lbl">years hiring, mentoring &amp; coaching</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="logos">
+  <div class="wrap">
+    <div class="cap">Where I've worked</div>
+    <div class="logo-row">
+      <div class="logo-slot">logo</div>
+      <div class="logo-slot">logo</div>
+      <div class="logo-slot">logo</div>
+      <div class="logo-slot">logo</div>
+      <div class="logo-slot">logo</div>
+    </div>
+    <p class="hint">⚑ swap these slots for your company logos (SVG or PNG). Keep them greyscale for a clean, consistent strip.</p>
+  </div>
+</section>
+
+<section class="funnel" id="how">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">The funnel · you talk, Lucy routes</span>
+      <h2>You never pick a tool. You just talk.</h2>
+      <p>Say what you need in plain language. Lucy reads the intent and runs the right specialist — or chains several.</p>
+    </div>
+    <div class="stages">
+      <div class="stg"><div class="idx">01</div><div>
+        <h3>Discovery</h3>
+        <p>Sweeps public job boards each morning, drops anything off-target before spending a single model call, and scores the rest against a rubric tuned to you.</p>
+        <span class="say"><b>You wake up to</b> — apply first / worth a look / skipped.</span></div></div>
+      <div class="stg"><div class="idx">02</div><div>
+        <h3>Fit &amp; tailoring</h3>
+        <p>A drafter rewrites your CV and cover letter for the specific role. A second, fresh-eyed reviewer critiques it like a stranger would. Then it's compiled and checked.</p>
+        <span class="say"><b>You say</b> — tailor my CV for this one.</span></div></div>
+      <div class="stg warm"><div class="idx">03</div><div>
+        <span class="flag">the part nobody else builds</span>
+        <h3>The warm path in</h3>
+        <p>Works from your own connections to find who you already know at the company — and drafts the introduction. A referral beats a perfect CV.</p>
+        <span class="say"><b>You say</b> — who do I know at Stripe?</span></div></div>
+      <div class="stg"><div class="idx">04</div><div>
+        <h3>Apply — your hand on it</h3>
+        <p>Lucy fills the real application and stops at the submit line. She never sends anything without you. Two locks, one deliberate human click.</p>
+        <span class="say"><b>You do</b> — the final submit. Always.</span></div></div>
+      <div class="stg"><div class="idx">05</div><div>
+        <h3>Interview, from the other chair</h3>
+        <p>The coach is fed the hiring side's own playbook — how interviewers score, structure loops, and read a JD — so you walk in already knowing what they're looking for.</p>
+        <span class="say"><b>You say</b> — get me ready for Thursday.</span></div></div>
+      <div class="stg"><div class="idx">06</div><div>
+        <h3>Track &amp; negotiate</h3>
+        <p>Every application, its stage, and when to follow up — kept as durable memory. When an offer lands, she helps you hold your ground on comp.</p>
+        <span class="say"><b>You ask</b> — what should I chase this week?</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="start" id="start">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Getting started · for job seekers</span>
+      <h2>How you'd actually use it.</h2>
+      <p>Lucy runs on Claude Code, so you set her up once, then just talk to her whenever you're job hunting. Four steps to your first tailored application.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="sn">1</span>
+        <h4>Fork &amp; open it</h4>
+        <p>Fork the repo, then open the folder in Claude Code. That's the whole install — Lucy's instructions load automatically.</p>
+        <span class="ex"><b>You do:</b> fork on GitHub → open in Claude Code → say "run setup".</span>
+      </div>
+      <div class="step">
+        <span class="sn">2</span>
+        <h4>Give Lucy your story</h4>
+        <p>Drop in your CV and answer a few questions. This is the one part that matters most — the richer your profile, the sharper everything she produces. It stays private on your machine.</p>
+        <span class="ex"><b>You say:</b> "here's my resume — help me build my profile."</span>
+      </div>
+      <div class="step">
+        <span class="sn">3</span>
+        <h4>Ask for what you need</h4>
+        <p>No commands to memorize. Talk in plain language and Lucy routes it to the right specialist — discovery, tailoring, a warm intro, interview prep.</p>
+        <span class="ex"><b>You say:</b> "find me senior PM roles" · "tailor my CV for this" · "who do I know here?"</span>
+      </div>
+      <div class="step">
+        <span class="sn">4</span>
+        <h4>You stay in control</h4>
+        <p>Lucy prepares everything and stops at the edge of every real action. You read, you tweak, and you make the final call to apply or reach out.</p>
+        <span class="ex"><b>You do:</b> review the draft, then hit submit yourself. Always.</span>
+      </div>
+    </div>
+    <p class="start-note">Prefer to just watch first? Everything's open source — <a href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">read the code and setup guide on GitHub</a>.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="orch">
+      <div class="inner">
+        <span class="eyebrow">Under the hood</span>
+        <h2>How the orchestrator decides</h2>
+        <p>Lucy is the only thing you talk to. Behind her sit twelve specialists — she reads your intent and calls whichever the moment needs, then hands you one clean result.</p>
+        <div class="hub">
+          <div class="lucy-node">Lucy · orchestrator</div>
+          <div class="stem"></div>
+          <div class="chips">
+            <span class="chip">job-scout</span><span class="chip">cv-tailor</span><span class="chip">reviewer</span>
+            <span class="chip">cover-letter</span><span class="chip">company-research</span>
+            <span class="chip w">network-mapper</span><span class="chip w">outreach-drafter</span>
+            <span class="chip">interview-coach</span><span class="chip">tracker</span>
+            <span class="chip">upskill</span><span class="chip">negotiator</span><span class="chip">submit</span>
+          </div>
+        </div>
+        <p class="foot"><code>"what's out there?"</code> → job-scout &nbsp;·&nbsp; <code>"tailor this"</code> → cv-tailor → reviewer → honesty gate &nbsp;·&nbsp; <code>"who do I know there?"</code> → network-mapper</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Three rules it won't break</span>
+      <h2>What makes it trustworthy.</h2>
+    </div>
+    <div class="grid3">
+      <div class="card"><div class="n">/ 01</div><h4>Never fabricates</h4>
+        <p>Every generated line is checked in code against a frozen record of your real history. Invent an employer or a metric and the build fails. A promise you can verify.</p></div>
+      <div class="card"><div class="n">/ 02</div><h4>You commit, not the agent</h4>
+        <p>It automates everything up to applying, reaching out, or accepting — then stops and hands you the wheel. No message leaves without your say-so.</p></div>
+      <div class="card"><div class="n">/ 03</div><h4>Your data stays yours</h4>
+        <p>Your real profile never leaves your machine. The public repo ships only templates, so anyone can fork it and fill in their own.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">A day with Lucy</span>
+      <h2>What actually changes about your morning.</h2>
+      <p>Two speeds: the cheap, repetitive work runs on a schedule while you sleep. The expensive, judgment-heavy work waits for you to decide it's worth doing.</p>
+    </div>
+    <div class="day"><div class="tl">
+      <div class="mo auto"><div class="t">6:30 — before you're up</div>
+        <h4>The digest arrives<span class="pill a">automated</span></h4>
+        <p>Overnight, Lucy swept the boards and scored what's new. A ranked shortlist is waiting.</p></div>
+      <div class="mo"><div class="t">8:00 — coffee</div>
+        <h4>You skim and pick<span class="pill o">you decide</span></h4>
+        <p>Three roles in "apply first." One's a real fit. You tell Lucy to go after it.</p></div>
+      <div class="mo"><div class="t">8:15 — twenty focused minutes</div>
+        <h4>Tailor, research, find a way in<span class="pill o">on demand</span></h4>
+        <p>She tailors your CV, researches the company, and surfaces a former colleague who works there. She drafts the intro. You read it, tweak one line.</p></div>
+      <div class="mo"><div class="t">8:35 — your call</div>
+        <h4>You hit submit<span class="pill o">human</span></h4>
+        <p>Everything's ready and honest. The last click is yours — always.</p></div>
+    </div></div>
+    <div class="fill">
+      <span class="eyebrow">⚑ still building — the email step</span>
+      <p><b>Roadmap:</b> right now the digest is written to a file in the repo. Next is wiring up the
+        morning email so it lands in your inbox — the difference between "a script" and "an agent that
+        shows up." Building in public, so this gets documented when it ships.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Why I built this</span>
+      <h2>The story behind Lucy.</h2>
+    </div>
+    <div class="fill">
+      <span class="eyebrow">⚑ your words go here</span>
+      <p><b>Write this in your own voice — it's the part people remember.</b> A short, honest paragraph:
+        you were hunting for senior PM / AI-builder roles, kept seeing people post about multi-agent
+        setups, and decided to build your own in public. Mention that you named the orchestrator
+        <b>Lucy</b> after the first conversational AI you ever worked on — that detail lands. Two or three
+        sentences. This one should sound like <em>you</em>, not like a machine.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="foot-logo">Lucy</div>
+      <div class="lic">ai-job-search-agent · MIT licensed</div>
+    </div>
+    <p class="credits">Built after studying the best public job-search automation and taking it further —
+      a conversational orchestrator over the whole funnel, a warm-intro layer, and honesty enforced in code.
+      Full acknowledgements in the repo.</p>
+  </div>
+</footer>
+
+<script>
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15});
+  document.querySelectorAll('.stg').forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
