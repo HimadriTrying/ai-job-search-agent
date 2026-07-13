@@ -34,12 +34,17 @@ profile/07-interview-prep.md
 # Env / secrets
 .env
 .claude/settings.local.json
+# Private token list read by the pre-commit guard (scripts/check-private.sh) — never commit
+.private-guard
 
 # Keep empty dirs
 !data/connections/.gitkeep
 !data/digests/.gitkeep
 
-# NOTE: profile/*.md and career_facts.yaml ARE committed by default — they are the brain and
-# (redacted) the first public artifact. If you'd rather keep personal reflections private,
-# uncomment:
-# profile/02-behavioral-profile.md
+# NOTE: The real career_facts.yaml and profile/0X-*.md (non-.example) ARE ignored by the rules
+# above — they stay on your machine and are NEVER committed. Only the *.example templates and
+# profile/00-README.md are public. To publish a *redacted* showcase of a profile file, copy a
+# scrubbed version to e.g. profile/05-cv-source.public.md and un-ignore that exact path:
+#   !profile/05-cv-source.public.md
+# A pre-commit guard (scripts/check-private.sh) enforces this — enable it with:
+#   git config core.hooksPath .githooks

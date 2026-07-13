@@ -21,17 +21,34 @@ in later will not leak them.
 
 3. Edit `LICENSE` to replace `<YOUR NAME>`.
 
+## Automated guard (set up once)
+
+A pre-commit hook refuses to commit private data — it blocks the known private paths
+(even if force-added with `git add -f`) and scans staged content for your real names,
+email, and employer names. Enable it once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The hook (`.githooks/pre-commit` → `scripts/check-private.sh`) reads your private tokens
+from `.private-guard`, which is **gitignored** — the token list never enters the public repo.
+If you clone this fresh, recreate `.private-guard` (one token per line) and re-run the command
+above. In a genuine false positive: `git commit --no-verify` (sparingly).
+
 ## Pre-push checklist (30 seconds, do it every time)
 
 ```bash
-# Nothing personal should appear in this list:
+# 1. Nothing personal should appear here:
 git status --short
-# Confirm the gate is protecting you — these must print a path (= ignored):
+# 2. The ignore rules must be active — each must print a path:
 git check-ignore career_facts.yaml profile/01-candidate-profile.md data/tracker.csv
+# 3. No tracked file contains a private token (reads your gitignored .private-guard —
+#    so this command names no one):
+git grep -iFf <(grep -vE '^[[:space:]]*(#|$)' .private-guard) -- . && echo "^ REVIEW" || echo "clean ✓"
 ```
 
-If `git check-ignore` prints nothing for those, STOP — do not push — the ignore rules
-aren't active.
+If step 2 prints nothing, or step 3 prints a filename, **STOP — do not push.**
 
 ## When you fill in your profile later
 
