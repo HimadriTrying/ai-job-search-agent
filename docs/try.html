@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Try Lucy — tailor your CV in a minute</title>
+<title>Try Lucy: tailor your CV in 60 seconds</title>
 <meta name="description" content="Upload your CV, paste a job posting, and get a tailored, honesty-checked CV and cover letter you can save as PDF. Runs in your browser with your own Anthropic key.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,7 +53,7 @@
   .field:last-child{margin-bottom:0}
   label.lbl{display:block;font-weight:600;font-size:.95rem;margin-bottom:6px}
   .hint{font-size:.85rem;color:var(--ink-3);margin-bottom:9px}
-  textarea,input[type=password],input[type=email],select{
+  textarea,input[type=password],input[type=email],input[type=text],select{
     width:100%;font-family:var(--sans);font-size:.95rem;color:var(--ink);
     background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 13px;
     transition:border-color .15s}
@@ -87,6 +87,19 @@
 
   .err{margin-top:18px;border:1px solid #e3b6ac;background:#fbeeea;color:#8a3324;
     border-radius:10px;padding:13px 15px;font-size:.9rem;display:none}
+
+  /* loading / transition state */
+  #loading{display:none;background:#fff;border:1px solid var(--line);border-radius:16px;
+    padding:56px 28px;text-align:center}
+  .bar{height:6px;background:var(--paper-2);border-radius:99px;overflow:hidden;max-width:340px;margin:0 auto 26px}
+  .bar span{display:block;height:100%;width:38%;background:var(--pine);border-radius:99px;
+    animation:slide 1.35s cubic-bezier(.5,0,.5,1) infinite}
+  @keyframes slide{0%{transform:translateX(-130%)}100%{transform:translateX(360%)}}
+  .stage{font-family:var(--display);font-size:clamp(1.15rem,3vw,1.4rem);color:var(--ink);
+    min-height:1.5em;transition:opacity .3s}
+  .load-sub{font-size:.85rem;color:var(--ink-3);margin-top:10px}
+  .fade-in{animation:fadeIn .45s ease both}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
   /* results */
   #results{display:none;margin-top:8px}
@@ -145,12 +158,28 @@
   .step{font-size:.85rem;color:var(--ink-2);background:#fff;border:1px solid var(--line);
     border-radius:999px;padding:6px 14px}
   .step.hot{border-color:var(--ember);color:var(--ember);font-weight:500}
-  .checks{margin:20px 0 0;padding:0;list-style:none;max-width:66ch}
-  .checks li{position:relative;padding:9px 0 9px 28px;font-size:.96rem;color:var(--ink-2);
-    line-height:1.55;border-top:1px solid var(--line)}
-  .checks li:first-child{border-top:none}
-  .checks li::before{content:"✓";position:absolute;left:0;top:9px;color:var(--pine);font-weight:600}
+  .checks{margin:24px 0 0;padding:0;list-style:none;max-width:70ch;display:grid;gap:16px}
+  .checks li{position:relative;padding-left:40px;font-size:1rem;color:var(--ink-2);line-height:1.55}
+  .checks li b{color:var(--ink)}
+  .checks li::before{content:"✓";position:absolute;left:0;top:0;width:24px;height:24px;
+    display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;
+    color:#fff;background:var(--pine);border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,.14)}
+  [data-float]{will-change:transform}
   .band .more{margin-top:24px;font-size:.92rem}
+  .band.accent{background:var(--pine-soft)}
+  .early-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:start;margin-top:30px}
+  @media(max-width:820px){.early-grid{grid-template-columns:1fr;gap:26px}}
+  .early-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;
+    box-shadow:0 8px 28px rgba(27,77,62,.09)}
+  .early-card h3{font-family:var(--display);font-weight:500;font-size:1.3rem;margin-bottom:6px}
+  .wl-p{font-size:.9rem;color:var(--ink-3);line-height:1.5;margin-bottom:16px}
+  .wl-lbl{display:block;font-size:.8rem;font-weight:600;color:var(--ink-2);margin:12px 0 5px}
+  .early-card input,.early-card select{margin-bottom:2px}
+  .wl-btn{width:100%;justify-content:center;margin-top:16px;background:var(--pine);border-color:var(--pine)}
+  .wl-btn:hover{background:#163f33}
+  .wl-tick{width:46px;height:46px;border-radius:50%;background:var(--pine-soft);color:var(--pine);
+    display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;margin-bottom:14px}
+  .early-note{font-size:.8rem;color:var(--ink-3);margin-top:16px;line-height:1.5}
 
   footer{border-top:1px solid var(--line);padding:30px 0;margin-top:0;color:var(--ink-3);font-size:.85rem}
 
@@ -170,8 +199,8 @@
   <div class="wrap">
     <a href="index.html" class="logo">Lucy</a>
     <div class="nav-right">
+      <a href="#early" class="nav-back">Early access</a>
       <a href="#about" class="nav-back">About</a>
-      <a href="#how" class="nav-back">How it works</a>
       <a href="index.html" class="nav-back">← overview</a>
     </div>
   </div>
@@ -180,10 +209,10 @@
 <header class="hero">
   <div class="wrap">
     <span class="eyebrow">Try it · no install</span>
-    <h1>Tailor your CV to a role, <em>honestly</em>, in about sixty seconds.</h1>
+    <h1>Tailor your CV to a role, <em>honestly</em>, in about 60 seconds.</h1>
     <p class="sub">Drop in your CV and a job posting. You get back a version of your CV reshaped for
-      that role, plus a matching cover letter — checked so nothing is invented that isn't already in
-      what you gave. Save either one as a PDF.</p>
+      that role, plus a matching cover letter. Everything is checked against what you gave, so nothing
+      gets invented. Save either one as a PDF.</p>
     <div class="trust">
       <span class="pill"><span class="d"></span> Runs in your browser</span>
       <span class="pill"><span class="d"></span> Your key never leaves this page</span>
@@ -203,12 +232,12 @@
           <label class="filebtn">Upload file<input type="file" id="cvfile" accept=".txt,.md,.markdown,.text" hidden></label>
           <span class="filename" id="cvfilename"></span>
         </div>
-        <textarea id="cv" class="cv-min" placeholder="Paste your full CV here — roles, dates, achievements, skills…"></textarea>
+        <textarea id="cv" class="cv-min" placeholder="Paste your full CV here: roles, dates, achievements, skills…"></textarea>
       </div>
 
       <div class="field">
         <label class="lbl">The job posting</label>
-        <div class="hint">Paste it, drop in a link, or upload a file — whichever you have.</div>
+        <div class="hint">Paste it, drop in a link, or upload a file, whichever you have.</div>
         <div class="seg" id="jdseg">
           <button type="button" class="segbtn active" data-mode="paste">Paste</button>
           <button type="button" class="segbtn" data-mode="url">URL</button>
@@ -224,14 +253,14 @@
 
       <div class="field">
         <label class="lbl" for="key">Your Anthropic API key</label>
-        <div class="hint">Used only to make the request from your browser — it is never sent to us or stored anywhere.
+        <div class="hint">Used only to make the request from your browser. It is never sent to us or stored anywhere.
           Get one at <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>.</div>
         <div class="keyrow">
           <input type="password" id="key" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
           <select id="model" title="Model">
-            <option value="claude-opus-4-8">Opus 4.8 — best</option>
-            <option value="claude-sonnet-5">Sonnet 5 — cheaper</option>
-            <option value="claude-haiku-4-5">Haiku 4.5 — cheapest</option>
+            <option value="claude-opus-4-8">Opus 4.8 · best</option>
+            <option value="claude-sonnet-5">Sonnet 5 · cheaper</option>
+            <option value="claude-haiku-4-5">Haiku 4.5 · cheapest</option>
           </select>
         </div>
         <details class="nokey">
@@ -246,6 +275,12 @@
         <span class="status" id="status"></span>
       </div>
       <div class="err" id="err"></div>
+    </div>
+
+    <div id="loading">
+      <div class="bar"><span></span></div>
+      <div class="stage" id="stage">Warming up…</div>
+      <div class="load-sub">Running in your browser with your key. Nothing is stored.</div>
     </div>
 
     <div id="results">
@@ -265,16 +300,67 @@
   </div>
 </section>
 
+<section class="band accent" id="early">
+  <div class="wrap">
+    <span class="eyebrow">Where this is going</span>
+    <h2>Tailoring one CV is step one. The real product runs your whole funnel.</h2>
+    <p class="lead">This page is the first piece we've opened up. The full version does this for you on
+      repeat: set your profile and what you're hunting for once, and Lucy watches new postings as they
+      appear, scores them against your rules, and tailors your CV and cover letter for the ones worth it.
+      You stop starting from scratch every time.</p>
+    <div class="early-grid">
+      <div class="early-copy">
+        <ul class="checks">
+          <li><b>Set it up once.</b> Your profile, your target roles, your seniority floor, and the rules that matter to you.</li>
+          <li><b>New roles come to you.</b> As postings appear, they're scored against your rubric before a word is written.</li>
+          <li><b>Tailored automatically.</b> The ones that fit get a CV and cover letter ready for your review.</li>
+          <li><b>You still hold the final click.</b> Nothing is applied or sent without you.</li>
+        </ul>
+      </div>
+      <div class="early-card" id="waitlist">
+        <div id="wl-step1">
+          <h3>Get early access</h3>
+          <p class="wl-p">Be first when the automated funnel opens. No spam, just the invite.</p>
+          <input type="email" id="wl-email" placeholder="you@email.com" autocomplete="email" spellcheck="false">
+          <button type="button" class="btn wl-btn" id="wl-next">Request access</button>
+        </div>
+        <div id="wl-step2" style="display:none">
+          <h3>Nice. 2 quick things.</h3>
+          <p class="wl-p">So it's tuned to you from day one.</p>
+          <label class="wl-lbl">Roles you're hunting</label>
+          <input type="text" id="wl-roles" placeholder="e.g. Senior PM, AI product roles" spellcheck="false">
+          <label class="wl-lbl">Your level</label>
+          <select id="wl-level">
+            <option value="">Choose…</option>
+            <option>Senior</option>
+            <option>Lead / Staff</option>
+            <option>Group / Director</option>
+            <option>Other</option>
+          </select>
+          <button type="button" class="btn wl-btn" id="wl-submit">Join the early list</button>
+        </div>
+        <div id="wl-done" style="display:none">
+          <div class="wl-tick">✓</div>
+          <h3>You're on the list.</h3>
+          <p class="wl-p">We'll reach out the moment the automated funnel is ready for you.</p>
+        </div>
+        <p class="early-note">Open source. The agent behind this is yours to run too, on
+          <a href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">GitHub</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="band" id="how">
   <div class="wrap">
     <span class="eyebrow">What happens behind the scenes</span>
     <h2>It's not just rewriting your CV.</h2>
     <p class="lead">This page is one stage of a larger funnel, and even here it's doing more than
       swapping in keywords. Before it hands you anything, it works through a set of rules and
-      conventions — the same ones the full system uses.</p>
+      conventions, the same ones the full system uses.</p>
     <ul class="checks">
       <li><b>Grounds every line in what you gave it.</b> It selects, reorders, and rephrases the facts already in your CV. It never invents an employer, a title, a date, or a metric to fit the posting.</li>
-      <li><b>Reads the posting for what it's really asking.</b> It maps the role's stated needs to the evidence you actually have, and leans on that — rather than padding with things you can't back up.</li>
+      <li><b>Reads the posting for what it's really asking.</b> It maps the role's stated needs to the evidence you actually have, and leans on that, rather than padding with things you can't back up.</li>
       <li><b>Writes in a plain human voice.</b> No em-dashes, no "results-driven / passionate" filler, none of the usual AI tells. It's meant to read like you wrote it.</li>
       <li><b>Flags anything it can't trace.</b> The honesty badge you see is the browser version of the code-enforced gate: any number or claim it can't tie back to your CV gets surfaced for you to check, not quietly shipped.</li>
     </ul>
@@ -289,7 +375,7 @@
       <span class="step">Interview prep</span>
       <span class="step">Offer &amp; negotiate</span>
     </div>
-    <p class="body" style="margin-top:14px">The warm-intro step is the one almost nothing else touches — finding a real path into a company through your own network before you apply.</p>
+    <p class="body" style="margin-top:14px">The warm-intro step is the one almost nothing else touches. It finds a real path into a company through your own network, before you apply.</p>
   </div>
 </section>
 
@@ -302,20 +388,20 @@
       together by hand. Lucy is a single conversational agent that manages the whole funnel,
       refuses to fabricate anything about you, and always stops before committing you to anything.</p>
     <div class="ideas">
-      <div class="idea">
+      <div class="idea" data-float="14">
         <div class="n">/ 01</div>
         <h3>One agent, not a command list</h3>
         <p>You say what you need in plain language; it routes to the right specialist. Nothing to memorise.</p>
       </div>
-      <div class="idea">
+      <div class="idea" data-float="24">
         <div class="n">/ 02</div>
         <h3>Honesty enforced in code</h3>
         <p>Every outbound document is checked against a frozen record of your real history before it can leave the system. Invent an employer or a metric and it fails loudly. A promise you can verify beats one you can't.</p>
       </div>
-      <div class="idea">
+      <div class="idea" data-float="14">
         <div class="n">/ 03</div>
         <h3>You commit, never the agent</h3>
-        <p>It automates everything up to applying, reaching out, or accepting — then hands you the wheel. The last click is always yours.</p>
+        <p>It automates everything up to applying, reaching out, or accepting, then hands you the wheel. The last click is always yours.</p>
       </div>
     </div>
     <p class="more">Built as an open, multi-agent system on Claude Code. Read the full rationale and the
@@ -325,7 +411,7 @@
 
 <footer>
   <div class="wrap">
-    Part of <a href="index.html">Lucy</a> — an open-source, honesty-gated job-search agent. This page sends your CV
+    Part of <a href="index.html">Lucy</a>, an open-source, honesty-gated job-search agent. This page sends your CV
     and the job posting directly to Anthropic using your key; the result is generated in your browser and kept only here.
   </div>
 </footer>
@@ -385,9 +471,8 @@
 
   // resolve a job-posting URL into text using Claude's web_fetch tool
   async function fetchJobFromUrl(url, apiKey){
-    statusEl.textContent = 'Fetching the job posting from that link…';
     let messages = [{ role:"user", content:
-      "Fetch the job posting at this URL and return ONLY the full text of the posting — the role " +
+      "Fetch the job posting at this URL and return ONLY the full text of the posting: the role " +
       "title, responsibilities, requirements, and any about-the-team detail. No commentary.\n\nURL: " + url }];
     for(let i=0;i<3;i++){
       const data = await callApi({
@@ -420,21 +505,49 @@
 
   function showErr(msg){ err.textContent = msg; err.style.display = 'block'; }
   function clearErr(){ err.style.display = 'none'; }
-  function busy(on){
-    go.disabled = on; spin.style.display = on ? 'inline-block' : 'none';
-    golabel.textContent = on ? 'Working…' : 'Tailor my CV';
-    statusEl.textContent = on ? 'Reading your CV against the role — this takes ~30–60 seconds.' : '';
+
+  // staged loading + smooth transitions between form / loading / results
+  const STAGES_FETCH = ['Fetching the job posting from that link…'];
+  const STAGES_MAIN = [
+    'Reading your CV',
+    'Working out what the role really needs',
+    'Matching your real experience to it',
+    'Rewriting it in your voice, nothing invented',
+    'Drafting your cover letter',
+    'Checking every line against your CV'
+  ];
+  let stageTimer = null;
+  function startStages(list){
+    let i = 0; const s = $('stage');
+    clearInterval(stageTimer);
+    s.style.opacity = 1; s.textContent = list[0];
+    stageTimer = setInterval(() => {
+      i = (i + 1) % list.length;
+      s.style.opacity = 0;
+      setTimeout(() => { s.textContent = list[i]; s.style.opacity = 1; }, 300);
+    }, 2600);
   }
+  function stopStages(){ clearInterval(stageTimer); stageTimer = null; }
+  function fadeShow(el){ el.style.display = 'block'; el.classList.remove('fade-in'); void el.offsetWidth; el.classList.add('fade-in'); }
+  function showLoading(){
+    clearErr();
+    $('form-card').style.display = 'none';
+    results.style.display = 'none';
+    fadeShow($('loading'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function hideLoading(){ $('loading').style.display = 'none'; stopStages(); }
+  function backToForm(){ hideLoading(); results.style.display = 'none'; $('form-card').style.display = 'block'; }
 
   const SYSTEM = [
     "You are the CV-tailoring and cover-letter engine of an honesty-gated job-application system.",
-    "You receive a candidate's CV — the ONLY source of truth about them — and a target job posting.",
+    "You receive a candidate's CV (the ONLY source of truth about them) and a target job posting.",
     "Produce (1) a tailored version of their CV, reordered and reworded to fit the role, and (2) a cover letter in their own voice.",
-    "ABSOLUTE RULE — NEVER FABRICATE: every claim in both documents must trace to a fact present in the provided CV.",
+    "ABSOLUTE RULE, NEVER FABRICATE: every claim in both documents must trace to a fact present in the provided CV.",
     "You may rephrase, reorder, emphasise, select, and tighten. You may NOT invent employers, job titles, dates, metrics, numbers, tools, certifications, or achievements.",
-    "If the job wants something the CV does not show, omit it — do not manufacture it. Do not inflate a number or round it up.",
+    "If the job wants something the CV does not show, omit it. Do not manufacture it. Do not inflate a number or round it up.",
     "Write in a plain, human voice: no em-dashes, no corporate filler, no clichés like 'passionate' or 'results-driven'.",
-    "Return HTML fragments for the documents using only <h1> <h2> <h3> <p> <ul> <li> and <span class=\"muted\"> tags — no styles, no scripts, no wrappers.",
+    "Return HTML fragments for the documents using only <h1> <h2> <h3> <p> <ul> <li> and <span class=\"muted\"> tags. No styles, no scripts, no wrappers.",
     "In unsupported_claims, list any statement you included that you are not fully certain is grounded in the CV. Aim for an empty list."
   ].join(' ');
 
@@ -474,12 +587,12 @@
     if(jdMode === 'paste') jdText = jd.value.trim();
     else if(jdMode === 'upload') jdText = (jdFileText || '').trim();
     if(jdMode === 'url' && !jdurl.value.trim()) return showErr('Add the job posting link, or switch to Paste.');
-    if(jdMode !== 'url' && !jdText) return showErr('Add the job posting — paste it or upload a file.');
+    if(jdMode !== 'url' && !jdText) return showErr('Add the job posting. Paste it or upload a file.');
 
-    busy(true);
+    showLoading();
+    startStages(jdMode === 'url' ? STAGES_FETCH : STAGES_MAIN);
     try{
-      if(jdMode === 'url') jdText = await fetchJobFromUrl(jdurl.value.trim(), apiKey);
-      statusEl.textContent = 'Reading your CV against the role — this takes ~30–60 seconds.';
+      if(jdMode === 'url'){ jdText = await fetchJobFromUrl(jdurl.value.trim(), apiKey); startStages(STAGES_MAIN); }
 
       const userMsg =
         "=== MY CV (the only source of truth about me) ===\n" + cv.value.trim() +
@@ -507,28 +620,79 @@
       const numFlags = numberFlags(cv.value, (out.tailored_cv_html||'') + ' ' + (out.cover_letter_html||''));
       const total = modelFlags.length + numFlags.length;
       if(total === 0){
-        honesty.innerHTML = '<span class="badge ok">✓ Honesty check passed — nothing added that isn\'t in your CV</span>';
+        honesty.innerHTML = '<span class="badge ok">✓ Honesty check passed. Nothing added that isn\'t in your CV.</span>';
       } else {
         let items = '';
         modelFlags.forEach(f => items += '<li>'+escapeHtml(f)+'</li>');
-        numFlags.forEach(f => items += '<li>Number <b>'+escapeHtml(f)+'</b> appears in the output but not in your CV — confirm it\'s real.</li>');
+        numFlags.forEach(f => items += '<li>Number <b>'+escapeHtml(f)+'</b> appears in the output but not in your CV. Confirm it\'s real.</li>');
         honesty.innerHTML = '<span class="badge warn">⚑ '+total+' thing'+(total>1?'s':'')+' to double-check before you send</span>';
-        honesty.innerHTML += '<div class="flags"><b>Review these — the tool flags anything it can\'t trace to your CV:</b><ul>'+items+'</ul></div>';
+        honesty.innerHTML += '<div class="flags"><b>Review these. The tool flags anything it can\'t trace to your CV:</b><ul>'+items+'</ul></div>';
       }
 
+      hideLoading();
       $('form-card').style.display = 'none';
-      results.style.display = 'block';
+      fadeShow(results);
       window.scrollTo({top:0, behavior:'smooth'});
     }catch(e){
+      backToForm();
       showErr(e.message || 'Something went wrong. Try again.');
-    }finally{
-      busy(false);
     }
   }
 
   function escapeHtml(s){ return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 
   go.addEventListener('click', run);
+
+  // early-access onboarding (progressive: email first, enrich after commitment)
+  const WAITLIST_ENDPOINT = ''; // paste a Formspree / your own endpoint to capture leads; empty = local only
+  const emailRe = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  const wlEmail = $('wl-email');
+  function wlShow(step){ ['wl-step1','wl-step2','wl-done'].forEach(id => $(id).style.display = id === step ? 'block' : 'none'); }
+  $('wl-next').addEventListener('click', () => {
+    if(!emailRe.test(wlEmail.value.trim())){ wlEmail.style.borderColor = 'var(--ember)'; wlEmail.focus(); return; }
+    wlEmail.style.borderColor = '';
+    wlShow('wl-step2');
+  });
+  wlEmail.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); $('wl-next').click(); } });
+  $('wl-submit').addEventListener('click', async () => {
+    const lead = {
+      email: wlEmail.value.trim(),
+      roles: $('wl-roles').value.trim(),
+      level: $('wl-level').value,
+      source: 'try-page',
+      at: new Date().toISOString()
+    };
+    try{
+      if(WAITLIST_ENDPOINT){
+        await fetch(WAITLIST_ENDPOINT, { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(lead) });
+      } else {
+        try{ localStorage.setItem('lucy_waitlist', JSON.stringify(lead)); }catch(e){}
+      }
+    }catch(e){ /* best-effort in the prototype; still confirm to the user */ }
+    wlShow('wl-done');
+  });
+
+  // subtle scroll motion: elements drift a little as they pass through the viewport.
+  // (This is the foundation for animated imagery: any image with data-float behaves the same.)
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduceMotion){
+    const floaters = Array.from(document.querySelectorAll('[data-float]'));
+    let ticking = false;
+    function applyFloat(){
+      const vh = window.innerHeight || 800;
+      floaters.forEach(el => {
+        const r = el.getBoundingClientRect();
+        const dist = ((r.top + r.height/2) - vh/2) / vh;   // roughly -0.5 .. 0.5
+        const amt = parseFloat(el.dataset.float) || 12;
+        el.style.transform = 'translateY(' + (dist * amt * -1).toFixed(1) + 'px)';
+      });
+      ticking = false;
+    }
+    function onScroll(){ if(!ticking){ ticking = true; requestAnimationFrame(applyFloat); } }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', onScroll);
+    applyFloat();
+  }
 })();
 </script>
 </body>
