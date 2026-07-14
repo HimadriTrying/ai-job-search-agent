@@ -45,6 +45,9 @@ profile/07-interview-prep.md
 # Generated application docs (tailored CVs, cover letters) — your real history, keep private
 applications/
 
+# Session handoff / current-state note — references private targets & status, keep private
+HANDOFF.md
+
 # Keep empty dirs
 !data/connections/.gitkeep
 !data/digests/.gitkeep
