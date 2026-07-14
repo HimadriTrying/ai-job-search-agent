@@ -36,6 +36,16 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
   blocks private files and identifying tokens from ever reaching this public repo.
   *Hypothesis: people will only trust a job tool with their real history if that data never leaves their own machine.*
 
+- ✅ **Voice / style framework** — a codified writing-style spec (`profile/03-writing-style.md`,
+  `profile/06-cover-letter-notes.md`) that strips the usual AI tells so generated documents sound
+  like the actual person. Tuned to the primary user today; generalising it to any user is future work.
+  *Hypothesis: documents that sound like a language model get discarded; a codified voice framework — even one tuned to a single person — is what makes generated writing usable without a rewrite.*
+
+- ✅ **Interview-prep guidelines** — the `interview-coach` prepares you from the interviewer's seat,
+  feeding on hiring-side rubrics (how interviewers score, structure loops, and write the JD) inverted
+  into prep. Grounded in a personal STAR bank that is still being filled in.
+  *Hypothesis: preparing from the interviewer's seat — the scoring rubric inverted — beats rehearsing answers blind, because you prepare for what interviewers actually evaluate.*
+
 ---
 
 ## Now
@@ -43,6 +53,14 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
 - 🔨 **Finish the core loop** — get discovery → fit → tailored CV and cover letter working
   end-to-end on a first real role, with the honesty gate passing on real output. In progress; not yet proven end-to-end.
   *Hypothesis: every other feature depends on the discovery→tailored-CV loop working end-to-end on real data first.*
+
+- 🔨 **Public web page** — the project's front door: an explainer/landing page (`docs/index.html`)
+  that shows what Lucy is and why she's built this way. Being built and polished in a parallel session.
+  *Hypothesis: an open-source agent is only as credible as its front door; a clear explainer page is what turns a passing reader into someone who tries it.*
+
+- 🔨 **Try-it demo** — an interactive page (`docs/try.html`) that lets someone watch Lucy run in
+  ~30 seconds without installing anything. Under construction alongside the web page.
+  *Hypothesis: letting someone see Lucy run in 30 seconds without installing anything bridges the gap between "read about it" and "use it."*
 
 ---
 
@@ -69,9 +87,6 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
 - ⬜ **Outcome metrics** — measure the full funnel: applications→screens, screens→interviews,
   interviews→offers, and whether a warm intro changed conversion.
   *Hypothesis: you can't improve what you don't measure; tracking the full funnel is how we prove Lucy works, not just runs.*
-
-- ⬜ **Try-it demo** — let someone watch Lucy run in ~30 seconds without installing anything.
-  *Hypothesis: letting someone see Lucy run in 30 seconds without installing anything bridges the gap between "read about it" and "use it."*
 
 - ⬜ **Guided onboarding** — a setup conversation that replaces hand-editing config files.
   *Hypothesis: hand-editing config is the scariest barrier; a guided setup conversation makes Lucy usable by non-technical people.*
