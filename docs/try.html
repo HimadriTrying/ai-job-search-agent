@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Try Lucy — tailor your CV in a minute</title>
+<meta name="description" content="Upload your CV, paste a job posting, and get a tailored, honesty-checked CV and cover letter you can save as PDF. Runs in your browser with your own Anthropic key.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#161512; --ink-2:#3f3b34; --ink-3:#6b665c;
+    --paper:#fbfaf7; --paper-2:#f2efe8; --line:#e4ded1;
+    --pine:#1b4d3e; --pine-soft:#eaf1ed; --ember:#c8624a;
+    --amber:#b7791f; --amber-soft:#fbf3e2;
+    --display:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+    font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 32px}
+  @media(max-width:640px){.wrap{padding:0 20px}}
+  a{color:var(--pine);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .eyebrow{font-size:.74rem;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--pine)}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(251,250,247,.85);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{font-family:var(--display);font-size:1.5rem;font-weight:500;color:var(--ink);letter-spacing:-.015em}
+  .logo:hover{text-decoration:none}
+  .nav-back{font-size:.9rem;color:var(--ink-3)}
+  .nav-right{display:flex;gap:22px;align-items:center}
+
+  header.hero{padding:60px 0 24px}
+  @media(max-width:640px){header.hero{padding:40px 0 16px}}
+  h1{font-family:var(--display);font-weight:400;font-size:clamp(2.1rem,5vw,3.2rem);
+    line-height:1.06;letter-spacing:-.02em;margin-bottom:16px;max-width:18ch}
+  h1 em{font-style:italic;color:var(--pine)}
+  .sub{font-size:clamp(1rem,2vw,1.15rem);color:var(--ink-2);max-width:60ch;line-height:1.55}
+  .trust{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-size:.82rem;color:var(--ink-2);
+    border:1px solid var(--line);border-radius:999px;padding:6px 13px;background:#fff}
+  .pill .d{width:7px;height:7px;border-radius:50%;background:var(--pine)}
+
+  section{padding:24px 0 48px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px}
+  @media(max-width:640px){.card{padding:20px}}
+  .field{margin-bottom:22px}
+  .field:last-child{margin-bottom:0}
+  label.lbl{display:block;font-weight:600;font-size:.95rem;margin-bottom:6px}
+  .hint{font-size:.85rem;color:var(--ink-3);margin-bottom:9px}
+  textarea,input[type=password],input[type=email],select{
+    width:100%;font-family:var(--sans);font-size:.95rem;color:var(--ink);
+    background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 13px;
+    transition:border-color .15s}
+  textarea{resize:vertical;min-height:120px;line-height:1.5}
+  textarea:focus,input:focus,select:focus{outline:none;border-color:var(--pine)}
+  .cv-min{min-height:180px}
+  .filerow{display:flex;align-items:center;gap:12px;margin-bottom:9px;flex-wrap:wrap}
+  .filebtn{font-size:.86rem;font-weight:500;padding:8px 14px;border:1px solid var(--line);
+    border-radius:8px;background:#fff;cursor:pointer;color:var(--ink)}
+  .filebtn:hover{border-color:var(--ink)}
+  .filename{font-size:.85rem;color:var(--pine)}
+  .keyrow{display:grid;grid-template-columns:1fr 200px;gap:12px}
+  @media(max-width:640px){.keyrow{grid-template-columns:1fr}}
+  details.nokey{margin-top:12px;border:1px dashed var(--line);border-radius:10px;padding:0 14px;background:var(--paper)}
+  details.nokey summary{cursor:pointer;padding:12px 0;font-size:.9rem;color:var(--ink-2);font-weight:500;list-style:none}
+  details.nokey summary::-webkit-details-marker{display:none}
+  details.nokey summary::before{content:"＋ ";color:var(--pine)}
+  details.nokey[open] summary::before{content:"－ "}
+  details.nokey .body{padding:0 0 14px;font-size:.88rem;color:var(--ink-3);line-height:1.6}
+
+  .actions{display:flex;align-items:center;gap:16px;margin-top:26px;flex-wrap:wrap}
+  .btn{font-family:var(--sans);font-weight:500;font-size:1rem;padding:14px 26px;border-radius:10px;
+    border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:.15s;
+    display:inline-flex;align-items:center;gap:9px}
+  .btn:hover:not(:disabled){transform:translateY(-1px)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
+    border-radius:50%;animation:spin .7s linear infinite;display:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .status{font-size:.9rem;color:var(--ink-3)}
+
+  .err{margin-top:18px;border:1px solid #e3b6ac;background:#fbeeea;color:#8a3324;
+    border-radius:10px;padding:13px 15px;font-size:.9rem;display:none}
+
+  /* results */
+  #results{display:none;margin-top:8px}
+  .badge{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;font-weight:500;
+    border-radius:999px;padding:7px 14px;margin-bottom:18px}
+  .badge.ok{background:var(--pine-soft);color:var(--pine);border:1px solid #cfe0d7}
+  .badge.warn{background:var(--amber-soft);color:var(--amber);border:1px solid #ecd9ac}
+  .flags{background:var(--amber-soft);border:1px solid #ecd9ac;border-radius:10px;padding:13px 15px;
+    font-size:.87rem;color:#7a5510;margin-bottom:18px}
+  .flags b{display:block;margin-bottom:5px;color:var(--amber)}
+  .flags ul{margin:0;padding-left:18px}
+  .fitnote{background:var(--paper-2);border-left:2px solid var(--pine);border-radius:0 8px 8px 0;
+    padding:12px 16px;font-size:.9rem;color:var(--ink-2);margin-bottom:22px;line-height:1.55}
+  .doc-tabs{display:flex;gap:8px;margin-bottom:16px}
+  .tab{font-size:.9rem;font-weight:500;padding:8px 16px;border-radius:8px;border:1px solid var(--line);
+    background:#fff;cursor:pointer;color:var(--ink-2)}
+  .tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .doc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:40px 46px}
+  @media(max-width:640px){.doc{padding:26px 22px}}
+  .doc.hidden{display:none}
+  .doc h1,.doc h2,.doc h3{font-family:var(--display);font-weight:500;color:var(--ink);letter-spacing:-.01em}
+  .doc h1{font-size:1.7rem;margin-bottom:4px}
+  .doc h2{font-size:1.15rem;margin:22px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+  .doc h3{font-size:1rem;margin:14px 0 3px}
+  .doc p{margin:0 0 10px;color:var(--ink-2);font-size:.95rem}
+  .doc ul{margin:0 0 12px;padding-left:20px}
+  .doc li{color:var(--ink-2);font-size:.95rem;margin-bottom:5px}
+  .doc .muted{color:var(--ink-3);font-size:.88rem}
+  .doc-actions{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);font-size:.92rem;padding:11px 20px}
+  .btn.ghost:hover{border-color:var(--ink)}
+
+  /* segmented input control */
+  .seg{display:inline-flex;gap:4px;background:var(--paper-2);border:1px solid var(--line);
+    border-radius:10px;padding:4px;margin-bottom:10px}
+  .segbtn{font-family:var(--sans);font-size:.85rem;font-weight:500;color:var(--ink-3);
+    padding:7px 15px;border:none;background:transparent;border-radius:7px;cursor:pointer}
+  .segbtn.active{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+
+  /* about + how-it-works */
+  .band{border-top:1px solid var(--line);background:var(--paper-2)}
+  .band.plain{background:transparent}
+  .band .wrap{padding:56px 32px}
+  @media(max-width:640px){.band .wrap{padding:40px 20px}}
+  .band h2{font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,4vw,2.4rem);
+    letter-spacing:-.02em;line-height:1.1;margin:10px 0 16px;max-width:20ch}
+  .band .lead{font-size:1.08rem;color:var(--ink-2);max-width:66ch;line-height:1.6;margin-bottom:8px}
+  .band p.body{font-size:.98rem;color:var(--ink-2);max-width:66ch;line-height:1.65;margin-bottom:14px}
+  .ideas{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
+  @media(max-width:720px){.ideas{grid-template-columns:1fr}}
+  .idea{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px}
+  .idea .n{font-family:var(--display);color:var(--ember);font-size:.95rem;margin-bottom:8px}
+  .idea h3{font-family:var(--display);font-weight:500;font-size:1.15rem;margin-bottom:6px}
+  .idea p{font-size:.9rem;color:var(--ink-3);line-height:1.55}
+  .steps{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 6px}
+  .step{font-size:.85rem;color:var(--ink-2);background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:6px 14px}
+  .step.hot{border-color:var(--ember);color:var(--ember);font-weight:500}
+  .checks{margin:20px 0 0;padding:0;list-style:none;max-width:66ch}
+  .checks li{position:relative;padding:9px 0 9px 28px;font-size:.96rem;color:var(--ink-2);
+    line-height:1.55;border-top:1px solid var(--line)}
+  .checks li:first-child{border-top:none}
+  .checks li::before{content:"✓";position:absolute;left:0;top:9px;color:var(--pine);font-weight:600}
+  .band .more{margin-top:24px;font-size:.92rem}
+
+  footer{border-top:1px solid var(--line);padding:30px 0;margin-top:0;color:var(--ink-3);font-size:.85rem}
+
+  @media print{
+    nav,header.hero,#form-card,.doc-tabs,.badge,.flags,.fitnote,.doc-actions,footer,.status,.err{display:none!important}
+    body{background:#fff}
+    .doc{border:none;border-radius:0;padding:0}
+    .doc.hidden{display:block!important}
+    .wrap{max-width:none;padding:0}
+    #results{display:block!important;margin:0}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="logo">Lucy</a>
+    <div class="nav-right">
+      <a href="#about" class="nav-back">About</a>
+      <a href="#how" class="nav-back">How it works</a>
+      <a href="index.html" class="nav-back">← overview</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Try it · no install</span>
+    <h1>Tailor your CV to a role, <em>honestly</em>, in about sixty seconds.</h1>
+    <p class="sub">Drop in your CV and a job posting. You get back a version of your CV reshaped for
+      that role, plus a matching cover letter — checked so nothing is invented that isn't already in
+      what you gave. Save either one as a PDF.</p>
+    <div class="trust">
+      <span class="pill"><span class="d"></span> Runs in your browser</span>
+      <span class="pill"><span class="d"></span> Your key never leaves this page</span>
+      <span class="pill"><span class="d"></span> Nothing stored</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="card" id="form-card">
+
+      <div class="field">
+        <label class="lbl" for="cv">Your CV</label>
+        <div class="hint">Paste the text, or upload a <code>.txt</code> / <code>.md</code> file. (For a PDF, open it and copy the text in.)</div>
+        <div class="filerow">
+          <label class="filebtn">Upload file<input type="file" id="cvfile" accept=".txt,.md,.markdown,.text" hidden></label>
+          <span class="filename" id="cvfilename"></span>
+        </div>
+        <textarea id="cv" class="cv-min" placeholder="Paste your full CV here — roles, dates, achievements, skills…"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="lbl">The job posting</label>
+        <div class="hint">Paste it, drop in a link, or upload a file — whichever you have.</div>
+        <div class="seg" id="jdseg">
+          <button type="button" class="segbtn active" data-mode="paste">Paste</button>
+          <button type="button" class="segbtn" data-mode="url">URL</button>
+          <button type="button" class="segbtn" data-mode="upload">Upload</button>
+        </div>
+        <textarea id="jd" placeholder="Paste the role's title, responsibilities, and requirements…"></textarea>
+        <input type="text" id="jdurl" placeholder="https://…  link to the job posting" style="display:none" autocomplete="off" spellcheck="false">
+        <div class="filerow" id="jdfilerow" style="display:none">
+          <label class="filebtn">Upload file<input type="file" id="jdfile" accept=".txt,.md,.markdown,.text" hidden></label>
+          <span class="filename" id="jdfilename"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="lbl" for="key">Your Anthropic API key</label>
+        <div class="hint">Used only to make the request from your browser — it is never sent to us or stored anywhere.
+          Get one at <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>.</div>
+        <div class="keyrow">
+          <input type="password" id="key" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
+          <select id="model" title="Model">
+            <option value="claude-opus-4-8">Opus 4.8 — best</option>
+            <option value="claude-sonnet-5">Sonnet 5 — cheaper</option>
+            <option value="claude-haiku-4-5">Haiku 4.5 — cheapest</option>
+          </select>
+        </div>
+        <details class="nokey">
+          <summary>No Anthropic key?</summary>
+          <div class="body">A free option that just needs a verified email address is coming next. For now,
+            a personal Anthropic key takes a minute to create and costs cents per tailoring.</div>
+        </details>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="go"><span class="spin" id="spin"></span><span id="golabel">Tailor my CV</span></button>
+        <span class="status" id="status"></span>
+      </div>
+      <div class="err" id="err"></div>
+    </div>
+
+    <div id="results">
+      <div id="honesty"></div>
+      <div class="fitnote" id="fitnote"></div>
+      <div class="doc-tabs">
+        <button class="tab active" data-doc="cv">Tailored CV</button>
+        <button class="tab" data-doc="cl">Cover letter</button>
+      </div>
+      <div class="doc" id="doc-cv"></div>
+      <div class="doc hidden" id="doc-cl"></div>
+      <div class="doc-actions">
+        <button class="btn ghost" onclick="window.print()">Save as PDF</button>
+        <button class="btn ghost" id="startover">Start over</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="how">
+  <div class="wrap">
+    <span class="eyebrow">What happens behind the scenes</span>
+    <h2>It's not just rewriting your CV.</h2>
+    <p class="lead">This page is one stage of a larger funnel, and even here it's doing more than
+      swapping in keywords. Before it hands you anything, it works through a set of rules and
+      conventions — the same ones the full system uses.</p>
+    <ul class="checks">
+      <li><b>Grounds every line in what you gave it.</b> It selects, reorders, and rephrases the facts already in your CV. It never invents an employer, a title, a date, or a metric to fit the posting.</li>
+      <li><b>Reads the posting for what it's really asking.</b> It maps the role's stated needs to the evidence you actually have, and leans on that — rather than padding with things you can't back up.</li>
+      <li><b>Writes in a plain human voice.</b> No em-dashes, no "results-driven / passionate" filler, none of the usual AI tells. It's meant to read like you wrote it.</li>
+      <li><b>Flags anything it can't trace.</b> The honesty badge you see is the browser version of the code-enforced gate: any number or claim it can't tie back to your CV gets surfaced for you to check, not quietly shipped.</li>
+    </ul>
+    <p class="body" style="margin-top:26px">And this is only the "tailored documents" stage. The full system runs the whole funnel:</p>
+    <div class="steps">
+      <span class="step">Discover roles</span>
+      <span class="step">Judge fit</span>
+      <span class="step">Tailor documents</span>
+      <span class="step hot">Find a warm path in</span>
+      <span class="step">Apply</span>
+      <span class="step">Track</span>
+      <span class="step">Interview prep</span>
+      <span class="step">Offer &amp; negotiate</span>
+    </div>
+    <p class="body" style="margin-top:14px">The warm-intro step is the one almost nothing else touches — finding a real path into a company through your own network before you apply.</p>
+  </div>
+</section>
+
+<section class="band plain" id="about">
+  <div class="wrap">
+    <span class="eyebrow">Why this exists</span>
+    <h2>Job hunting is a funnel. Most tools only fix one stage.</h2>
+    <p class="lead">You discover roles, judge fit, tailor documents, find a way in, apply, track,
+      prep, and negotiate. Most tools automate one of those and leave you to stitch the rest
+      together by hand. Lucy is a single conversational agent that manages the whole funnel,
+      refuses to fabricate anything about you, and always stops before committing you to anything.</p>
+    <div class="ideas">
+      <div class="idea">
+        <div class="n">/ 01</div>
+        <h3>One agent, not a command list</h3>
+        <p>You say what you need in plain language; it routes to the right specialist. Nothing to memorise.</p>
+      </div>
+      <div class="idea">
+        <div class="n">/ 02</div>
+        <h3>Honesty enforced in code</h3>
+        <p>Every outbound document is checked against a frozen record of your real history before it can leave the system. Invent an employer or a metric and it fails loudly. A promise you can verify beats one you can't.</p>
+      </div>
+      <div class="idea">
+        <div class="n">/ 03</div>
+        <h3>You commit, never the agent</h3>
+        <p>It automates everything up to applying, reaching out, or accepting — then hands you the wheel. The last click is always yours.</p>
+      </div>
+    </div>
+    <p class="more">Built as an open, multi-agent system on Claude Code. Read the full rationale and the
+      code on <a href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">GitHub</a>.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Part of <a href="index.html">Lucy</a> — an open-source, honesty-gated job-search agent. This page sends your CV
+    and the job posting directly to Anthropic using your key; the result is generated in your browser and kept only here.
+  </div>
+</footer>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'), jd = $('jd'), key = $('key'), model = $('model');
+  const go = $('go'), spin = $('spin'), golabel = $('golabel'), statusEl = $('status'), err = $('err');
+  const results = $('results'), honesty = $('honesty'), fitnote = $('fitnote');
+  const docCv = $('doc-cv'), docCl = $('doc-cl');
+
+  // CV file upload
+  $('cvfile').addEventListener('change', e => {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = () => { cv.value = r.result; $('cvfilename').textContent = f.name + ' loaded'; };
+    r.readAsText(f);
+  });
+
+  // job posting: paste / url / upload
+  let jdMode = 'paste', jdFileText = '';
+  const jdurl = $('jdurl');
+  document.querySelectorAll('#jdseg .segbtn').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#jdseg .segbtn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); jdMode = b.dataset.mode;
+    jd.style.display = jdMode === 'paste' ? 'block' : 'none';
+    jdurl.style.display = jdMode === 'url' ? 'block' : 'none';
+    $('jdfilerow').style.display = jdMode === 'upload' ? 'flex' : 'none';
+  }));
+  $('jdfile').addEventListener('change', e => {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = () => { jdFileText = r.result; $('jdfilename').textContent = f.name + ' loaded'; };
+    r.readAsText(f);
+  });
+
+  // shared API plumbing (browser → Anthropic, user's key)
+  const API = "https://api.anthropic.com/v1/messages";
+  function apiHeaders(apiKey){ return {
+    "content-type": "application/json",
+    "x-api-key": apiKey,
+    "anthropic-version": "2023-06-01",
+    "anthropic-dangerous-direct-browser-access": "true"
+  }; }
+  async function callApi(body, apiKey){
+    const resp = await fetch(API, { method:"POST", headers:apiHeaders(apiKey), body:JSON.stringify(body) });
+    if(!resp.ok){
+      let detail = '';
+      try{ detail = (await resp.json()).error?.message || ''; }catch(e){}
+      if(resp.status === 401) throw new Error('That API key was rejected. Check it and try again.');
+      if(resp.status === 429) throw new Error('Rate limited by Anthropic. Wait a moment and retry.');
+      throw new Error('Request failed (' + resp.status + '). ' + (detail || ''));
+    }
+    return resp.json();
+  }
+
+  // resolve a job-posting URL into text using Claude's web_fetch tool
+  async function fetchJobFromUrl(url, apiKey){
+    statusEl.textContent = 'Fetching the job posting from that link…';
+    let messages = [{ role:"user", content:
+      "Fetch the job posting at this URL and return ONLY the full text of the posting — the role " +
+      "title, responsibilities, requirements, and any about-the-team detail. No commentary.\n\nURL: " + url }];
+    for(let i=0;i<3;i++){
+      const data = await callApi({
+        model: "claude-opus-4-8", max_tokens: 4000,
+        tools: [{ type:"web_fetch_20260209", name:"web_fetch", max_uses:3 }],
+        messages
+      }, apiKey);
+      if(data.stop_reason === "pause_turn"){ messages.push({ role:"assistant", content:data.content }); continue; }
+      const text = (data.content || []).filter(b => b.type === "text").map(b => b.text).join("\n").trim();
+      if(!text) throw new Error("Couldn't read that link. Switch to Paste and drop the text in.");
+      return text;
+    }
+    throw new Error("That link took too long to read. Switch to Paste instead.");
+  }
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const which = t.dataset.doc;
+    docCv.classList.toggle('hidden', which !== 'cv');
+    docCl.classList.toggle('hidden', which !== 'cl');
+  }));
+
+  $('startover').addEventListener('click', () => {
+    results.style.display = 'none';
+    $('form-card').style.display = 'block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  function showErr(msg){ err.textContent = msg; err.style.display = 'block'; }
+  function clearErr(){ err.style.display = 'none'; }
+  function busy(on){
+    go.disabled = on; spin.style.display = on ? 'inline-block' : 'none';
+    golabel.textContent = on ? 'Working…' : 'Tailor my CV';
+    statusEl.textContent = on ? 'Reading your CV against the role — this takes ~30–60 seconds.' : '';
+  }
+
+  const SYSTEM = [
+    "You are the CV-tailoring and cover-letter engine of an honesty-gated job-application system.",
+    "You receive a candidate's CV — the ONLY source of truth about them — and a target job posting.",
+    "Produce (1) a tailored version of their CV, reordered and reworded to fit the role, and (2) a cover letter in their own voice.",
+    "ABSOLUTE RULE — NEVER FABRICATE: every claim in both documents must trace to a fact present in the provided CV.",
+    "You may rephrase, reorder, emphasise, select, and tighten. You may NOT invent employers, job titles, dates, metrics, numbers, tools, certifications, or achievements.",
+    "If the job wants something the CV does not show, omit it — do not manufacture it. Do not inflate a number or round it up.",
+    "Write in a plain, human voice: no em-dashes, no corporate filler, no clichés like 'passionate' or 'results-driven'.",
+    "Return HTML fragments for the documents using only <h1> <h2> <h3> <p> <ul> <li> and <span class=\"muted\"> tags — no styles, no scripts, no wrappers.",
+    "In unsupported_claims, list any statement you included that you are not fully certain is grounded in the CV. Aim for an empty list."
+  ].join(' ');
+
+  const SCHEMA = {
+    type: "object",
+    properties: {
+      tailored_cv_html:  { type: "string" },
+      cover_letter_html: { type: "string" },
+      fit_summary:       { type: "string" },
+      unsupported_claims:{ type: "array", items: { type: "string" } }
+    },
+    required: ["tailored_cv_html","cover_letter_html","fit_summary","unsupported_claims"],
+    additionalProperties: false
+  };
+
+  // light client-side honesty check: numbers in output not present in source
+  function numberFlags(source, out){
+    const norm = s => s.replace(/[,\s]/g,'');
+    const srcNums = new Set((source.match(/\d[\d,.]*/g) || []).map(norm));
+    const flags = [];
+    const seen = new Set();
+    (out.match(/\d[\d,.]*/g) || []).forEach(n => {
+      const k = norm(n);
+      if(k.length < 2) return;                 // ignore single digits (bullets, small counts)
+      if(!srcNums.has(k) && !seen.has(k)){ seen.add(k); flags.push(n); }
+    });
+    return flags;
+  }
+
+  async function run(){
+    clearErr();
+    if(!cv.value.trim()) return showErr('Add your CV first.');
+    if(!key.value.trim()) return showErr('Add your Anthropic API key. It stays in your browser.');
+    const apiKey = key.value.trim();
+
+    let jdText = '';
+    if(jdMode === 'paste') jdText = jd.value.trim();
+    else if(jdMode === 'upload') jdText = (jdFileText || '').trim();
+    if(jdMode === 'url' && !jdurl.value.trim()) return showErr('Add the job posting link, or switch to Paste.');
+    if(jdMode !== 'url' && !jdText) return showErr('Add the job posting — paste it or upload a file.');
+
+    busy(true);
+    try{
+      if(jdMode === 'url') jdText = await fetchJobFromUrl(jdurl.value.trim(), apiKey);
+      statusEl.textContent = 'Reading your CV against the role — this takes ~30–60 seconds.';
+
+      const userMsg =
+        "=== MY CV (the only source of truth about me) ===\n" + cv.value.trim() +
+        "\n\n=== TARGET JOB POSTING ===\n" + jdText +
+        "\n\nTailor my CV to this role and write a matching cover letter, grounded only in my CV.";
+
+      const data = await callApi({
+        model: model.value,
+        max_tokens: 8000,
+        system: SYSTEM,
+        output_config: { format: { type: "json_schema", schema: SCHEMA } },
+        messages: [{ role: "user", content: userMsg }]
+      }, apiKey);
+
+      const textBlock = (data.content || []).find(b => b.type === 'text');
+      if(!textBlock) throw new Error('No content returned. Try again.');
+      const out = JSON.parse(textBlock.text);
+
+      docCv.innerHTML = out.tailored_cv_html || '';
+      docCl.innerHTML = out.cover_letter_html || '';
+      fitnote.textContent = out.fit_summary || '';
+
+      // honesty badge
+      const modelFlags = Array.isArray(out.unsupported_claims) ? out.unsupported_claims : [];
+      const numFlags = numberFlags(cv.value, (out.tailored_cv_html||'') + ' ' + (out.cover_letter_html||''));
+      const total = modelFlags.length + numFlags.length;
+      if(total === 0){
+        honesty.innerHTML = '<span class="badge ok">✓ Honesty check passed — nothing added that isn\'t in your CV</span>';
+      } else {
+        let items = '';
+        modelFlags.forEach(f => items += '<li>'+escapeHtml(f)+'</li>');
+        numFlags.forEach(f => items += '<li>Number <b>'+escapeHtml(f)+'</b> appears in the output but not in your CV — confirm it\'s real.</li>');
+        honesty.innerHTML = '<span class="badge warn">⚑ '+total+' thing'+(total>1?'s':'')+' to double-check before you send</span>';
+        honesty.innerHTML += '<div class="flags"><b>Review these — the tool flags anything it can\'t trace to your CV:</b><ul>'+items+'</ul></div>';
+      }
+
+      $('form-card').style.display = 'none';
+      results.style.display = 'block';
+      window.scrollTo({top:0, behavior:'smooth'});
+    }catch(e){
+      showErr(e.message || 'Something went wrong. Try again.');
+    }finally{
+      busy(false);
+    }
+  }
+
+  function escapeHtml(s){ return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+  go.addEventListener('click', run);
+})();
+</script>
+</body>
+</html>
