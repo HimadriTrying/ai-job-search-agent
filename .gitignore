@@ -34,6 +34,8 @@ profile/07-interview-prep.md
 # Env / secrets
 .env
 .claude/settings.local.json
+# Local Claude Code preview config — contains machine-specific paths, never commit
+.claude/launch.json
 # Private token list read by the pre-commit guard (scripts/check-private.sh) — never commit
 .private-guard
 
