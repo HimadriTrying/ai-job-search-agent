@@ -34,6 +34,8 @@ profile/07-interview-prep.md
 # Env / secrets
 .env
 .claude/settings.local.json
+# Human-accepted honesty-gate findings — references your personal docs (see accepted.example.txt)
+honesty/accepted.txt
 # Private token list read by the pre-commit guard (scripts/check-private.sh) — never commit
 .private-guard
 

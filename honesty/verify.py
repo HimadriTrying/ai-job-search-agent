@@ -49,6 +49,15 @@ def load_facts(path: Path) -> dict:
 def known_strings(facts: dict) -> set[str]:
     """Every proper noun / credential the document is allowed to assert."""
     out: set[str] = set()
+    cand = facts.get("candidate") or {}
+    if cand.get("name"):
+        out.add(cand["name"].strip().lower())
+    for p in facts.get("projects") or []:
+        if p.get("name"):
+            out.add(p["name"].strip().lower())
+    for t in facts.get("tools") or []:
+        if t:
+            out.add(t.strip().lower())
     for e in facts.get("employers") or []:
         for k in ("company", "title"):
             if e.get(k):

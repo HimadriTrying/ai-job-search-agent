@@ -1,0 +1,17 @@
+# honesty/accepted.txt — human-reviewed gate findings that are NOT fabrications.
+#
+# verify.py is deliberately conservative: it flags anything it cannot trace to
+# career_facts.yaml, which includes some things that are obviously fine — your
+# own name, CV section headers, names of public tools you mention. When the
+# automatic hook (scripts/honesty-hook.sh) raises a finding and a HUMAN has
+# reviewed it and confirmed it is true, add the flagged phrase here (one per
+# line, case-insensitive substring match against the finding text).
+#
+# Copy this file to honesty/accepted.txt — the real file is gitignored because
+# it references your personal documents. Only a human adds lines here; the AI
+# fixes documents, it does not expand this list.
+#
+# Examples:
+# Jane Doe
+# Selected Projects
+# Google Analytics
