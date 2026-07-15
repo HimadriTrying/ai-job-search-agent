@@ -1,0 +1,21 @@
+# Code owners for ai-job-search-agent
+#
+# Anyone can fork this repo and run the agent themselves. But changes to THIS
+# repository (and therefore to the live web app deployed from it) require the
+# repo owner's review. Paired with branch protection on `main`
+# ("Require review from Code Owners"), no change lands without approval.
+#
+# GitHub auto-requests review from the owners listed here on every matching PR.
+
+# Default: everything needs the owner's review.
+*                   @HimadriTrying
+
+# The live web app (landing page + the "try it" tool) is owner-only.
+/docs/              @HimadriTrying
+
+# Deploy config, workflows, and this file itself.
+/.github/           @HimadriTrying
+
+# The honesty gate and the frozen source of truth are load-bearing.
+/honesty/           @HimadriTrying
+/career_facts.yaml  @HimadriTrying
