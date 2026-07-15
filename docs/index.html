@@ -152,6 +152,19 @@
     background:var(--pine-soft);border-radius:8px;padding:10px 13px;line-height:1.5}
   .step .ex b{font-weight:600}
   .start-note{max-width:820px;margin:26px auto 0;text-align:center;font-size:.95rem;color:var(--ink-3)}
+  .quickstart{max-width:820px;margin:0 auto 18px;border:1px solid var(--line);border-radius:14px;
+    overflow:hidden;background:#161512}
+  .qs-bar{display:flex;align-items:center;gap:7px;padding:11px 16px;background:#22201c;
+    border-bottom:1px solid #2f2c27}
+  .qs-dot{width:10px;height:10px;border-radius:50%;background:#3f3b34}
+  .qs-label{margin-left:8px;font-size:.76rem;color:#8a847a;letter-spacing:.04em}
+  .quickstart pre{margin:0;padding:20px 22px;overflow-x:auto}
+  .quickstart code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.9rem;
+    line-height:1.7;color:#eae5da;white-space:pre}
+  .quickstart .c{color:#6b665c}
+  .quickstart .p{color:#7fb79f}
+  .qs-note{max-width:820px;margin:0 auto 28px;text-align:center;font-size:.95rem;color:var(--ink-3)}
+  .qs-note em{color:var(--pine);font-style:italic}
 
   /* credibility */
   .cred .wrap{max-width:760px}
@@ -300,6 +313,20 @@
       <h2>How you'd actually use it.</h2>
       <p>Lucy runs on Claude Code, so you set her up once, then just talk to her whenever you're job hunting. Four steps to your first tailored application.</p>
     </div>
+    <div class="quickstart">
+      <div class="qs-bar"><span class="qs-dot"></span><span class="qs-dot"></span><span class="qs-dot"></span><span class="qs-label">your terminal</span></div>
+      <pre><code><span class="c"># 1 · install Claude Code (needs Node.js)</span>
+npm install -g @anthropic-ai/claude-code
+
+<span class="c"># 2 · fork the repo, then open the folder</span>
+git clone https://github.com/&lt;you&gt;/ai-job-search-agent
+cd ai-job-search-agent
+claude
+
+<span class="c"># 3 · now just talk to Lucy — start here:</span>
+<span class="p">&gt;</span> run setup</code></pre>
+    </div>
+    <p class="qs-note">No slash commands to learn. After setup, you speak plainly — <em>"tailor my CV for this role,"</em> <em>"who do I know at Stripe?"</em> — and Lucy routes it. Full guide in <a href="https://github.com/HimadriTrying/ai-job-search-agent/blob/main/SETUP.md" target="_blank" rel="noopener">SETUP.md</a>.</p>
     <div class="steps">
       <div class="step">
         <span class="sn">1</span>
