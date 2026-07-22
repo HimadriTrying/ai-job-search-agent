@@ -77,6 +77,17 @@ opens the app. So only the genuinely-benefits-from-overnight work is scheduled:
 
 ---
 
+## Token discipline
+
+- **Command output is compressed.** A PreToolUse hook (`.claude/hooks/rtk-rewrite.sh`)
+  transparently rewrites shell commands to their [rtk](https://github.com/rtk-ai/rtk)
+  equivalents (`git status` → `rtk git status`) so their output arrives compressed. Don't
+  fight the rewrite; if you need raw output for debugging, use `rtk proxy <cmd>`.
+- **When changing Lucy's own code, write the minimum.** Reuse what already exists in this
+  repo, prefer the standard library over new dependencies, and prefer the smallest diff
+  that solves the problem. This applies to code only — never trim user-facing documents
+  (CVs, cover letters, digests) for token reasons.
+
 ## Where state lives
 
 - **Frozen truth:** `career_facts.yaml` — the source of truth for the honesty gate. Changes
