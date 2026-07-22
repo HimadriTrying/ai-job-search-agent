@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lucy — one agent for the whole job search</title>
-<meta name="description" content="Lucy is a conversational multi-agent system that runs the entire job-search funnel — discovery, tailoring, warm intros, interview prep. Built on Claude Code, open source.">
-<meta property="og:title" content="Lucy — one agent for the whole job search">
+<title>Lucy: one agent for the whole job search</title>
+<meta name="description" content="Lucy is a conversational multi-agent system that runs the entire job-search funnel: discovery, tailoring, mutual connections, interview prep. Built on Claude Code, open source.">
+<meta property="og:title" content="Lucy: one agent for the whole job search">
 <meta property="og:description" content="A conversational agent that runs the entire job-search funnel. Open source, built on Claude Code.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,6 @@
   :root{
     --ink:#17141a; --ink-2:#443f4b; --ink-3:#6f6879;
     --paper:#fcfbf9; --paper-2:#f5f2ee; --line:#e7e1dc;
-    /* accent hues, pulled from the gradient-glass inspiration */
     --pink:#e9518f; --violet:#7c5cf0; --orange:#f2793f; --sky:#4fb8e8;
     --grad:linear-gradient(100deg,#e9518f 0%,#7c5cf0 52%,#f2793f 100%);
     --violet-soft:#f1edfd; --pink-soft:#fdeef4;
@@ -47,8 +46,8 @@
   .nav-cta:hover{text-decoration:none;transform:translateY(-1px);box-shadow:0 4px 14px rgba(124,92,240,.25)}
   @media(max-width:560px){.nav-link{display:none}}
 
-  .hero{padding:84px 0 0;position:relative}
-  @media(max-width:640px){.hero{padding:50px 0 0}}
+  .hero{padding:88px 0 64px;position:relative;border-bottom:1px solid var(--line)}
+  @media(max-width:640px){.hero{padding:52px 0 44px}}
   .hero::before{content:'';position:absolute;top:-160px;right:-180px;width:560px;height:560px;
     border-radius:50%;pointer-events:none;
     background:radial-gradient(closest-side,rgba(233,81,143,.16),rgba(124,92,240,.10) 55%,transparent 75%)}
@@ -59,7 +58,7 @@
     line-height:1.04;letter-spacing:-.025em;margin-bottom:24px;max-width:16ch}
   h1 em{font-style:italic;background:var(--grad);-webkit-background-clip:text;
     background-clip:text;color:transparent}
-  .sub{font-size:clamp(1.05rem,2.2vw,1.28rem);color:var(--ink-2);max-width:580px;
+  .sub{font-size:clamp(1.05rem,2.2vw,1.28rem);color:var(--ink-2);max-width:600px;
     line-height:1.55;margin-bottom:32px}
   .row{display:flex;gap:13px;flex-wrap:wrap}
   .btn{font-family:var(--sans);font-weight:500;font-size:.98rem;padding:14px 26px;
@@ -69,30 +68,13 @@
   .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
   .btn.ghost:hover{border-color:var(--ink);box-shadow:none;transform:translateY(-1px)}
 
-  /* hero art — three gradient panels, the imagery layer */
-  .hero-art{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;margin:56px 0 0;
-    align-items:stretch}
-  @media(max-width:720px){.hero-art{grid-template-columns:1fr 1fr;margin-top:40px}
-    .ha:first-child{grid-column:1/-1}}
-  .ha{position:relative;border-radius:20px;min-height:210px;overflow:hidden;
-    display:flex;align-items:flex-end;padding:18px}
-  .ha::before{content:'';position:absolute;inset:0;
-    background:radial-gradient(120% 90% at 20% 0%,rgba(255,255,255,.55),transparent 55%)}
-  .ha.t1{background:linear-gradient(160deg,#ffd6e7 0%,#ee5f9d 55%,#8d4bd6 115%)}
-  .ha.t2{background:linear-gradient(160deg,#ddd2ff 0%,#7c5cf0 60%,#4630b8 120%)}
-  .ha.t3{background:linear-gradient(160deg,#ffe3cd 0%,#f2793f 58%,#e9518f 120%)}
-  .ha span{position:relative;font-size:.82rem;font-weight:600;color:#fff;
-    background:rgba(23,20,26,.35);backdrop-filter:blur(6px);border-radius:999px;padding:7px 14px}
-  .hero-foot{border-bottom:1px solid var(--line);padding-bottom:64px}
-
-  .story{padding:76px 0 40px}
+  .story{padding:72px 0 8px}
   .story .wrap{max-width:720px}
   .story p{font-size:clamp(1.15rem,2.4vw,1.4rem);line-height:1.6;color:var(--ink);
     margin-bottom:1.5rem;font-family:var(--display);font-weight:400;letter-spacing:-.01em}
-  .story p.small{font-family:var(--sans);font-size:1.05rem;color:var(--ink-2);line-height:1.7}
   .story .turn{font-style:italic;background:var(--grad);-webkit-background-clip:text;
     background-clip:text;color:transparent}
-  .pull{border-left:3px solid transparent;border-image:var(--grad) 1;padding-left:22px;margin:34px 0}
+  .pull{border-left:3px solid transparent;border-image:var(--grad) 1;padding-left:22px;margin:34px 0 0}
   .pull span{font-family:var(--display);font-size:1.5rem;line-height:1.4;color:var(--ink);font-weight:500}
 
   section{padding:70px 0}
@@ -101,16 +83,14 @@
     letter-spacing:-.022em;line-height:1.1;margin:12px 0 14px}
   .head p{color:var(--ink-2);font-size:1.08rem}
 
-  /* why me — photo + blurb + carousel */
-  .cred{border-top:1px solid var(--line)}
+  /* about me */
   .whoami{display:grid;grid-template-columns:200px 1fr;gap:44px;align-items:center;max-width:860px}
   @media(max-width:640px){.whoami{grid-template-columns:1fr;gap:26px}}
   .pfp{position:relative;width:200px;height:200px;border-radius:50%;padding:5px;
     background:var(--grad)}
   @media(max-width:640px){.pfp{width:150px;height:150px}}
-  .pfp .disc{position:absolute;inset:5px;border-radius:50%;background:var(--violet-soft);
-    display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .pfp .disc .init{font-family:var(--display);font-size:4rem;color:var(--violet);opacity:.7}
+  .pfp .disc{position:absolute;inset:5px;border-radius:50%;overflow:hidden;
+    background:radial-gradient(120% 120% at 30% 20%,#f9d8e7,#d6c8fb 55%,#fbd9c4)}
   .pfp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
   .whoami .lead{font-family:var(--display);font-weight:400;font-size:clamp(1.2rem,2.5vw,1.5rem);
     line-height:1.45;letter-spacing:-.01em;color:var(--ink);margin-bottom:14px}
@@ -118,19 +98,18 @@
     background-clip:text;color:transparent}
   .whoami .body{font-size:1.02rem;color:var(--ink-2);line-height:1.7}
 
-  .marq-cap{font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--ink-3);text-align:center;margin:56px 0 26px}
-  .marq{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);
+  .marq{overflow:hidden;margin-top:56px;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);
     mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
-  .marq-track{display:flex;align-items:center;gap:64px;width:max-content;
-    animation:marq 36s linear infinite;padding-right:64px}
+  .marq-track{display:flex;align-items:center;gap:72px;width:max-content;
+    animation:marq 36s linear infinite;padding-right:72px}
   .marq:hover .marq-track{animation-play-state:paused}
-  .marq img{height:32px;width:auto;filter:grayscale(1);opacity:.6;transition:.2s}
+  .marq img{height:36px;width:auto;filter:grayscale(1);opacity:.6;transition:.2s}
   .marq img:hover{filter:none;opacity:1}
   @keyframes marq{to{transform:translateX(-50%)}}
   @media (prefers-reduced-motion:reduce){
     .marq{mask-image:none;-webkit-mask-image:none}
-    .marq-track{flex-wrap:wrap;justify-content:center;width:auto;padding:0}
+    .marq-track{flex-wrap:wrap;justify-content:center;width:auto;padding:0;gap:40px}
     .marq-track img.dup{display:none}}
 
   .funnel{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -160,28 +139,6 @@
     color:var(--pink);border:1px solid var(--pink);border-radius:6px;padding:2px 8px;margin-bottom:9px}
   @media(max-width:640px){.stg{padding:20px;gap:15px}}
 
-  .orch{background:var(--ink);color:var(--paper);border-radius:22px;padding:46px 34px;
-    position:relative;overflow:hidden}
-  .orch::before{content:'';position:absolute;top:-120px;right:-100px;width:340px;height:340px;
-    border-radius:50%;background:radial-gradient(closest-side,rgba(124,92,240,.35),transparent 75%)}
-  .orch::after{content:'';position:absolute;bottom:-140px;left:-80px;width:300px;height:300px;
-    border-radius:50%;background:radial-gradient(closest-side,rgba(233,81,143,.28),transparent 75%)}
-  @media(max-width:640px){.orch{padding:32px 22px}}
-  .orch .inner{position:relative;z-index:1}
-  .orch h2{font-family:var(--display);font-weight:400;color:#fff;
-    font-size:clamp(1.7rem,3.6vw,2.3rem);margin:12px 0 10px;letter-spacing:-.015em}
-  .orch>.inner>p{color:#c9c3cf;max-width:580px;margin-bottom:32px}
-  .hub{display:flex;flex-direction:column;align-items:center}
-  .hub .lucy-node{background:var(--grad);color:#fff;font-family:var(--display);font-weight:500;
-    font-size:1.25rem;padding:13px 30px;border-radius:999px;display:flex;align-items:center;gap:10px}
-  .hub .stem{width:2px;height:24px;background:#4a4453}
-  .chips{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;max-width:700px}
-  .chip{font-family:var(--sans);font-size:.8rem;background:#241f2b;border:1px solid #3a3344;
-    color:#d8d2de;padding:8px 13px;border-radius:999px}
-  .chip.w{border-color:var(--pink);color:#f5a8c8}
-  .orch .foot{font-size:.82rem;color:#948d9e;text-align:center;margin-top:26px;line-height:1.9}
-  .orch .foot code{color:#c3b2f5;font-family:var(--sans)}
-
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   @media(max-width:760px){.grid3{grid-template-columns:1fr}}
   .card{border:1px solid var(--line);border-radius:16px;padding:28px 24px;background:#fff}
@@ -193,26 +150,6 @@
   .card h4{font-family:var(--display);font-weight:500;font-size:1.2rem;margin-bottom:9px}
   .card p{font-size:.96rem;color:var(--ink-2);line-height:1.55}
 
-  .day{max-width:680px}
-  .tl{border-left:2px solid var(--line);padding-left:28px;margin-left:4px}
-  .mo{position:relative;padding-bottom:30px}
-  .mo::before{content:'';position:absolute;left:-35px;top:5px;width:12px;height:12px;border-radius:50%;
-    background:var(--paper);border:2px solid var(--violet)}
-  .mo.auto::before{border-color:var(--pink)}
-  .mo .t{font-size:.8rem;font-weight:600;color:var(--violet);letter-spacing:.04em}
-  .mo.auto .t{color:var(--pink)}
-  .mo h4{font-family:var(--display);font-weight:500;font-size:1.15rem;margin:4px 0 5px}
-  .mo p{font-size:.96rem;color:var(--ink-2)}
-  .pill{font-size:.64rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-    padding:2px 8px;border-radius:5px;margin-left:8px;vertical-align:middle}
-  .pill.a{background:var(--pink-soft);color:var(--pink)}
-  .pill.o{background:var(--violet-soft);color:var(--violet)}
-
-  .fill{background:repeating-linear-gradient(45deg,#faf6f2,#faf6f2 11px,#f4eee9 11px,#f4eee9 22px);
-    border:1px dashed var(--orange);border-radius:12px;padding:24px 26px;margin-top:22px}
-  .fill .eyebrow{background:none;color:var(--orange)}
-  .fill p{font-size:.96rem;color:var(--ink-2);margin-top:9px;line-height:1.6}
-
   /* getting started */
   .start{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
   .steps{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:820px;margin:0 auto}
@@ -223,8 +160,6 @@
     font-size:.9rem;margin-bottom:14px}
   .step h4{font-family:var(--display);font-weight:500;font-size:1.22rem;margin-bottom:7px}
   .step p{font-size:.96rem;color:var(--ink-2);line-height:1.55}
-  .step code{font-family:var(--sans);font-size:.86rem;background:var(--paper-2);
-    border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--violet)}
   .step .ex{display:block;margin-top:12px;font-size:.9rem;color:var(--violet);
     background:var(--violet-soft);border-radius:8px;padding:10px 13px;line-height:1.5}
   .step .ex b{font-weight:600}
@@ -243,11 +178,26 @@
   .qs-note{max-width:820px;margin:0 auto 28px;text-align:center;font-size:.95rem;color:var(--ink-3)}
   .qs-note em{color:var(--violet);font-style:italic}
 
+  /* faq */
+  .faq-list{max-width:760px}
+  .faq{border:1px solid var(--line);border-radius:14px;background:#fff;margin-bottom:12px;
+    padding:0 22px}
+  .faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;
+    align-items:center;gap:16px;padding:18px 0;font-family:var(--display);font-weight:500;
+    font-size:1.08rem;color:var(--ink)}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary .plus{flex:0 0 auto;width:26px;height:26px;border-radius:8px;background:var(--violet-soft);
+    color:var(--violet);display:flex;align-items:center;justify-content:center;font-weight:600;
+    font-size:1rem;transition:.15s}
+  .faq[open] summary .plus{transform:rotate(45deg)}
+  .faq .a{padding:0 0 18px;font-size:.96rem;color:var(--ink-2);line-height:1.65;max-width:62ch}
+
   footer{border-top:1px solid var(--line);padding:48px 0 72px;margin-top:20px}
   footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
-  footer .credits{font-size:.86rem;color:var(--ink-3);max-width:460px;line-height:1.6}
+  footer .credits{font-size:.86rem;color:var(--ink-3);max-width:440px;line-height:1.6}
   footer .foot-logo{font-family:var(--display);font-size:1.3rem;margin-bottom:6px}
   footer .lic{font-size:.8rem;color:var(--ink-3)}
+  footer .foot-links{display:flex;gap:18px;margin-top:10px;font-size:.86rem}
 </style>
 </head>
 <body>
@@ -258,7 +208,7 @@
     <div class="nav-links">
       <a class="nav-link" href="#how">How it works</a>
       <a class="nav-link" href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">GitHub</a>
-      <a class="nav-cta" href="try.html">Try it →</a>
+      <a class="nav-cta" href="try.html">Try it</a>
     </div>
   </div>
 </nav>
@@ -267,51 +217,44 @@
   <div class="wrap">
     <div class="tag"><span class="d"></span> Open source · built on Claude Code</div>
     <h1>One agent for the <em>whole</em> job search.</h1>
-    <p class="sub">Most tools automate a single step. Lucy runs the entire funnel as a conversation —
-      finding roles, tailoring your story, opening warm doors, and prepping you for the room.</p>
+    <p class="sub">Most tools automate a single step. Lucy runs the entire funnel as a conversation:
+      she finds roles, tailors your story, surfaces mutual connections at the companies you apply to,
+      and preps you for the room.</p>
     <div class="row">
-      <a class="btn" href="try.html">Try it in your browser</a>
+      <a class="btn" href="try.html">Try it</a>
       <a class="btn ghost" href="#how">See how it works</a>
     </div>
-    <div class="hero-art" aria-hidden="true">
-      <div class="ha t1"><span>Roles found &amp; scored while you sleep</span></div>
-      <div class="ha t2"><span>Docs tailored, honestly</span></div>
-      <div class="ha t3"><span>A warm way in</span></div>
-    </div>
-    <div class="hero-foot"></div>
   </div>
 </header>
 
 <div class="story">
   <div class="wrap">
     <span class="eyebrow">Why this exists</span>
-    <p>Applying to a job is the easy half. Everyone can see the posting; everyone sends the same tailored CV.</p>
-    <p>The half that actually moves the needle is quieter: <span class="turn">knowing someone on the inside.</span>
-      A warm introduction changes your odds more than any keyword ever will — and it's the part no tool would touch.</p>
-    <div class="pull"><span>So the job search isn't one problem. It's a funnel of six — and most tools solve exactly one.</span></div>
-    <p class="small">Discovery. Fit. Tailoring. The warm path in. The interview. The offer. Lucy holds the whole
-      funnel in one place, so you spend your energy on judgment, not logistics.</p>
+    <p style="margin-top:14px">Applying is the easy half. Everyone can see the posting, and everyone sends the same tailored CV.</p>
+    <p>What actually moves the needle is quieter: <span class="turn">knowing someone on the inside.</span>
+      A warm introduction changes your odds more than any keyword ever will.</p>
+    <div class="pull"><span>The job search is a funnel of six stages, and most tools solve exactly one.</span></div>
   </div>
 </div>
 
 <section class="cred">
   <div class="wrap">
-    <span class="eyebrow">Why me</span>
+    <span class="eyebrow">About me</span>
     <div class="whoami" style="margin-top:26px">
       <div class="pfp">
-        <div class="disc"><span class="init">H</span></div>
-        <img src="assets/profile.jpg" alt="Himadri, Lucy's builder" onerror="this.remove()">
+        <div class="disc"></div>
+        <img src="assets/profile.jpg" alt="Portrait of Lucy's builder" onerror="this.remove()">
       </div>
       <div>
-        <p class="lead">I didn't build this because AI agents are having a moment. I built it because I've spent
-          years <em>coaching people through their job search</em> — and watching where they get stuck.</p>
-        <p class="body">I'm Himadri — a product manager, and a career coach with Pragmatic Leaders. Across resume
-          rewrites, interview loops, and career-move conversations, the same patterns came up every time: strong
-          candidates freezing on their own story, great fits never hearing back, and the quiet truth that a warm
-          introduction beats a perfect application. Lucy is that hard-won knowledge, turned into a system.</p>
+        <p class="lead">I didn't build this because AI agents are having a moment. I built it because
+          I know this problem from <em>both sides of the table.</em></p>
+        <p class="body">I've run my own job searches, coached others through theirs, and learned as much
+          from the people I worked with as they did from me. Along the way I've worked across conversational AI,
+          consumer, fintech, and enterprise software, in companies from startups to scale ups. I've hired,
+          and I've been hired, and I've seen the constraints companies and recruiters actually screen against.
+          Lucy turns that experience into a repeatable system.</p>
       </div>
     </div>
-    <div class="marq-cap">Companies &amp; communities I've worked with</div>
     <div class="marq">
       <div class="marq-track">
         <img src="assets/logos/haptik.svg" alt="Haptik">
@@ -340,36 +283,37 @@
 <section class="funnel" id="how">
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">The funnel · you talk, Lucy routes</span>
-      <h2>You never pick a tool. You just talk.</h2>
-      <p>Say what you need in plain language. Lucy reads the intent and runs the right specialist — or chains several.</p>
+      <span class="eyebrow">How Lucy works</span>
+      <h2>Six stages, one conversation.</h2>
+      <p>Say what you need in plain language. One orchestrator reads the intent and runs the right
+        specialist behind the scenes, twelve in all, then hands you one clean result.</p>
     </div>
     <div class="stages">
       <div class="stg"><div class="idx">01</div><div>
         <h3>Discovery</h3>
-        <p>Sweeps public job boards each morning, drops anything off-target before spending a single model call, and scores the rest against a rubric tuned to you.</p>
-        <span class="say"><b>You wake up to</b> — apply first / worth a look / skipped.</span></div></div>
+        <p>Sweeps public job boards each morning, drops anything off target before spending a single model call, and scores the rest against a rubric tuned to you.</p>
+        <span class="say"><b>You wake up to:</b> apply first, worth a look, skipped.</span></div></div>
       <div class="stg"><div class="idx">02</div><div>
         <h3>Fit &amp; tailoring</h3>
         <p>A drafter rewrites your CV and cover letter for the specific role. A second, fresh-eyed reviewer critiques it like a stranger would.</p>
-        <span class="say"><b>You say</b> — tailor my CV for this one.</span></div></div>
+        <span class="say"><b>You say:</b> tailor my CV for this one.</span></div></div>
       <div class="stg warm"><div class="idx">03</div><div>
         <span class="flag">the part nobody else builds</span>
         <h3>The warm path in</h3>
-        <p>Works from your own connections to find who you already know at the company — and drafts the introduction. A referral beats a perfect CV.</p>
-        <span class="say"><b>You say</b> — who do I know at Stripe?</span></div></div>
+        <p>Scans your own network for mutual connections at the company you're applying to, then drafts the introduction. A referral beats a perfect CV.</p>
+        <span class="say"><b>You say:</b> who do I know at Stripe?</span></div></div>
       <div class="stg"><div class="idx">04</div><div>
-        <h3>Apply — your hand on it</h3>
+        <h3>Apply, with your hand on it</h3>
         <p>Lucy fills the real application and stops at the submit line. She never sends anything without you. Two locks, one deliberate human click.</p>
-        <span class="say"><b>You do</b> — the final submit. Always.</span></div></div>
+        <span class="say"><b>You do:</b> the final submit. Always.</span></div></div>
       <div class="stg"><div class="idx">05</div><div>
         <h3>Interview, from the other chair</h3>
-        <p>The coach is fed the hiring side's own playbook — how interviewers score, structure loops, and read a JD — so you walk in knowing what they're looking for.</p>
-        <span class="say"><b>You say</b> — get me ready for Thursday.</span></div></div>
+        <p>The coach is fed the hiring side's own playbook: how interviewers score, structure loops, and read a JD. You walk in knowing what they're looking for.</p>
+        <span class="say"><b>You say:</b> get me ready for Thursday.</span></div></div>
       <div class="stg"><div class="idx">06</div><div>
         <h3>Track &amp; negotiate</h3>
-        <p>Every application, its stage, and when to follow up — kept as durable memory. When an offer lands, she helps you hold your ground on comp.</p>
-        <span class="say"><b>You ask</b> — what should I chase this week?</span></div></div>
+        <p>Every application, its stage, and when to follow up, kept as durable memory. When an offer lands, she helps you hold your ground on comp.</p>
+        <span class="say"><b>You ask:</b> what should I chase this week?</span></div></div>
     </div>
   </div>
 </section>
@@ -377,9 +321,9 @@
 <section class="start" id="start">
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">Getting started · for job seekers</span>
+      <span class="eyebrow">Getting started</span>
       <h2>How you'd actually use it.</h2>
-      <p>Lucy runs on Claude Code, so you set her up once, then just talk to her whenever you're job hunting. Four steps to your first tailored application.</p>
+      <p>Lucy runs on Claude Code. Set her up once, then just talk to her whenever you're job hunting. Four steps to your first tailored application.</p>
     </div>
     <div class="quickstart">
       <div class="qs-bar"><span class="qs-dot"></span><span class="qs-dot"></span><span class="qs-dot"></span><span class="qs-label">your terminal</span></div>
@@ -391,27 +335,27 @@ git clone https://github.com/&lt;you&gt;/ai-job-search-agent
 cd ai-job-search-agent
 claude
 
-<span class="c"># 3 · now just talk to Lucy — start here:</span>
+<span class="c"># 3 · now just talk to Lucy. Start here:</span>
 <span class="p">&gt;</span> run setup</code></pre>
     </div>
-    <p class="qs-note">No slash commands to learn. After setup, you speak plainly — <em>"tailor my CV for this role,"</em> <em>"who do I know at Stripe?"</em> — and Lucy routes it. Full guide in <a href="https://github.com/HimadriTrying/ai-job-search-agent/blob/main/SETUP.md" target="_blank" rel="noopener">SETUP.md</a>.</p>
+    <p class="qs-note">No slash commands to learn. After setup, you speak plainly, like <em>"tailor my CV for this role"</em> or <em>"who do I know at Stripe?"</em>, and Lucy routes it. Full guide in <a href="https://github.com/HimadriTrying/ai-job-search-agent/blob/main/SETUP.md" target="_blank" rel="noopener">SETUP.md</a>.</p>
     <div class="steps">
       <div class="step">
         <span class="sn">1</span>
         <h4>Fork &amp; open it</h4>
-        <p>Fork the repo, then open the folder in Claude Code. That's the whole install — Lucy's instructions load automatically.</p>
-        <span class="ex"><b>You do:</b> fork on GitHub → open in Claude Code → say "run setup".</span>
+        <p>Fork the repo, then open the folder in Claude Code. That's the whole install. Lucy's instructions load automatically.</p>
+        <span class="ex"><b>You do:</b> fork on GitHub, open in Claude Code, say "run setup".</span>
       </div>
       <div class="step">
         <span class="sn">2</span>
         <h4>Give Lucy your story</h4>
         <p>Drop in your CV and answer a few questions. The richer your profile, the sharper everything she produces. It stays private on your machine.</p>
-        <span class="ex"><b>You say:</b> "here's my resume — help me build my profile."</span>
+        <span class="ex"><b>You say:</b> "here's my resume, help me build my profile."</span>
       </div>
       <div class="step">
         <span class="sn">3</span>
         <h4>Ask for what you need</h4>
-        <p>No commands to memorize. Talk in plain language and Lucy routes it to the right specialist — discovery, tailoring, a warm intro, interview prep.</p>
+        <p>No commands to memorize. Talk in plain language and Lucy routes it to the right specialist: discovery, tailoring, a warm intro, interview prep.</p>
         <span class="ex"><b>You say:</b> "find me senior PM roles" · "tailor my CV for this" · "who do I know here?"</span>
       </div>
       <div class="step">
@@ -421,31 +365,7 @@ claude
         <span class="ex"><b>You do:</b> review the draft, then hit submit yourself. Always.</span>
       </div>
     </div>
-    <p class="start-note">Prefer to just watch first? Everything's open source — <a href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">read the code and setup guide on GitHub</a>.</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="orch">
-      <div class="inner">
-        <span class="eyebrow">Under the hood</span>
-        <h2>How the orchestrator decides</h2>
-        <p>Lucy is the only thing you talk to. Behind her sit twelve specialists — she reads your intent and calls whichever the moment needs, then hands you one clean result.</p>
-        <div class="hub">
-          <div class="lucy-node">Lucy · orchestrator</div>
-          <div class="stem"></div>
-          <div class="chips">
-            <span class="chip">job-scout</span><span class="chip">cv-tailor</span><span class="chip">reviewer</span>
-            <span class="chip">cover-letter</span><span class="chip">company-research</span>
-            <span class="chip w">network-mapper</span><span class="chip w">outreach-drafter</span>
-            <span class="chip">interview-coach</span><span class="chip">tracker</span>
-            <span class="chip">upskill</span><span class="chip">negotiator</span><span class="chip">submit</span>
-          </div>
-        </div>
-        <p class="foot"><code>"what's out there?"</code> → job-scout &nbsp;·&nbsp; <code>"tailor this"</code> → cv-tailor → reviewer → honesty gate &nbsp;·&nbsp; <code>"who do I know there?"</code> → network-mapper</p>
-      </div>
-    </div>
+    <p class="start-note">Prefer to just watch first? Everything's open source. <a href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">Read the code and setup guide on GitHub</a>.</p>
   </div>
 </section>
 
@@ -463,7 +383,7 @@ claude
       <div class="card">
         <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V7a5 5 0 0 1 10 0v4"/><rect x="3" y="11" width="18" height="11" rx="2"/></svg></div>
         <h4>You commit, not the agent</h4>
-        <p>It automates everything up to applying, reaching out, or accepting — then stops and hands you the wheel. No message leaves without your say-so.</p></div>
+        <p>It automates everything up to applying, reaching out, or accepting, then stops and hands you the wheel. No message leaves without your say-so.</p></div>
       <div class="card">
         <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6"/><path d="M12 9v6"/></svg></div>
         <h4>Your data stays yours</h4>
@@ -472,49 +392,49 @@ claude
   </div>
 </section>
 
-<section>
+<section id="faq">
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">A day with Lucy</span>
-      <h2>What actually changes about your morning.</h2>
-      <p>Two speeds: the cheap, repetitive work runs on a schedule while you sleep. The expensive, judgment-heavy work waits for you to decide it's worth doing.</p>
+      <span class="eyebrow">FAQ</span>
+      <h2>Usage, data, and cost.</h2>
     </div>
-    <div class="day"><div class="tl">
-      <div class="mo auto"><div class="t">6:30 — before you're up</div>
-        <h4>The digest arrives<span class="pill a">automated</span></h4>
-        <p>Overnight, Lucy swept the boards and scored what's new. A ranked shortlist is waiting.</p></div>
-      <div class="mo"><div class="t">8:00 — coffee</div>
-        <h4>You skim and pick<span class="pill o">you decide</span></h4>
-        <p>Three roles in "apply first." One's a real fit. You tell Lucy to go after it.</p></div>
-      <div class="mo"><div class="t">8:15 — twenty focused minutes</div>
-        <h4>Tailor, research, find a way in<span class="pill o">on demand</span></h4>
-        <p>She tailors your CV, researches the company, and surfaces a former colleague who works there. She drafts the intro. You read it, tweak one line.</p></div>
-      <div class="mo"><div class="t">8:35 — your call</div>
-        <h4>You hit submit<span class="pill o">human</span></h4>
-        <p>Everything's ready and honest. The last click is yours — always.</p></div>
-    </div></div>
-    <div class="fill">
-      <span class="eyebrow">⚑ still building — the email step</span>
-      <p><b>Roadmap:</b> right now the digest is written to a file in the repo. Next is wiring up the
-        morning email so it lands in your inbox — the difference between "a script" and "an agent that
-        shows up." Building in public, so this gets documented when it ships.</p>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="head">
-      <span class="eyebrow">Why I built this</span>
-      <h2>The story behind Lucy.</h2>
-    </div>
-    <div class="fill">
-      <span class="eyebrow">⚑ your words go here</span>
-      <p><b>Write this in your own voice — it's the part people remember.</b> A short, honest paragraph:
-        you were hunting for senior PM / AI-builder roles, kept seeing people post about multi-agent
-        setups, and decided to build your own in public. Mention that you named the orchestrator
-        <b>Lucy</b> after the first conversational AI you ever worked on — that detail lands. Two or three
-        sentences. This one should sound like <em>you</em>, not like a machine.</p>
+    <div class="faq-list">
+      <details class="faq">
+        <summary>Where are my CV and profile stored?<span class="plus">＋</span></summary>
+        <div class="a">On your machine. Lucy runs locally in Claude Code, and your real profile, work
+          history, and application tracker are gitignored, so they never reach the public repo. The
+          try page runs entirely in your browser and stores nothing.</div>
+      </details>
+      <details class="faq">
+        <summary>How is my data handled?<span class="plus">＋</span></summary>
+        <div class="a">There is no server of ours and no analytics on your documents. The only network
+          call your data makes is to Anthropic's API using your own key or subscription, under
+          Anthropic's terms. Your connections export, tracker, and profile are plain local files you
+          own and can delete at any time.</div>
+      </details>
+      <details class="faq">
+        <summary>What does it cost?<span class="plus">＋</span></summary>
+        <div class="a">Lucy is free and open source under the MIT license. You bring your own Claude
+          access: a Claude subscription for interactive use, or an Anthropic API key if you want the
+          scheduled morning sweeps. The only cost is your model usage.</div>
+      </details>
+      <details class="faq">
+        <summary>Will it apply to jobs without me?<span class="plus">＋</span></summary>
+        <div class="a">Never. Lucy stops at every point of commitment. Applications, outreach messages,
+          and offer decisions always wait for your explicit go-ahead, behind two independent
+          confirmation locks.</div>
+      </details>
+      <details class="faq">
+        <summary>Can it invent things about me?<span class="plus">＋</span></summary>
+        <div class="a">No. Every outbound document is checked in code against a frozen record of your
+          real history before it can leave the system. An invented employer, credential, or metric
+          fails loudly instead of shipping quietly.</div>
+      </details>
+      <details class="faq">
+        <summary>Can I read or change how it works?<span class="plus">＋</span></summary>
+        <div class="a">Yes. The whole system is open source on GitHub under the MIT license. Fork it,
+          read every prompt and check, and adapt it to your own search.</div>
+      </details>
     </div>
   </div>
 </section>
@@ -524,10 +444,14 @@ claude
     <div>
       <div class="foot-logo">Lucy</div>
       <div class="lic">ai-job-search-agent · MIT licensed</div>
+      <div class="foot-links">
+        <a href="try.html">Try it</a>
+        <a href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">GitHub</a>
+        <a href="terms.html">Terms &amp; conditions</a>
+      </div>
     </div>
-    <p class="credits">Built after studying the best public job-search automation and taking it further —
-      a conversational orchestrator over the whole funnel, a warm-intro layer, and honesty enforced in code.
-      Full acknowledgements in the repo.</p>
+    <p class="credits">Built in the open: a conversational orchestrator over the whole job-search funnel,
+      a warm-intro layer, and honesty enforced in code. Full acknowledgements in the repo.</p>
   </div>
 </footer>
 
