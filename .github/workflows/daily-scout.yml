@@ -16,6 +16,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install rtk (compresses command output before it reaches the model)
+        # The committed .claude/settings.json PreToolUse hook rewrites shell
+        # commands to rtk equivalents; the hook no-ops if this step fails, so
+        # the sweep still runs — just without the token savings.
+        continue-on-error: true
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
       - name: Run job-scout headless
         # Claude Code can run as a one-shot CLI without a TTY — that is what makes
         # scheduled jobs and CI integration possible.

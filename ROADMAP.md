@@ -46,6 +46,14 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
   into prep. Grounded in a personal STAR bank that is still being filled in.
   *Hypothesis: preparing from the interviewer's seat — the scoring rubric inverted — beats rehearsing answers blind, because you prepare for what interviewers actually evaluate.*
 
+- ✅ **Token-efficiency layer** — sessions run behind [rtk](https://github.com/rtk-ai/rtk), a
+  hook that compresses shell-command output before it reaches the context window. Installed
+  automatically at session start on the web and in the daily-scout workflow; degrades to a no-op
+  if unavailable. Paired with a minimal-code rule in `CLAUDE.md` (distilled from
+  [ponytail](https://github.com/DietrichGebert/ponytail)'s laziness-ladder idea, kept to a few
+  lines rather than a per-session ruleset) for work on Lucy's own code.
+  *Hypothesis: on a subscription the scarce resource is rate-limit quota, not dollars; shrinking what the model reads protects the interactive quota without touching what it writes.*
+
 ---
 
 ## Now
