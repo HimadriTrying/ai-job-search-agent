@@ -36,10 +36,21 @@ if ! command -v rtk >/dev/null 2>&1; then
   fi
 fi
 
-# Make rtk visible to the Bash tool for the rest of the session.
+# OpenSpec (https://github.com/Fission-AI/OpenSpec) — the spec-driven-development
+# CLI behind the /opsx:* commands and openspec-* skills committed in .claude/.
+# Idempotent, and a failure only disables those commands, never the session.
+if ! command -v openspec >/dev/null 2>&1; then
+  npm install -g @fission-ai/openspec@latest >/dev/null 2>&1 \
+    || echo "[session-start] openspec install failed — /opsx:* commands unavailable this session" >&2
+fi
+
+# Make rtk/openspec visible to the Bash tool for the rest of the session, and
+# opt out of OpenSpec's anonymous usage telemetry.
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo 'export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"' >> "$CLAUDE_ENV_FILE"
+  echo 'export OPENSPEC_TELEMETRY=0' >> "$CLAUDE_ENV_FILE"
 fi
 
 rtk --version 2>/dev/null || true
+openspec --version 2>/dev/null || true
 exit 0
