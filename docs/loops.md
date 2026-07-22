@@ -32,6 +32,10 @@ escalation · report-back. A loop missing any of these isn't enabled, it's loose
 
 ### 1. Morning scout (daily, weekdays)
 
+- **Status: designed, NOT armed.** Arm it (as a Routine or via the Actions secrets)
+  only once its inputs exist — scout config, watchlist, and tracker in the private
+  repo. Until then there is nothing to pick up, and a loop with no inputs just burns
+  quota reporting emptiness.
 - **Trigger:** cron, 06:00 UTC weekdays.
 - **Inputs:** `job-scout` config + watchlist, tracker (all from the private repo).
 - **Definition of done:** dated digest written to `data/digests/` (resolves into the
