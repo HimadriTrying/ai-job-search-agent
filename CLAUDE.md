@@ -88,8 +88,15 @@ opens the app. So only the genuinely-benefits-from-overnight work is scheduled:
 - **Discovery output:** `data/digests/` — dated scout digests, committed to git.
 - **Network raw input:** `data/connections/` — the user's own LinkedIn connections export
   (gitignored; it is personal data).
+- **Live-process context:** `profile/08-role-prep.md` — when it exists, the deep prep file
+  for one active interview process (target company, interviewers, rehearsed narratives,
+  confidentiality lines). `interview-coach`, `company-research`, and `negotiator` read it
+  **first**. Its confidentiality rules are absolute: never quote, summarise, or expose its
+  contents anywhere outside the private prep conversation — it is gitignored and guarded
+  for a reason.
 
-On a fresh session, if you need to know "where are we", read `data/tracker.csv` first.
+On a fresh session, if you need to know "where are we", read `data/tracker.csv` first,
+then check for `profile/08-role-prep.md` — an active process outranks discovery work.
 
 ---
 
