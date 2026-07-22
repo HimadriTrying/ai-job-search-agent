@@ -108,14 +108,27 @@ On your fork:
 flowchart LR
     U([You]) <--> L["Lucy — orchestrator<br/>(CLAUDE.md)"]
     L --> S["12 specialist skills<br/>(.claude/skills/)"]
-    S <--> T[("data/tracker.csv<br/>funnel state")]
+    subgraph P["🔒 Private — local only, gitignored, never pushed"]
+        F[("career_facts.yaml<br/>frozen truth")]
+        B[("profile/*.md<br/>background & voice")]
+        T[("data/tracker.csv<br/>funnel state")]
+        C[("data/connections/<br/>LinkedIn export")]
+        D[("data/digests/<br/>discovery results")]
+    end
+    B --> S
+    C --> S
+    S <--> T
     S -- outbound docs --> R["Fresh-context Reviewer<br/>(subagent)"]
     R --> H{"Honesty gate<br/>honesty/verify.py"}
-    F[("career_facts.yaml<br/>frozen truth")] --> H
+    F --> H
     H -- passes --> U
     H -- fails: fix the doc --> S
-    G["GitHub Actions<br/>daily scout"] --> D[("data/digests/")]
+    G["GitHub Actions<br/>daily scout"] --> D
 ```
+
+Everything in the private box exists only on your machine: the agent reads it, but it is
+gitignored (with a pre-commit guard as backstop) and only the `*.example` templates are in
+this repo.
 
 Design rationale: [docs/DESIGN.md](docs/DESIGN.md). Roadmap: [ROADMAP.md](ROADMAP.md).
 
