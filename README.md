@@ -50,8 +50,8 @@ pip install pyyaml
 claude
 ```
 
-To use the scheduled scout, fork this repo first and clone your fork — the workflow runs in
-your fork's GitHub Actions.
+To use the scheduled scout, you will need a **private copy** of this repo (not a fork —
+forks of public repos are always public). See [Scheduled scout](#scheduled-scout-optional).
 
 ## Setup
 
@@ -94,13 +94,24 @@ AI-product roles), the inverse of a junior-candidate filter.
 
 ### Scheduled scout (optional)
 
-On your fork:
+Digests and the watchlist name the companies you are targeting, so the workflow **refuses
+to run in a public repository** — on a public repo its logs, artifacts, and commits would
+be visible to anyone, and GitHub forks of public repos are always public. Run it from a
+private copy:
 
-1. Enable workflows under the **Actions** tab.
-2. Add a repository secret named `ANTHROPIC_API_KEY`.
-3. `.github/workflows/daily-scout.yml` then runs weekday mornings and commits digests to
-   `data/digests/`. The sweep and scoring are plain Python; the key pays only for the thin
-   orchestration, a few dollars a month.
+1. Create a **private copy** (not a fork): on GitHub, **New → Import repository**, paste
+   this repo's URL, set visibility to **Private**.
+2. In your private copy, commit your scout inputs — they are gitignored by default as
+   protection for the public repo, so force-add them:
+   ```bash
+   git add -f .claude/skills/job-scout/watchlist.txt .claude/skills/job-scout/config.yaml
+   git commit -m "Add scout inputs" && git push
+   ```
+3. Enable workflows under the **Actions** tab and add a repository secret named
+   `ANTHROPIC_API_KEY`.
+4. `.github/workflows/daily-scout.yml` then runs weekday mornings and commits digests to
+   `data/digests/` in the private copy, visible only to you. The sweep and scoring are
+   plain Python; the key pays only for the thin orchestration, a few dollars a month.
 
 ## How it works
 
@@ -140,7 +151,9 @@ Design rationale: [docs/DESIGN.md](docs/DESIGN.md). Roadmap: [ROADMAP.md](ROADMA
 - **Honesty check keeps failing a document** — the draft claims something
   `career_facts.yaml` cannot back. If the claim is real, add it to the facts file;
   otherwise the document gets rewritten. Never weaken a fact to pass the check.
-- **Scheduled scout never ran** — confirm Actions are enabled on your fork and the
+- **Scheduled scout never ran / fails immediately** — the workflow refuses to run in a
+  public repo and fails loudly if the watchlist is missing from the checkout; the error
+  message says which. Otherwise confirm Actions are enabled in your private copy and the
   `ANTHROPIC_API_KEY` secret is set, then read the run log under the Actions tab.
 - **`honesty/verify.py` import error** — `pip install pyyaml` (the only dependency).
 
