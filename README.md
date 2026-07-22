@@ -1,5 +1,9 @@
 # AI Job Search Agent
 
+[![Built with Claude Code](https://img.shields.io/badge/built%20with-Claude%20Code-d97757)](https://docs.claude.com/en/docs/claude-code/overview)
+[![License: MIT](https://img.shields.io/github/license/HimadriTrying/ai-job-search-agent)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.x-blue)](https://www.python.org/)
+
 **Meet Lucy. One agent you talk to across your entire job search, from discovering a role to
 walking into the interview holding the hiring manager's own playbook.**
 
