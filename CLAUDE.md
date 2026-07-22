@@ -88,15 +88,24 @@ opens the app. So only the genuinely-benefits-from-overnight work is scheduled:
 - **Discovery output:** `data/digests/` — dated scout digests, committed to git.
 - **Network raw input:** `data/connections/` — the user's own LinkedIn connections export
   (gitignored; it is personal data).
-- **Live-process context:** `profile/08-role-prep.md` — when it exists, the deep prep file
-  for one active interview process (target company, interviewers, rehearsed narratives,
-  confidentiality lines). `interview-coach`, `company-research`, and `negotiator` read it
-  **first**. Its confidentiality rules are absolute: never quote, summarise, or expose its
-  contents anywhere outside the private prep conversation — it is gitignored and guarded
-  for a reason.
+- **Live-process context:** `processes/<company>/role-prep.md` — one folder **per active
+  interview process** (parallel processes are normal), plus `processes/_shared.md` for
+  what travels across all of them: candidate framing, flagship stories, definitions bank,
+  departure narrative. `interview-coach`, `company-research`, and `negotiator` read
+  `_shared.md` + the relevant company file **first**. Confidentiality is absolute: never
+  quote, summarise, or expose their contents outside the private prep conversation — and
+  processes are airgapped from each other: nothing learned in one is ever mentioned in
+  another.
 
-On a fresh session, if you need to know "where are we", read `data/tracker.csv` first,
-then check for `profile/08-role-prep.md` — an active process outranks discovery work.
+**The tool is public; the person is private.** Everything above that is personal —
+`career_facts.yaml`, real `profile/` files, tracker, `processes/`, applications — lives in
+a separate **private companion repo**, wired in by `scripts/sync-private.sh` (cloned to
+`private/`, symlinked into place). This makes personal state device-agnostic and durable
+across ephemeral sessions. After any session that changes personal state, **commit and
+push inside `private/`** — that repo is the durable memory; this container is not.
+
+On a fresh session: run `scripts/sync-private.sh` if `private/` is missing, then read
+`data/tracker.csv`, then check `processes/` — an active process outranks discovery work.
 
 ---
 

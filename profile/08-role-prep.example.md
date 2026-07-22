@@ -1,61 +1,46 @@
-# Role-Prep Agent Context — TEMPLATE
+# Role-prep context — per-process structure (TEMPLATE)
 
-> Copy to `profile/08-role-prep.md` and fill in. The real file is **gitignored and
-> blocked by the pre-commit guard** — it is the most sensitive file in the whole system:
-> it names a live interview process, real people, and things you must *never* say aloud.
-> It must never land in the public repo. Keep a backup outside this repo (it is not
-> committed anywhere).
+> **Where the real files live:** in your **private companion repo**, wired in by
+> `scripts/sync-private.sh` — never in this public repo. The `processes/` path here is
+> gitignored **and** hard-blocked by the pre-commit guard. Design principle: *the tool is
+> public; the person is private.* Everything you and the agent produce together — CVs,
+> prep notes, questions, narratives — belongs to you alone.
 >
-> Purpose: while `07-interview-prep.md` holds your evergreen STAR bank, this file holds
-> the **live state of one specific process** — the target company, the interviewers, the
-> rehearsed narratives, and the confidentiality lines. `interview-coach`,
-> `company-research`, and `negotiator` read it first when it exists.
+> You will often run **several interview processes in parallel**, each at a different
+> stage. One folder per company keeps them separate; one shared file holds what travels
+> across all of them. Processes are **airgapped**: the agent never mentions one company's
+> process inside another's.
 
-## 0. Who the agent is in this mode
+## Layout
 
-How you want the agent to behave for this process: coach-not-flatterer, mock-interviewer,
-terminology tutor, etc. Interview language. Any standing behaviors (e.g. "define every new
-regulatory term in plain English + why it matters for the target company").
+```
+processes/
+  _shared.md                 # cross-process: who you are for interviewers, flagship
+                             # stories with real metrics, definitions bank, departure
+                             # narrative, working agreements, standing confidentiality
+  <company-a>/role-prep.md   # everything specific to company A's process
+  <company-b>/role-prep.md   # …company B, at whatever different stage it's in
+```
 
-## 1. Candidate framing for this process
+## `_shared.md` sections
 
-Your positioning for *this* role specifically: domain edge, the one-line story of your
-career path, and the decision framework you use to narrate moves (e.g. a named "compass"
-of criteria). Include the counter to your weakest-looking pattern (tenure, gaps, pivots).
+- **Agent behaviors** for prep mode (coach-not-flatterer, mock interviewer, term tutor)
+- **Candidate framing** — positioning, career-path story, counter to your weakest pattern
+- **Flagship-story knowledge base** — deep detail of your best story; label measured vs
+  estimated metrics
+- **Definitions bank** — every technical/regulatory term, plain-English, grows per session
+- **Departure narrative** — the rehearsed true story + explicit never-say list; the
+  stay-condition line is adapted per company in each process file
+- **Working agreements** — how you and the agent run prep sessions
+- **Standing confidentiality rules** — apply to every process, absolute
 
-## 2. Flagship-story knowledge base
+## `<company>/role-prep.md` sections
 
-The deep, numbers-level detail of your best story: the system you owned, its funnel or
-architecture, key metrics (label which are measured vs estimated!), known issues you can
-speak to, tooling. This is the material mock interviews drill into.
-
-## 3. Domain definitions (interview-ready)
-
-Every technical/regulatory term you might need, defined in plain English with its
-relevance to the target company. Grows with every prep session.
-
-## 4. Target company
-
-Verified company facts (re-verify numbers before each round!), the strategic angle that
-makes *you* the obvious hire, the specific role(s) in play, the people in the process
-(who they are, what their round tests, what to watch for), and current process status.
-
-## 5. Departure narrative
-
-The rehearsed, true, structural story of why you're leaving — plus the explicit
-**never-say list** and the judgment-line phrasing you'll use instead.
-
-## 6. Question banks
-
-Questions to ask each interviewer; the knowledge-extraction backlog that feeds §2–§3;
-what's still to prepare for upcoming rounds.
-
-## 7. Working agreements
-
-How you and the agent work together in prep sessions (voice-notes → refined speakable
-scripts, cross-checking against best practices, mock-interview format, etc.).
-
-## 8. Confidentiality rules (absolute)
-
-The hard lines: facts never volunteered, sources never revealed, internals never quoted.
-The agent treats these as inviolable — including never exposing this file itself.
+- **A. Target company** — verified facts (re-verify before each round), your specific
+  strategic angle, the role(s) in play
+- **B. The people** — each interviewer: what their round tests, incentives, watch-fors
+- **C. Process status** — stage log with dates; update after every touchpoint
+- **D. Question banks** — what to ask whom; intel still to extract
+- **E. Still to prepare** — concrete actions, highest-ROI first
+- **F. Process-specific confidentiality** — sources never revealed, facts never
+  volunteered, in this process specifically

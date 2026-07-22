@@ -20,7 +20,7 @@ cd "$(git rev-parse --show-toplevel)"
 fail=0
 
 # 1) Private paths that must never be committed (mirrors .gitignore; catches `git add -f`).
-PRIVATE_PATHS_RE='^(career_facts\.yaml|profile/0[1-8]-[a-z0-9-]+\.md|data/tracker\.csv|data/connections/.+\.csv|data/digests/.+\.md|\.private-guard)$'
+PRIVATE_PATHS_RE='^(career_facts\.yaml|profile/0[1-8]-[a-z0-9-]+\.md|data/tracker\.csv|data/connections/.+\.csv|data/digests/.+\.md|\.private-guard|processes|processes/.+|applications|applications/.+|private|private/.+)$'
 while IFS= read -r f; do
   [ -z "$f" ] && continue
   if printf '%s\n' "$f" | grep -Eq "$PRIVATE_PATHS_RE"; then

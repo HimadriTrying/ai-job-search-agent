@@ -19,8 +19,17 @@ profile/04-job-evaluation.md
 profile/05-cv-source.md
 profile/06-cover-letter-notes.md
 profile/07-interview-prep.md
-# Live-process prep context (target company, interviewers, process state) — MOST private file
+# Live interview-process context — MOST private data in the system.
+# One folder per company under processes/ (usually a symlink into private/).
+# NOTE: no trailing slash — sync-private.sh creates these as SYMLINKS, and
+# `dir/` patterns don't match symlinks.
 profile/08-role-prep.md
+processes
+
+# The private data companion repo, cloned here by scripts/sync-private.sh.
+# Everything personal lives THERE (device-agnostic, private remote), never here.
+private/
+.private-repo-url
 
 # ...but DO keep the templates + the README so the repo is usable by others.
 !profile/00-README.md
@@ -47,7 +56,8 @@ profile/08-role-prep.md
 .claude/skills/job-scout/watchlist.txt
 
 # Generated application docs (tailored CVs, cover letters) — your real history, keep private
-applications/
+# (no trailing slash: must also match the symlink sync-private.sh creates)
+applications
 
 # Session handoff / current-state note — references private targets & status, keep private
 HANDOFF.md
