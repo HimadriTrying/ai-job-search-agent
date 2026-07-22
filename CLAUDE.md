@@ -70,8 +70,12 @@ This is the core cost-control principle. On a Claude.ai subscription the risk is
 but **rate limits** — a heavy overnight job can eat the interactive quota before the user
 opens the app. So only the genuinely-benefits-from-overnight work is scheduled:
 
-- **Scheduled** (see `.github/workflows/daily-scout.yml`): job discovery + scoring digest;
+- **Scheduled** (loop contracts in `docs/loops.md`): job discovery + scoring digest;
   follow-up nudges (pure time logic, trivially cheap); weekly network-map refresh.
+  Two runtimes: Claude scheduled Routines (recommended on subscription) or
+  `.github/workflows/daily-scout.yml` (API-key path). Every loop reads and writes state
+  in the private repo, never the public one, and reports what it did — or why it
+  couldn't run.
 - **On-demand** (only when the user has decided to act): CV tailoring, cover letters,
   company research, interview prep, outreach drafting, negotiation.
 

@@ -1,7 +1,17 @@
 name: daily-scout
-# Scheduled discovery sweep — the "runs while you sleep" piece.
+# Scheduled discovery sweep — the "runs while you sleep" loop (see docs/loops.md).
 # This is NOT a continuously-thinking agent; it is a cron trigger that wakes Claude Code
-# headless, runs the job-scout skill once, commits the digest, and stops.
+# headless, runs the job-scout skill once, writes the digest, and stops.
+#
+# IMPORTANT — this is the API-key runtime. The recommended runtime on a Claude
+# subscription is a scheduled Claude Routine (docs/loops.md §"Two runtimes").
+#
+# The loop's inputs (scout config, watchlist, tracker) AND its output (the digest) all
+# live in the PRIVATE data companion repo — by design, nothing personal exists in this
+# public repo. So this workflow needs two secrets, and exits early without them:
+#   ANTHROPIC_API_KEY   — API access for the headless run
+#   LUCY_PRIVATE_TOKEN  — fine-grained PAT, read/write scoped to ONLY the private repo
+# Set LUCY_PRIVATE_REPO as a repository variable, e.g. "youruser/lucy-private".
 
 on:
   schedule:
@@ -12,25 +22,49 @@ jobs:
   scout:
     runs-on: ubuntu-latest
     permissions:
-      contents: write        # to commit the digest back to the repo
+      contents: read         # the PUBLIC repo is never written by this loop
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check loop inputs are configured
+        id: gate
+        env:
+          HAS_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+          HAS_PAT: ${{ secrets.LUCY_PRIVATE_TOKEN != '' }}
+          HAS_REPO: ${{ vars.LUCY_PRIVATE_REPO != '' }}
+        run: |
+          if [ "$HAS_KEY" != "true" ] || [ "$HAS_PAT" != "true" ] || [ "$HAS_REPO" != "true" ]; then
+            echo "Loop not armed: missing ANTHROPIC_API_KEY / LUCY_PRIVATE_TOKEN / LUCY_PRIVATE_REPO."
+            echo "A loop that can't run reports that it can't run (docs/loops.md)."
+            echo "armed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "armed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Wire in private state
+        if: steps.gate.outputs.armed == 'true'
+        run: |
+          git clone "https://x-access-token:${{ secrets.LUCY_PRIVATE_TOKEN }}@github.com/${{ vars.LUCY_PRIVATE_REPO }}.git" private
+          scripts/sync-private.sh || true   # symlinks tracker, digests dir, scout config into place
+
       - name: Run job-scout headless
-        # Claude Code can run as a one-shot CLI without a TTY — that is what makes
-        # scheduled jobs and CI integration possible.
+        if: steps.gate.outputs.armed == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           npm install -g @anthropic-ai/claude-code
           claude -p "Run the job-scout skill: sweep the watchlist, score against the rubric, \
-            write today's digest to data/digests/, and stop. Do not tailor anything." \
+            write today's digest to data/digests/, and append tracker follow-up nudges. \
+            If scout config or watchlist are missing, write a digest that says exactly what \
+            is missing instead. Do not tailor anything. Stop after the digest." \
             --allowedTools "Read,Write,Bash,WebSearch"
 
-      - name: Commit digest
+      - name: Commit digest to the PRIVATE repo
+        if: steps.gate.outputs.armed == 'true'
         run: |
+          cd private
           git config user.name  "job-scout-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data/digests/ || true
+          git add data/digests/ data/tracker.csv || true
           git commit -m "chore: daily scout digest $(date -u +%F)" || echo "nothing to commit"
           git push || echo "nothing to push"
