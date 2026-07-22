@@ -2,6 +2,10 @@ name: daily-scout
 # Scheduled discovery sweep — the "runs while you sleep" piece.
 # This is NOT a continuously-thinking agent; it is a cron trigger that wakes Claude Code
 # headless, runs the job-scout skill once, commits the digest, and stops.
+#
+# PRIVACY: digests and the watchlist name the companies you are targeting. This workflow
+# therefore refuses to run in a public repository — run it from a PRIVATE copy of the repo
+# (not a fork; forks of public repos are always public). See README → Scheduled scout.
 
 on:
   schedule:
@@ -12,9 +16,27 @@ jobs:
   scout:
     runs-on: ubuntu-latest
     permissions:
-      contents: write        # to commit the digest back to the repo
+      contents: write        # to commit the digest back to the (private) repo
     steps:
+      - name: Privacy guard — refuse to run in a public repo
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(gh api "repos/${GITHUB_REPOSITORY}" --jq .private)" != "true" ]; then
+            echo "::error::This repository is PUBLIC. The scout reads your private watchlist and writes digests naming your target companies; on a public repo its logs, artifacts, and commits would all be visible to anyone. Run it from a private copy instead — see README → Scheduled scout."
+            exit 1
+          fi
+
       - uses: actions/checkout@v4
+
+      - name: Check scout inputs are present
+        # watchlist.txt and config.yaml are gitignored in the public repo; in your private
+        # copy they must be committed (force-added) or the checkout arrives without them.
+        run: |
+          if [ ! -f .claude/skills/job-scout/watchlist.txt ]; then
+            echo "::error::No watchlist found in this copy. Commit your scout inputs: git add -f .claude/skills/job-scout/watchlist.txt .claude/skills/job-scout/config.yaml && git commit && git push"
+            exit 1
+          fi
 
       - name: Install rtk (compresses command output before it reaches the model)
         # The committed .claude/settings.json PreToolUse hook rewrites shell
@@ -37,9 +59,11 @@ jobs:
             --allowedTools "Read,Write,Bash,WebSearch"
 
       - name: Commit digest
+        # -f because data/digests/*.md is gitignored (a safety net for the public repo);
+        # the privacy guard above guarantees we only ever get here in a private one.
         run: |
           git config user.name  "job-scout-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data/digests/ || true
+          git add -f data/digests/
           git commit -m "chore: daily scout digest $(date -u +%F)" || echo "nothing to commit"
           git push || echo "nothing to push"
