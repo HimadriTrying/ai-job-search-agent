@@ -85,10 +85,10 @@
 
   /* about me */
   .whoami{display:grid;grid-template-columns:200px 1fr;gap:44px;align-items:center;max-width:860px}
-  @media(max-width:640px){.whoami{grid-template-columns:1fr;gap:26px}}
+  @media(max-width:640px){.whoami{grid-template-columns:1fr;gap:26px;text-align:left}}
   .pfp{position:relative;width:200px;height:200px;border-radius:50%;padding:5px;
     background:var(--grad)}
-  @media(max-width:640px){.pfp{width:150px;height:150px}}
+  @media(max-width:640px){.pfp{width:150px;height:150px;margin:0 auto}}
   .pfp .disc{position:absolute;inset:5px;border-radius:50%;overflow:hidden;
     background:radial-gradient(120% 120% at 30% 20%,#f9d8e7,#d6c8fb 55%,#fbd9c4)}
   .pfp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
@@ -113,31 +113,45 @@
     .marq-track img.dup{display:none}}
 
   .funnel{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .stages{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:900px;margin:0 auto}
-  @media(max-width:720px){.stages{grid-template-columns:1fr}}
-  .stg{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 26px;
-    display:grid;grid-template-columns:40px 1fr;gap:18px;align-items:start;
-    transition:opacity .55s ease,transform .55s ease}
-  .js .stg{opacity:0;transform:translateY(16px)}
-  .js .stg.in{opacity:1;transform:none}
-  .stg .idx{font-family:var(--sans);font-weight:600;font-size:.82rem;color:#fff;
-    border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center}
-  .stg:nth-child(1) .idx{background:linear-gradient(140deg,#ee5f9d,#8d4bd6)}
-  .stg:nth-child(2) .idx{background:linear-gradient(140deg,#7c5cf0,#4630b8)}
-  .stg:nth-child(3) .idx{background:linear-gradient(140deg,#f2793f,#e9518f)}
-  .stg:nth-child(4) .idx{background:linear-gradient(140deg,#4fb8e8,#7c5cf0)}
-  .stg:nth-child(5) .idx{background:linear-gradient(140deg,#e9518f,#7c5cf0)}
-  .stg:nth-child(6) .idx{background:linear-gradient(140deg,#8d4bd6,#f2793f)}
-  .stg h3{font-family:var(--display);font-weight:500;font-size:1.24rem;letter-spacing:-.01em;margin-bottom:5px}
-  .stg p{font-size:.95rem;color:var(--ink-2);line-height:1.55}
-  .stg .say{display:inline-block;margin-top:12px;font-size:.84rem;color:var(--violet);
+  /* animated six-stage funnel */
+  .fseq{max-width:860px;margin:0 auto}
+  .frail{position:relative;display:flex;justify-content:space-between;align-items:flex-start;
+    margin:8px 4px 28px}
+  .frail::before{content:'';position:absolute;left:24px;right:24px;top:20px;height:3px;
+    background:var(--line);border-radius:99px}
+  .fprog{position:absolute;left:24px;top:20px;height:3px;max-width:calc(100% - 48px);
+    background:var(--grad);border-radius:99px;width:0;transition:width .5s ease}
+  .fnode{position:relative;z-index:1;background:none;border:0;cursor:pointer;padding:0;
+    display:flex;flex-direction:column;align-items:center;gap:10px;font-family:var(--sans);width:92px}
+  .fnode .fdot{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--line);
+    color:var(--ink-3);font-weight:600;font-size:.8rem;display:flex;align-items:center;
+    justify-content:center;transition:.25s}
+  .fnode.past .fdot{border-color:transparent;color:var(--violet);
+    background:linear-gradient(#fff,#fff) padding-box,var(--grad) border-box}
+  .fnode.on .fdot{background:var(--grad);border-color:transparent;color:#fff;
+    transform:scale(1.12);box-shadow:0 6px 16px rgba(124,92,240,.35)}
+  .fnode .flab{font-size:.78rem;font-weight:500;color:var(--ink-3);line-height:1.25}
+  .fnode.on .flab{color:var(--ink);font-weight:600}
+  @media(max-width:680px){
+    .fnode{width:auto}
+    .fnode .flab{display:none}
+    .fnode .fdot{width:34px;height:34px;font-size:.74rem}
+    .frail::before{left:17px;right:17px;top:17px}
+    .fprog{left:17px;top:17px;max-width:calc(100% - 34px)}}
+  .fpanel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 28px;
+    margin-bottom:12px}
+  .js .fpanel{display:none;margin-bottom:0}
+  .js .fpanel.on{display:block;animation:fadeUp .35s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .fpanel h3{font-family:var(--display);font-weight:500;font-size:1.35rem;letter-spacing:-.01em;
+    margin-bottom:7px}
+  .fpanel p{font-size:.98rem;color:var(--ink-2);line-height:1.6;max-width:62ch}
+  .fpanel .say{display:inline-block;margin-top:14px;font-size:.84rem;color:var(--violet);
     background:var(--violet-soft);border-radius:7px;padding:5px 11px}
-  .stg .say b{font-weight:600}
-  .stg.warm{border:1px solid transparent;background:
-    linear-gradient(#fff,#fff) padding-box,var(--grad) border-box}
+  .fpanel .say b{font-weight:600}
   .flag{display:inline-block;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
     color:var(--pink);border:1px solid var(--pink);border-radius:6px;padding:2px 8px;margin-bottom:9px}
-  @media(max-width:640px){.stg{padding:20px;gap:15px}}
+  @media(max-width:640px){.fpanel{padding:20px 22px}}
 
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   @media(max-width:760px){.grid3{grid-template-columns:1fr}}
@@ -288,32 +302,47 @@
       <p>Say what you need in plain language. One orchestrator reads the intent and runs the right
         specialist behind the scenes, twelve in all, then hands you one clean result.</p>
     </div>
-    <div class="stages">
-      <div class="stg"><div class="idx">01</div><div>
+    <div class="fseq">
+      <div class="frail" role="tablist" aria-label="The six stages">
+        <div class="fprog"></div>
+        <button class="fnode" role="tab"><span class="fdot">01</span><span class="flab">Discovery</span></button>
+        <button class="fnode" role="tab"><span class="fdot">02</span><span class="flab">Fit &amp; tailoring</span></button>
+        <button class="fnode" role="tab"><span class="fdot">03</span><span class="flab">Warm path</span></button>
+        <button class="fnode" role="tab"><span class="fdot">04</span><span class="flab">Apply</span></button>
+        <button class="fnode" role="tab"><span class="fdot">05</span><span class="flab">Interview</span></button>
+        <button class="fnode" role="tab"><span class="fdot">06</span><span class="flab">Track &amp; negotiate</span></button>
+      </div>
+      <div class="fpanel">
         <h3>Discovery</h3>
         <p>Sweeps public job boards each morning, drops anything off target before spending a single model call, and scores the rest against a rubric tuned to you.</p>
-        <span class="say"><b>You wake up to:</b> apply first, worth a look, skipped.</span></div></div>
-      <div class="stg"><div class="idx">02</div><div>
+        <span class="say"><b>You wake up to:</b> apply first, worth a look, skipped.</span>
+      </div>
+      <div class="fpanel">
         <h3>Fit &amp; tailoring</h3>
         <p>A drafter rewrites your CV and cover letter for the specific role. A second, fresh-eyed reviewer critiques it like a stranger would.</p>
-        <span class="say"><b>You say:</b> tailor my CV for this one.</span></div></div>
-      <div class="stg warm"><div class="idx">03</div><div>
+        <span class="say"><b>You say:</b> tailor my CV for this one.</span>
+      </div>
+      <div class="fpanel">
         <span class="flag">the part nobody else builds</span>
         <h3>The warm path in</h3>
         <p>Scans your own network for mutual connections at the company you're applying to, then drafts the introduction. A referral beats a perfect CV.</p>
-        <span class="say"><b>You say:</b> who do I know at Stripe?</span></div></div>
-      <div class="stg"><div class="idx">04</div><div>
+        <span class="say"><b>You say:</b> who do I know at Stripe?</span>
+      </div>
+      <div class="fpanel">
         <h3>Apply, with your hand on it</h3>
         <p>Lucy fills the real application and stops at the submit line. She never sends anything without you. Two locks, one deliberate human click.</p>
-        <span class="say"><b>You do:</b> the final submit. Always.</span></div></div>
-      <div class="stg"><div class="idx">05</div><div>
+        <span class="say"><b>You do:</b> the final submit. Always.</span>
+      </div>
+      <div class="fpanel">
         <h3>Interview, from the other chair</h3>
         <p>The coach is fed the hiring side's own playbook: how interviewers score, structure loops, and read a JD. You walk in knowing what they're looking for.</p>
-        <span class="say"><b>You say:</b> get me ready for Thursday.</span></div></div>
-      <div class="stg"><div class="idx">06</div><div>
+        <span class="say"><b>You say:</b> get me ready for Thursday.</span>
+      </div>
+      <div class="fpanel">
         <h3>Track &amp; negotiate</h3>
         <p>Every application, its stage, and when to follow up, kept as durable memory. When an offer lands, she helps you hold your ground on comp.</p>
-        <span class="say"><b>You ask:</b> what should I chase this week?</span></div></div>
+        <span class="say"><b>You ask:</b> what should I chase this week?</span>
+      </div>
     </div>
   </div>
 </section>
@@ -395,8 +424,8 @@ claude
 <section id="faq">
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">FAQ</span>
-      <h2>Usage, data, and cost.</h2>
+      <span class="eyebrow">Good to know</span>
+      <h2>FAQs</h2>
     </div>
     <div class="faq-list">
       <details class="faq">
@@ -457,8 +486,27 @@ claude
 
 <script>
   document.documentElement.classList.add('js');
-  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15});
-  document.querySelectorAll('.stg').forEach(s=>io.observe(s));
+  (function(){
+    const nodes=[...document.querySelectorAll('.fnode')];
+    const panels=[...document.querySelectorAll('.fpanel')];
+    const prog=document.querySelector('.fprog');
+    let cur=0,timer=null;
+    function go(n){
+      cur=n;
+      nodes.forEach((el,i)=>{
+        el.classList.toggle('on',i===n);
+        el.classList.toggle('past',i<n);
+        el.setAttribute('aria-selected',i===n?'true':'false');
+      });
+      panels.forEach((el,i)=>el.classList.toggle('on',i===n));
+      if(prog)prog.style.width=(n/(nodes.length-1)*100)+'%';
+    }
+    nodes.forEach((el,i)=>el.addEventListener('click',()=>{go(i);if(timer){clearInterval(timer);timer=null}}));
+    go(0);
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      timer=setInterval(()=>go((cur+1)%nodes.length),3800);
+    }
+  })();
 </script>
 </body>
 </html>
