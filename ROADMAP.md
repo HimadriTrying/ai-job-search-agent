@@ -1,6 +1,6 @@
 # Roadmap
 
-Where Lucy is, and where she's going. This roadmap tracks the whole job-search funnel —
+Where Lucy is, and where it's going. This roadmap tracks the whole job-search funnel —
 discovery → fit → tailored docs → warm intro → apply → track → interview → offer → negotiate —
 and is deliberately honest about what actually works versus what is merely scaffolded.
 
@@ -63,7 +63,7 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
   *Hypothesis: every other feature depends on the discovery→tailored-CV loop working end-to-end on real data first.*
 
 - 🔨 **Public web page** — the project's front door: an explainer/landing page (`docs/index.html`)
-  that shows what Lucy is and why she's built this way. Being built and polished in a parallel session.
+  that shows what Lucy is and why it's built this way. Being built and polished in a parallel session.
   *Hypothesis: an open-source agent is only as credible as its front door; a clear explainer page is what turns a passing reader into someone who tries it.*
 
 - 🔨 **Try-it demo** — an interactive page (`docs/try.html`) that lets someone watch Lucy run in
