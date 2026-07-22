@@ -55,9 +55,12 @@
     border:1px solid var(--line);border-radius:999px;padding:6px 14px;background:#fff;margin-bottom:30px}
   .tag .d{width:7px;height:7px;border-radius:50%;background:var(--grad)}
   h1{font-family:var(--display);font-weight:400;font-size:clamp(2.5rem,6.5vw,4.4rem);
-    line-height:1.04;letter-spacing:-.025em;margin-bottom:24px;max-width:16ch}
+    line-height:1.04;letter-spacing:-.025em;margin-bottom:24px;max-width:16ch;min-height:2.1em}
   h1 em{font-style:italic;background:var(--grad);-webkit-background-clip:text;
     background-clip:text;color:transparent}
+  .tw-caret{display:inline-block;width:3px;height:.9em;background:var(--violet);
+    margin-left:4px;vertical-align:-.06em;animation:twblink 1s steps(1) infinite}
+  @keyframes twblink{50%{opacity:0}}
   .sub{font-size:clamp(1.05rem,2.2vw,1.28rem);color:var(--ink-2);max-width:600px;
     line-height:1.55;margin-bottom:32px}
   .row{display:flex;gap:13px;flex-wrap:wrap}
@@ -230,7 +233,7 @@
 <header class="hero" id="top">
   <div class="wrap">
     <div class="tag"><span class="d"></span> Open source · built on Claude Code</div>
-    <h1>One agent for the <em>whole</em> job search.</h1>
+    <h1 id="hero-h1">One agent for <span class="tw-wrap">the <em>whole</em> job search.</span></h1>
     <p class="sub">Most tools automate a single step. Lucy runs the entire funnel as a conversation:
       she finds roles, tailors your story, surfaces mutual connections at the companies you apply to,
       and preps you for the room.</p>
@@ -247,7 +250,7 @@
     <p style="margin-top:14px">Applying is the easy half. Everyone can see the posting, and everyone sends the same tailored CV.</p>
     <p>What actually moves the needle is quieter: <span class="turn">knowing someone on the inside.</span>
       A warm introduction changes your odds more than any keyword ever will.</p>
-    <div class="pull"><span>The job search is a funnel of six stages, and most tools solve exactly one.</span></div>
+    <div class="pull"><span>The job search is a funnel of 6 stages, and most tools solve exactly 1.</span></div>
   </div>
 </div>
 
@@ -298,9 +301,9 @@
   <div class="wrap">
     <div class="head">
       <span class="eyebrow">How Lucy works</span>
-      <h2>Six stages, one conversation.</h2>
-      <p>Say what you need in plain language. One orchestrator reads the intent and runs the right
-        specialist behind the scenes, twelve in all, then hands you one clean result.</p>
+      <h2>6 stages, 1 conversation.</h2>
+      <p>Say what you need in plain language. Behind the scenes, 1 orchestrator reads the intent and
+        runs the right specialist, 12 in all, then hands you 1 clean result.</p>
     </div>
     <div class="fseq">
       <div class="frail" role="tablist" aria-label="The six stages">
@@ -330,7 +333,7 @@
       </div>
       <div class="fpanel">
         <h3>Apply, with your hand on it</h3>
-        <p>Lucy fills the real application and stops at the submit line. She never sends anything without you. Two locks, one deliberate human click.</p>
+        <p>Lucy fills the real application and stops at the submit line. She never sends anything without you. 2 locks, 1 deliberate human click.</p>
         <span class="say"><b>You do:</b> the final submit. Always.</span>
       </div>
       <div class="fpanel">
@@ -352,7 +355,7 @@
     <div class="head">
       <span class="eyebrow">Getting started</span>
       <h2>How you'd actually use it.</h2>
-      <p>Lucy runs on Claude Code. Set her up once, then just talk to her whenever you're job hunting. Four steps to your first tailored application.</p>
+      <p>Lucy runs on Claude Code. Set her up once, then just talk to her whenever you're job hunting. 4 steps to your first tailored application.</p>
     </div>
     <div class="quickstart">
       <div class="qs-bar"><span class="qs-dot"></span><span class="qs-dot"></span><span class="qs-dot"></span><span class="qs-label">your terminal</span></div>
@@ -401,7 +404,7 @@ claude
 <section>
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">Three rules it won't break</span>
+      <span class="eyebrow">3 rules it won't break</span>
       <h2>What makes it trustworthy.</h2>
     </div>
     <div class="grid3">
@@ -450,7 +453,7 @@ claude
       <details class="faq">
         <summary>Will it apply to jobs without me?<span class="plus">＋</span></summary>
         <div class="a">Never. Lucy stops at every point of commitment. Applications, outreach messages,
-          and offer decisions always wait for your explicit go-ahead, behind two independent
+          and offer decisions always wait for your explicit go-ahead, behind 2 independent
           confirmation locks.</div>
       </details>
       <details class="faq">
@@ -487,6 +490,37 @@ claude
 <script>
   document.documentElement.classList.add('js');
   (function(){
+    // typewriter headline: cycles use cases, lands on the full promise
+    const wrap=document.querySelector('#hero-h1 .tw-wrap');
+    const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(wrap&&!reduce){
+      const finalHTML=wrap.innerHTML;
+      const phrases=['applying.','tailoring your CV.','interview prep.','warm intros.'];
+      const FINAL='the whole job search.';
+      wrap.innerHTML='';
+      const txt=document.createElement('span');
+      const caret=document.createElement('span');caret.className='tw-caret';
+      wrap.append(txt,caret);
+      let p=0;
+      function type(str,i,done){
+        txt.textContent=str.slice(0,i);
+        if(i<str.length)setTimeout(()=>type(str,i+1,done),55);else done();
+      }
+      function erase(done){
+        const s=txt.textContent;
+        if(s.length){txt.textContent=s.slice(0,-1);setTimeout(()=>erase(done),28)}else done();
+      }
+      function next(){
+        if(p<phrases.length){
+          type(phrases[p],0,()=>setTimeout(()=>erase(()=>{p++;next()}),1150));
+        }else{
+          type(FINAL,0,()=>{wrap.innerHTML=finalHTML;
+            const c=document.createElement('span');c.className='tw-caret';wrap.append(c);
+            setTimeout(()=>c.remove(),4000)});
+        }
+      }
+      setTimeout(next,500);
+    }
     const nodes=[...document.querySelectorAll('.fnode')];
     const panels=[...document.querySelectorAll('.fpanel')];
     const prog=document.querySelector('.fprog');
