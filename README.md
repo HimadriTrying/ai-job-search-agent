@@ -236,6 +236,25 @@ Ideas, feature requests, and PRs are welcome:
 This is a multi-agent system on Claude Code: skills, subagent orchestration, an evals-style
 honesty gate, scheduled headless runs. For an AI-product role, the repo is the work sample.
 
+### Architecture at a glance
+
+```mermaid
+flowchart LR
+    U([You]) <--> L["Lucy — orchestrator<br/>(CLAUDE.md)"]
+    L --> S["12 specialist skills<br/>(.claude/skills/)"]
+    S <--> T[("data/tracker.csv<br/>funnel state")]
+    S -- outbound docs --> R["Fresh-context Reviewer<br/>(subagent)"]
+    R --> H{"Honesty gate<br/>honesty/verify.py"}
+    F[("career_facts.yaml<br/>frozen truth")] --> H
+    H -- passes --> U
+    H -- fails: fix the doc --> S
+    G["GitHub Actions<br/>daily scout"] --> D[("data/digests/")]
+```
+
+Every outbound document flows through the Reviewer and then the code-enforced honesty gate
+before it reaches you; nothing is ever submitted anywhere except by you. The scheduled scout
+is the only piece that runs unattended, and it only ever writes a digest.
+
 ## Repo layout
 
 ```
