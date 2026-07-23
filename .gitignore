@@ -30,6 +30,8 @@ profile/07-interview-prep.md
 *.aux
 *.log
 *.out
+__pycache__/
+*.pyc
 
 # Env / secrets
 .env
