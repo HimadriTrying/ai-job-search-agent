@@ -49,6 +49,45 @@ def load_watchlist() -> list[str]:
     return []
 
 
+def backfill_sr_descriptions(jobs: list[dict], cfg: dict,
+                             fetch=None) -> int:
+    """SmartRecruiters list results carry no description, which let those roles dodge
+    every description-based gate, penalty, and bonus — they scored a constant 0.
+    Fetch the posting detail, but only for jobs whose title already passes the cheap
+    title-only gates, so the sweep stays cheap. Returns how many fetches came back empty
+    (those roles are still scored, just without a description — disclosed in the digest).
+    """
+    from scout.seniority import passes_seniority
+    fetch = fetch or ats.fetch_sr_description
+    failed = 0
+    for j in jobs:
+        if j.get("source") != "smartrecruiters" or j.get("description"):
+            continue
+        if not filters.keyword_prefilter(j.get("title", ""), cfg.get("must_have_keywords", []))[0]:
+            continue
+        if not passes_seniority(j.get("title", ""), cfg.get("min_seniority", "senior"),
+                                cfg.get("max_seniority"), cfg.get("keep_ambiguous", False))[0]:
+            continue
+        desc = fetch(j.get("company", ""), j.get("id", ""))
+        if desc:
+            j["description"] = desc
+        else:
+            failed += 1
+    return failed
+
+
+def watchlist_health(n_entries: int, n_errors: int, threshold: float = 0.3):
+    """A mostly-dead watchlist produces an empty digest that reads like a quiet day.
+    Fail the run loudly instead when too many entries error, so slug drift gets fixed
+    instead of silently starving discovery. Returns (ok, message)."""
+    if n_entries and n_errors / n_entries > threshold:
+        return False, (f"{n_errors}/{n_entries} watchlist entries failed to fetch "
+                       f"(over {int(threshold * 100)}%). The watchlist looks stale — an empty "
+                       "digest would be misleading, so this run fails. Fix the ats:token "
+                       "slugs in watchlist.txt (a 404 usually means the board moved).")
+    return True, ""
+
+
 def apply_pipeline(jobs: list[dict], cfg: dict):
     """Return (buckets, dropped) where dropped is a list of (job, reason)."""
     buckets = {"apply first": [], "worth a look": [], "skipped": []}
@@ -116,15 +155,23 @@ def main() -> int:
     cfg = load_config()
 
     errors = []
+    n_entries = 0
     if args.offline:
         jobs = json.loads(Path(args.offline).read_text())
     else:
         jobs = []
-        for entry in load_watchlist():
+        entries = load_watchlist()
+        n_entries = len(entries)
+        for entry in entries:
             got, err = ats.fetch_company(entry)
             jobs.extend(got)
             if err:
                 errors.append(err)
+        n_fetch_errors = len(errors)
+        sr_failed = backfill_sr_descriptions(jobs, cfg)
+        if sr_failed:
+            errors.append(f"smartrecruiters: {sr_failed} posting-detail fetch(es) failed; "
+                          "those roles were scored without a description")
 
     buckets, dropped = apply_pipeline(jobs, cfg)
     path = write_digest(buckets, dropped, errors)
@@ -135,6 +182,12 @@ def main() -> int:
     print(f"Digest: {path}")
     if errors:
         print(f"({len(errors)} fetch error(s) — see digest)")
+    if not args.offline:
+        ok, msg = watchlist_health(n_entries, n_fetch_errors,
+                                   float(cfg.get("max_fetch_error_ratio", 0.3)))
+        if not ok:
+            print(f"ERROR: {msg}", file=sys.stderr)
+            return 1
     return 0
 
 

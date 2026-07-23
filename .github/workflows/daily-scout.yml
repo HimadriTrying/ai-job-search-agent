@@ -50,13 +50,17 @@ jobs:
       - name: Run job-scout headless
         # Claude Code can run as a one-shot CLI without a TTY — that is what makes
         # scheduled jobs and CI integration possible.
+        # Tool grant is least-privilege: the sweep is one deterministic script, so the
+        # model gets Read plus exactly that command — not blanket Bash on a cron job
+        # in a repo with contents:write.
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           npm install -g @anthropic-ai/claude-code
-          claude -p "Run the job-scout skill: sweep the watchlist, score against the rubric, \
-            write today's digest to data/digests/, and stop. Do not tailor anything." \
-            --allowedTools "Read,Write,Bash,WebSearch"
+          claude -p "Run the daily job-scout sweep: execute 'python3 .claude/skills/job-scout/run.py', \
+            report the digest path it prints, and stop. If the script exits non-zero, say why \
+            (its stderr explains) and stop — do not work around it. Do not tailor anything." \
+            --allowedTools "Read,Bash(python3 .claude/skills/job-scout/run.py:*),Bash(python .claude/skills/job-scout/run.py:*),Bash(pip install pyyaml),Bash(pip3 install pyyaml)"
 
       - name: Commit digest
         # -f because data/digests/*.md is gitignored (a safety net for the public repo);

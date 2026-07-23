@@ -25,6 +25,9 @@ ENDPOINTS = {
     "smartrecruiters": "https://api.smartrecruiters.com/v1/companies/{token}/postings",
 }
 
+# SmartRecruiters list results carry no description; full text needs a per-posting call.
+SR_POSTING = "https://api.smartrecruiters.com/v1/companies/{token}/postings/{id}"
+
 
 def fetch_json(url: str):
     """Live GET returning parsed JSON. Raises on network/HTTP error (caller handles)."""
@@ -108,6 +111,28 @@ def _norm_smartrecruiters(data: dict, company: str) -> list[dict]:
             "source": "smartrecruiters", "company": company,
         })
     return out
+
+
+def sr_description_from_posting(data: dict) -> str:
+    """Extract the full text from a SmartRecruiters posting-detail payload.
+    Pure parsing, unit-testable offline."""
+    sections = (data.get("jobAd") or {}).get("sections") or {}
+    parts = []
+    for key in ("companyDescription", "jobDescription", "qualifications", "additionalInformation"):
+        sec = sections.get(key) or {}
+        if sec.get("text"):
+            parts.append(sec["text"])
+    return "\n".join(parts)
+
+
+def fetch_sr_description(company: str, posting_id: str) -> str:
+    """Live detail fetch; returns '' on any failure so one missing posting never
+    crashes the sweep (the caller records how many came back empty)."""
+    try:
+        return sr_description_from_posting(
+            fetch_json(SR_POSTING.format(token=company, id=posting_id)))
+    except Exception:  # noqa: BLE001 - deliberately broad; degraded, not fatal
+        return ""
 
 
 _NORMALIZERS = {

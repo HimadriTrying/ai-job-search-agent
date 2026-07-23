@@ -16,5 +16,10 @@ ai_terms: ["ai", "ml", "llm", "genai", "machine learning"]
 comp_floor: null            # e.g. 95000  (penalty only applies if a job discloses comp)
 
 # Bucket thresholds
+# Fail the live sweep when more than this share of watchlist entries error out —
+# a mostly-dead watchlist would otherwise produce an empty digest that reads like
+# a quiet day instead of a broken one.
+max_fetch_error_ratio: 0.3
+
 apply_first_at: 2
 worth_a_look_at: 0
