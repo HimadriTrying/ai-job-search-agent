@@ -52,6 +52,37 @@ def test_scoring_buckets():
     assert scoring.score_job(weak, cfg).bucket == "skipped"
 
 
+def test_scoring_matches_whole_words_only():
+    cfg = {"ai_terms": ["ai", "ml"], "nice_to_have_keywords": [],
+           "apply_first_at": 2, "worth_a_look_at": 0}
+    # "Email careers@", "available", "detail" all contain "ai"/"ml" as substrings;
+    # none of them is an AI signal. This JD must NOT get the +2 AI bonus.
+    billing = {"title": "Senior Product Manager, Billing",
+               "description": ("Own the billing roadmap and pricing strategy. Email "
+                               "careers@example.com with detail on your background. "
+                               "More information available on request. ") * 6}
+    v = scoring.score_job(billing, cfg)
+    assert not any("AI-forward" in r for r in v.reasons), v.reasons
+    assert v.bucket != "apply first"
+    # A real whole-word mention still scores.
+    real_ai = {"title": "Senior Product Manager, AI Assistants",
+               "description": "Set the strategy and roadmap for our AI assistant. " * 12}
+    assert any("AI-forward" in r for r in scoring.score_job(real_ai, cfg).reasons)
+
+
+def test_scoring_ignores_html_markup():
+    cfg = {"ai_terms": ["ai"], "nice_to_have_keywords": ["b2b"],
+           "apply_first_at": 2, "worth_a_look_at": 0}
+    # Greenhouse-style HTML: tags/entities must not create or hide keyword hits.
+    job = {"title": "Senior Product Manager",
+           "description": ("<div class=\"main\"><p>Drive the <b>AI</b> strategy and roadmap "
+                           "for our B2B platform.</p></div>" + "<br/>" * 50 +
+                           "<p>Long form description of the role and the team.</p>" * 10)}
+    v = scoring.score_job(job, cfg)
+    assert any("AI-forward" in r for r in v.reasons)
+    assert any("b2b" in r for r in v.reasons)
+
+
 def test_ats_normalizers():
     gh = {"jobs": [{"id": 1, "title": "Senior PM", "location": {"name": "Berlin"},
                     "departments": [{"name": "Product"}], "absolute_url": "http://x", "content": "desc"}]}

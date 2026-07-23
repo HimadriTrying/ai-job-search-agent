@@ -9,6 +9,7 @@ This runs only on roles that already survived the hard drops in filters.py.
 """
 
 from __future__ import annotations
+import re
 from dataclasses import dataclass, field
 
 
@@ -20,8 +21,17 @@ class Verdict:
 
 
 def _contains_any(text: str, terms: list[str]) -> list[str]:
+    """Word-boundary matching. Substring matching made 'ai' hit 'email'/'available'
+    and put near-every JD in the top bucket — a term only counts as a whole word."""
     t = (text or "").lower()
-    return [k for k in terms if k.lower() in t]
+    return [k for k in terms
+            if k.strip() and re.search(rf"(?<!\w){re.escape(k.strip().lower())}(?!\w)", t)]
+
+
+def _strip_html(text: str) -> str:
+    """Greenhouse ships raw HTML in `content`; tags and entities must not feed the
+    keyword matcher."""
+    return re.sub(r"&[a-z#0-9]+;", " ", re.sub(r"<[^>]+>", " ", text or ""))
 
 
 def score_job(job: dict, cfg: dict) -> Verdict:
@@ -29,7 +39,7 @@ def score_job(job: dict, cfg: dict) -> Verdict:
     job: normalized dict with title, description, location, department, comp (optional).
     cfg: rubric config (see config.example.yaml). Returns a Verdict.
     """
-    text = f"{job.get('title','')} {job.get('description','')}".strip()
+    text = _strip_html(f"{job.get('title','')} {job.get('description','')}").strip()
     reasons: list[str] = []
     score = 0
 
