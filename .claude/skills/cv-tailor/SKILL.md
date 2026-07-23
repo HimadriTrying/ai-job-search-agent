@@ -22,7 +22,9 @@ and visually checked before it is shown.
    depends on it — cut the lowest total first. An older bullet that hits posting keywords
    survives ahead of a recent bullet that doesn't.
 4. Spawn the **Reviewer subagent** (fresh context) to critique; revise.
-5. **Honesty gate**: `python honesty/verify.py <draft>` — must exit 0 before presenting.
+5. **Honesty gate**: `python honesty/verify.py <draft> --target "<Company>" --job <jd-file>`
+   — must exit 0 before presenting. The flags declare the role being applied to, so naming
+   the target company or echoing the JD's own terms is not treated as fabrication.
 6. If compiling to PDF (LaTeX), **render and visually inspect**: exactly 2 pages, no orphaned
    titles, fonts consistent. Fix layout (`\needspace`, `\enlargethispage`) and re-check.
 7. Present with a verification checklist. Applying stays the human's job.
