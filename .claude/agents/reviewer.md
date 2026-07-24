@@ -16,6 +16,10 @@ the entire point: you read it the way a hiring manager who has never seen it wou
    - Missed keywords the JD clearly wants
    - Generic language that could describe anyone
    - Claims that read as spin even if technically true (flag for the honesty gate too)
+   - **Unscoped claims**: a claim true only within a scope (one market, a pilot cohort, an
+     average) must carry that scope in the written line. "Live in production" when it is
+     live in one pilot market is an overclaim built entirely from real facts — the code
+     gate cannot catch it; you are the layer that does.
    - Structure/altitude: does it read at the target seniority?
 4. Return a numbered list of concrete changes. Do not rewrite the document — you critique;
    the drafter revises.

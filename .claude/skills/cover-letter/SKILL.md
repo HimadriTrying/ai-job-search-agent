@@ -12,12 +12,16 @@ Drafts a targeted cover letter from your profile and the specific JD, then runs 
 
 ## Inputs
 `profile/06-cover-letter-notes.md`, `profile/03-writing-style.md`, `career_facts.yaml`,
-the JD, and (if available) `company-research` output.
+the JD **as a file** (see `CLAUDE.md` → "Getting the JD": unfetchable URL → ask the user
+to paste the text into `data/jd/<company>-<role>.md`; never reconstruct a JD from search
+snippets), and (if available) `company-research` output.
 
 ## Flow
 1. Pick the angle from the notes that best fits this company's actual problem.
 2. Draft in the user's voice (writing-style file). One page.
-3. Reviewer subagent (fresh context) critiques for generic language and missed hooks; revise.
+3. Reviewer subagent (fresh context) critiques for generic language and missed hooks;
+   revise. If the subagent cannot be spawned, stop and tell the user — the drafter never
+   reviews its own work as a substitute.
 4. **Honesty gate** must pass:
    `python honesty/verify.py <draft> --target "<Company>" --job <jd-file>` — the flags tell
    the gate which company/JD the letter legitimately references, so only true fabrications
