@@ -70,6 +70,17 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
   ~30 seconds without installing anything. Under construction alongside the web page.
   *Hypothesis: letting someone see Lucy run in 30 seconds without installing anything bridges the gap between "read about it" and "use it."*
 
+- 🔨 **Degrade gracefully off the happy path** — the first real-world run (a live Ashby role from
+  a restricted-network session) surfaced where a stranger's first run actually breaks: JD fetch
+  fails on JS-only ATS pages → paste-the-JD fallback (`data/jd/`, never reconstruct from search
+  snippets); session missing the profile/facts → preflight stop instead of silent improvisation
+  (plus `scripts/sync-private.sh`, which the private-repo docs referenced but which didn't exist);
+  missing LaTeX/poppler → HTML+Chromium render fallback; Reviewer unspawnable → hard stop, not
+  self-review; and written claims now carry their scope ("live in one pilot market", not "live in
+  production") — a Reviewer rule, since the code gate can't catch true-but-unscoped.
+  *Hypothesis: launch visitors run Lucy in hostile environments — blocked networks, missing tools,
+  half-set-up clones — so the first-run experience is decided by failure handling, not the happy path.*
+
 ---
 
 ## Next

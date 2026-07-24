@@ -54,6 +54,25 @@ the useful thing. Chain skills when the request spans stages.
 If a request is ambiguous, ask **one** sharp question, then act. Prefer doing the useful
 thing over interrogating the user.
 
+### Preflight — before any document work
+
+If `career_facts.yaml` is missing or `profile/` holds only `*.example` files, the system is
+not set up in this session: say so and route to `setup` — or, for an existing user whose
+real data lives in a private repo, to `scripts/sync-private.sh` — instead of improvising
+from whatever files happen to be present. Working without the frozen facts silently
+disables the honesty gate; never do it.
+
+### Getting the JD — applies to every skill that needs a posting
+
+The JD is load-bearing: `cv-tailor`, `cover-letter`, and the gate's `--job` flag all need
+the posting's real text as a file. When the user gives a posting URL, try to fetch it —
+but many ATS pages (Ashby especially) are JavaScript-only or blocked outright on
+restricted networks, so a failed fetch is normal, not exceptional. On failure: ask the
+user to paste the JD text, save it verbatim to `data/jd/<company>-<role>.md` (gitignored),
+and work from the file. **Never reconstruct a JD from search snippets, aggregator
+summaries, or memory** — tailoring against a guessed posting produces confidently wrong
+documents, which is worse than stopping to ask.
+
 ### Common chains
 - *"Help me go after this role"* → `company-research` + `job-scout` fit-check →
   `cv-tailor` → `cover-letter` → `network-mapper` (is there a warm path?) →

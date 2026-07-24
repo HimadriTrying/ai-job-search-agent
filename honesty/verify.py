@@ -99,6 +99,13 @@ def known_strings(facts: dict) -> set[str]:
         for k in ("company", "title"):
             if e.get(k):
                 out.add(e[k].strip().lower())
+        # Fact TEXT is quotable, not just fact names: a proper noun the user
+        # literally wrote in their own metrics/scope ("IBM Cloud", "Investor
+        # Club") is not an invention when a document reuses it. Numbers are
+        # unaffected — claim_numbers() keeps its own scoping.
+        for line in list(e.get("metrics") or []) + list(e.get("scope") or []):
+            if line:
+                out.add(str(line).strip().lower())
     for ed in facts.get("education") or []:
         for k in ("institution", "credential"):
             if ed.get(k):
@@ -191,7 +198,9 @@ def known_credentials(facts: dict) -> set[str]:
 # Capitalised multi-word phrases are candidate org/credential names.
 # No '.' inside, and we split on sentence/line boundaries before matching.
 ORG_LIKE = re.compile(r"\b([A-Z][a-zA-Z0-9&]+(?:\s+[A-Z][a-zA-Z0-9&]+){1,3})\b")
-CERT_CUES = re.compile(r"\b(certified|certificate|certification|PMP|CSPO|CSM|MBA|PhD)\b", re.I)
+# "self-certification" / "self-certified" are regulatory process vocabulary
+# (e.g. FCA self-certification), not claims of holding a credential.
+CERT_CUES = re.compile(r"(?<!self-)\b(certified|certificate|certification|PMP|CSPO|CSM|MBA|PhD)\b", re.I)
 METRIC = re.compile(r"\b\d+(?:\.\d+)?%?\b")
 
 # Words that look capitalised but are never a fabrication signal.
