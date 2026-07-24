@@ -31,7 +31,8 @@ FACTS = {
             "start": "2019-03",
             "end": "2022-06",
             "metrics": ["Grew activation 18% over two quarters"],
-            "scope": ["Owned roadmap for 3 squads, ~25 engineers"],
+            "scope": ["Owned roadmap for 3 squads, ~25 engineers",
+                      "Partnered with Iberia Cloud on data infrastructure"],
         },
         {
             "company": "Beacon Labs",
@@ -133,6 +134,18 @@ def test_uncredentialed_certification_still_flagged():
 def test_real_credential_passes():
     doc = "I completed an MSc Information Systems at the University of Coimbra in 2014."
     assert findings_for(doc) == []
+
+
+def test_fact_text_phrases_are_quotable():
+    # "Iberia Cloud" appears only inside a scope string — reusing it is not invention.
+    doc = "I partnered with Iberia Cloud on data infrastructure."
+    assert findings_for(doc) == []
+
+
+def test_self_certification_is_process_vocabulary_not_credential():
+    # Regulatory flows like FCA self-certification are not credential claims.
+    doc = "Built the self-certification flow for UK onboarding."
+    assert not any("certification cue" in f for f in findings_for(doc))
 
 
 # ── Job-posting context ──────────────────────────────────────────────────────
