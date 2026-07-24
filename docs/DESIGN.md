@@ -41,10 +41,12 @@ page closes on the same CTA it opened with.
 
 - **Copy rules are enforced in code.** No em or en dashes in `docs/*.html`; quantities as
   numerals ("11 years"). See `scripts/check-copy-style.sh`, wired as a PostToolUse hook.
-- **The 6 stages read left to right as clickable cards**, not a top-to-bottom stack. All 6
-  visible at once; the clicked card takes the brand gradient (that color flip is the
-  interaction the owner asked for); a slim strip below shows the active stage's diagram and
-  example phrase. Auto-advance until first click, then the visitor drives.
+- **The 6 stages keep the numbered rail with 1 panel at a time** (auto-advancing, click a
+  node to pin). A full left-to-right card grid was tried on 2026-07-23 and the owner
+  preferred the rail; do not reintroduce the grid for the stages.
+- **The click-to-light-up interaction lives on the 3 rule cards** ("3 rules it can't
+  break"): clicking a card flips it to the brand gradient. Keyboard accessible
+  (Enter/Space, aria-pressed).
 - **Every stage gets a small SVG diagram** in the brand palette, decorative and aria-hidden,
   hidden on small screens. No invented numbers inside diagrams: the honesty rule covers
   pictures too.

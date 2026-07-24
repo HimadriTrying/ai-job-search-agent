@@ -112,37 +112,49 @@
   @keyframes marq{to{transform:translateX(-50%)}}
 
   .funnel{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  /* stage cards: all 6 visible left to right, click a card to light it up */
-  .fseq{max-width:900px;margin:0 auto}
-  .fcards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  @media(max-width:760px){.fcards{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:500px){.fcards{grid-template-columns:1fr}}
-  .fcard{position:relative;text-align:left;cursor:pointer;background:#fff;border:1px solid var(--line);
-    border-radius:16px;padding:18px 18px 16px;font-family:var(--sans);
-    transition:transform .18s,box-shadow .18s,border-color .18s,background .18s;
-    display:flex;flex-direction:column;align-items:flex-start;gap:7px}
-  .fcard:hover{transform:translateY(-2px);border-color:var(--violet)}
-  .fcard .fnum{font-family:var(--display);font-size:.92rem;color:var(--ink-3)}
-  .fcard .ft{font-family:var(--display);font-weight:500;font-size:1.12rem;letter-spacing:-.01em;color:var(--ink)}
-  .fcard p{font-size:.87rem;color:var(--ink-2);line-height:1.5}
-  .fcard.on{background:var(--grad);border-color:transparent;transform:translateY(-2px);
-    box-shadow:0 12px 28px rgba(124,92,240,.32)}
-  .fcard.on .fnum,.fcard.on .ft{color:#fff}
-  .fcard.on p{color:rgba(255,255,255,.88)}
-  .fcard.on .flag{color:#fff;border-color:rgba(255,255,255,.65)}
-  .fdetail{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:16px;
-    padding:20px 26px;display:flex;align-items:center;gap:26px;justify-content:space-between}
-  .js .fdetail{display:none}
-  .js .fdetail.on{display:flex;animation:fadeUp .35s ease}
+  /* animated 6-stage funnel */
+  .fseq{max-width:860px;margin:0 auto}
+  .frail{position:relative;display:flex;justify-content:space-between;align-items:flex-start;
+    margin:8px 4px 28px}
+  .frail::before{content:'';position:absolute;left:24px;right:24px;top:20px;height:3px;
+    background:var(--line);border-radius:99px}
+  .fprog{position:absolute;left:24px;top:20px;height:3px;max-width:calc(100% - 48px);
+    background:var(--grad);border-radius:99px;width:0;transition:width .5s ease}
+  .fnode{position:relative;z-index:1;background:none;border:0;cursor:pointer;padding:0;
+    display:flex;flex-direction:column;align-items:center;gap:10px;font-family:var(--sans);width:92px}
+  .fnode .fdot{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--line);
+    color:var(--ink-3);font-weight:600;font-size:.8rem;display:flex;align-items:center;
+    justify-content:center;transition:.25s}
+  .fnode.past .fdot{border-color:transparent;color:var(--violet);
+    background:linear-gradient(#fff,#fff) padding-box,var(--grad) border-box}
+  .fnode.on .fdot{background:var(--grad);border-color:transparent;color:#fff;
+    transform:scale(1.12);box-shadow:0 6px 16px rgba(124,92,240,.35)}
+  .fnode .flab{font-size:.78rem;font-weight:500;color:var(--ink-3);line-height:1.25}
+  .fnode.on .flab{color:var(--ink);font-weight:600}
+  @media(max-width:680px){
+    .fnode{width:auto}
+    .fnode .flab{display:none}
+    .fnode .fdot{width:34px;height:34px;font-size:.74rem}
+    .frail::before{left:17px;right:17px;top:17px}
+    .fprog{left:17px;top:17px;max-width:calc(100% - 34px)}}
+  .fpanel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 28px;
+    margin-bottom:12px}
+  .js .fpanel{display:none;margin-bottom:0}
+  .js .fpanel.on{display:block;animation:fadeUp .35s ease}
   @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .fdetail .say{display:inline-block;font-size:.9rem;color:var(--violet);
-    background:var(--violet-soft);border-radius:8px;padding:8px 13px}
-  .fdetail .say b{font-weight:600}
+  .fpanel h3{font-family:var(--display);font-weight:500;font-size:1.35rem;letter-spacing:-.01em;
+    margin-bottom:7px}
+  .fpanel p{font-size:.98rem;color:var(--ink-2);line-height:1.6;max-width:62ch}
+  .fpanel .say{display:inline-block;margin-top:14px;font-size:.84rem;color:var(--violet);
+    background:var(--violet-soft);border-radius:7px;padding:5px 11px}
+  .fpanel .say b{font-weight:600}
   .flag{display:inline-block;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--pink);border:1px solid var(--pink);border-radius:6px;padding:2px 8px}
+    color:var(--pink);border:1px solid var(--pink);border-radius:6px;padding:2px 8px;margin-bottom:9px}
+  @media(max-width:640px){.fpanel{padding:20px 22px}}
+  .fgrid{display:grid;grid-template-columns:1fr 250px;gap:28px;align-items:center}
   .fviz{width:250px;height:175px;flex:none}
   .fviz text{font-family:var(--sans);font-size:9.5px;fill:var(--ink-3)}
-  @media(max-width:680px){.fdetail{justify-content:flex-start}.fviz{display:none}}
+  @media(max-width:680px){.fgrid{grid-template-columns:1fr}.fviz{display:none}}
 
   /* closing CTA */
   .cta-end{position:relative;padding:96px 0;text-align:center;border-top:1px solid var(--line);
@@ -168,6 +180,15 @@
   .card:nth-child(3) .ico{background:#fdf1e9;color:var(--orange)}
   .card h4{font-family:var(--display);font-weight:500;font-size:1.2rem;margin-bottom:9px}
   .card p{font-size:.96rem;color:var(--ink-2);line-height:1.55}
+  /* click a rule card to light it up */
+  .grid3 .card{cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s,background .18s}
+  .grid3 .card:hover{transform:translateY(-2px);border-color:var(--violet)}
+  .grid3 .card:focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+  .grid3 .card.on{background:var(--grad);border-color:transparent;transform:translateY(-2px);
+    box-shadow:0 12px 28px rgba(124,92,240,.32)}
+  .grid3 .card.on h4{color:#fff}
+  .grid3 .card.on p{color:rgba(255,255,255,.88)}
+  .grid3 .card.on .ico{background:rgba(255,255,255,.2);color:#fff}
 
   /* getting started */
   .start{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -309,23 +330,23 @@
         12 in all, and hands back 1 clean result.</p>
     </div>
     <div class="fseq">
-      <div class="fcards" role="tablist" aria-label="The 6 stages">
-        <button class="fcard" role="tab"><span class="fnum">01</span><span class="ft">Discovery</span>
-          <p>Sweeps the boards each morning and scores what's new against your rubric.</p></button>
-        <button class="fcard" role="tab"><span class="fnum">02</span><span class="ft">Fit &amp; tailoring</span>
-          <p>Rewrites your CV and cover letter for the role. A fresh reviewer critiques it.</p></button>
-        <button class="fcard" role="tab"><span class="flag">nobody else builds this</span><span class="ft">The warm path in</span>
-          <p>Finds mutual connections at the company and drafts the intro.</p></button>
-        <button class="fcard" role="tab"><span class="fnum">04</span><span class="ft">Apply, your hand on it</span>
-          <p>Fills the real form, then stops at the submit line. The last click is yours.</p></button>
-        <button class="fcard" role="tab"><span class="fnum">05</span><span class="ft">Interview prep</span>
-          <p>Preps you with the hiring side's own playbook, from the other chair.</p></button>
-        <button class="fcard" role="tab"><span class="fnum">06</span><span class="ft">Track &amp; negotiate</span>
-          <p>Remembers every application and follow-up, then helps you hold your ground on comp.</p></button>
+      <div class="frail" role="tablist" aria-label="The 6 stages">
+        <div class="fprog"></div>
+        <button class="fnode" role="tab"><span class="fdot">01</span><span class="flab">Discovery</span></button>
+        <button class="fnode" role="tab"><span class="fdot">02</span><span class="flab">Fit &amp; tailoring</span></button>
+        <button class="fnode" role="tab"><span class="fdot">03</span><span class="flab">Warm path</span></button>
+        <button class="fnode" role="tab"><span class="fdot">04</span><span class="flab">Apply</span></button>
+        <button class="fnode" role="tab"><span class="fdot">05</span><span class="flab">Interview</span></button>
+        <button class="fnode" role="tab"><span class="fdot">06</span><span class="flab">Track &amp; negotiate</span></button>
       </div>
-      <div class="fdetail">
-        <span class="say"><b>You wake up to:</b> apply first, worth a look, skipped.</span>
-        <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+      <div class="fpanel">
+        <div class="fgrid">
+          <div>
+            <h3>Discovery</h3>
+            <p>Sweeps public job boards each morning, drops anything off target before spending a single model call, and scores the rest against a rubric tuned to you.</p>
+            <span class="say"><b>You wake up to:</b> apply first, worth a look, skipped.</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
             <defs><linearGradient id="fg1" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0" stop-color="#e9518f"/><stop offset=".5" stop-color="#7c5cf0"/><stop offset="1" stop-color="#f2793f"/>
             </linearGradient></defs>
@@ -343,10 +364,16 @@
             <rect x="182" y="99" width="54" height="18" rx="5" fill="#e7e1dc" opacity=".2"/>
             <text x="14" y="160" opacity=".8">scored while you sleep, sorted before coffee</text>
           </svg>
+        </div>
       </div>
-      <div class="fdetail">
-        <span class="say"><b>You say:</b> tailor my CV for this one.</span>
-        <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+      <div class="fpanel">
+        <div class="fgrid">
+          <div>
+            <h3>Fit &amp; tailoring</h3>
+            <p>A drafter rewrites your CV and cover letter for the specific role. A second, fresh-eyed reviewer critiques it like a stranger would.</p>
+            <span class="say"><b>You say:</b> tailor my CV for this one.</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
             <rect x="18" y="30" width="76" height="100" rx="8" fill="#fff" stroke="#e7e1dc"/>
             <rect x="30" y="46" width="52" height="5" rx="2.5" fill="#e7e1dc"/>
             <rect x="30" y="58" width="44" height="5" rx="2.5" fill="#e7e1dc"/>
@@ -363,10 +390,17 @@
             <path d="M219 130l5 5 9-9" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             <text x="18" y="160" opacity=".8">your CV, reshaped for the role, then reviewed</text>
           </svg>
+        </div>
       </div>
-      <div class="fdetail">
-        <span class="say"><b>You say:</b> who do I know at Stripe?</span>
-        <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+      <div class="fpanel">
+        <div class="fgrid">
+          <div>
+            <span class="flag">the part nobody else builds</span>
+            <h3>The warm path in</h3>
+            <p>Scans your own network for mutual connections at the company you're applying to, then drafts the introduction. A referral beats a perfect CV.</p>
+            <span class="say"><b>You say:</b> who do I know at Stripe?</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
             <defs><linearGradient id="fg3" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0" stop-color="#e9518f"/><stop offset="1" stop-color="#7c5cf0"/>
             </linearGradient></defs>
@@ -381,10 +415,16 @@
             <text x="120" y="112" text-anchor="middle" opacity=".8">cold</text>
             <text x="120" y="160" opacity=".8" text-anchor="middle">the warm route beats the cold one</text>
           </svg>
+        </div>
       </div>
-      <div class="fdetail">
-        <span class="say"><b>You do:</b> the final submit. Always.</span>
-        <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+      <div class="fpanel">
+        <div class="fgrid">
+          <div>
+            <h3>Apply, with your hand on it</h3>
+            <p>Lucy fills the real application and stops at the submit line. It never sends anything without you. 2 locks, 1 deliberate human click.</p>
+            <span class="say"><b>You do:</b> the final submit. Always.</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
             <defs><linearGradient id="fg4" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0" stop-color="#e9518f"/><stop offset="1" stop-color="#7c5cf0"/>
             </linearGradient></defs>
@@ -404,10 +444,16 @@
             <text x="163" y="120" text-anchor="middle">your click</text>
             <text x="125" y="160" text-anchor="middle" opacity=".8">automation ends where commitment begins</text>
           </svg>
+        </div>
       </div>
-      <div class="fdetail">
-        <span class="say"><b>You say:</b> get me ready for Thursday.</span>
-        <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+      <div class="fpanel">
+        <div class="fgrid">
+          <div>
+            <h3>Interview, from the other chair</h3>
+            <p>The coach is fed the hiring side's own playbook: how interviewers score, structure loops, and read a JD. You walk in knowing what they're looking for.</p>
+            <span class="say"><b>You say:</b> get me ready for Thursday.</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
             <defs><linearGradient id="fg5" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stop-color="#e9518f"/><stop offset="1" stop-color="#7c5cf0"/>
             </linearGradient></defs>
@@ -423,10 +469,16 @@
             <text x="68" y="154" text-anchor="middle">structure</text>
             <text x="38" y="66" text-anchor="middle">stakes</text>
           </svg>
+        </div>
       </div>
-      <div class="fdetail">
-        <span class="say"><b>You ask:</b> what should I chase this week?</span>
-        <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+      <div class="fpanel">
+        <div class="fgrid">
+          <div>
+            <h3>Track &amp; negotiate</h3>
+            <p>Every application, its stage, and when to follow up, kept as durable memory. When an offer lands, it helps you hold your ground on comp.</p>
+            <span class="say"><b>You ask:</b> what should I chase this week?</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
             <defs><linearGradient id="fg6" x1="0" y1="1" x2="0" y2="0">
               <stop offset="0" stop-color="#7c5cf0"/><stop offset="1" stop-color="#e9518f"/>
             </linearGradient></defs>
@@ -443,6 +495,7 @@
             <path d="M97 57v5l3.5 2.5" fill="none" stroke="#f2793f" stroke-width="1.8" stroke-linecap="round"/>
             <text x="118" y="52">follow up due</text>
           </svg>
+        </div>
       </div>
     </div>
   </div>
@@ -502,19 +555,19 @@ claude
 <section>
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">3 rules it won't break</span>
-      <h2>What makes it trustworthy?</h2>
+      <span class="eyebrow">Why you can trust it</span>
+      <h2>3 rules it can't break.</h2>
     </div>
     <div class="grid3">
-      <div class="card">
+      <div class="card" role="button" tabindex="0" aria-pressed="false">
         <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
         <h4>Never fabricates</h4>
         <p>Every generated line is checked in code against a frozen record of your real history. Invented claims fail the build.</p></div>
-      <div class="card">
+      <div class="card" role="button" tabindex="0" aria-pressed="false">
         <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V7a5 5 0 0 1 10 0v4"/><rect x="3" y="11" width="18" height="11" rx="2"/></svg></div>
         <h4>You commit, not the agent</h4>
         <p>It automates everything up to applying, reaching out, or accepting. Then it hands you the wheel.</p></div>
-      <div class="card">
+      <div class="card" role="button" tabindex="0" aria-pressed="false">
         <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6"/><path d="M12 9v6"/></svg></div>
         <h4>Your data stays yours</h4>
         <p>Your real profile never leaves your machine. The public repo ships only templates.</p></div>
@@ -632,24 +685,36 @@ claude
       }
       setTimeout(next,500);
     }
-    // stage cards: the active card takes the gradient; its detail strip shows below.
-    // Auto-advances until the visitor clicks, then the choice is theirs.
-    const cards=[...document.querySelectorAll('.fcard')];
-    const details=[...document.querySelectorAll('.fdetail')];
+    const nodes=[...document.querySelectorAll('.fnode')];
+    const panels=[...document.querySelectorAll('.fpanel')];
+    const prog=document.querySelector('.fprog');
     let cur=0,timer=null;
     function go(n){
       cur=n;
-      cards.forEach((el,i)=>{
+      nodes.forEach((el,i)=>{
         el.classList.toggle('on',i===n);
+        el.classList.toggle('past',i<n);
         el.setAttribute('aria-selected',i===n?'true':'false');
       });
-      details.forEach((el,i)=>el.classList.toggle('on',i===n));
+      panels.forEach((el,i)=>el.classList.toggle('on',i===n));
+      if(prog)prog.style.width=(n/(nodes.length-1)*100)+'%';
     }
-    cards.forEach((el,i)=>el.addEventListener('click',()=>{go(i);if(timer){clearInterval(timer);timer=null}}));
+    nodes.forEach((el,i)=>el.addEventListener('click',()=>{go(i);if(timer){clearInterval(timer);timer=null}}));
     go(0);
     if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      timer=setInterval(()=>go((cur+1)%cards.length),4200);
+      timer=setInterval(()=>go((cur+1)%nodes.length),3800);
     }
+    // rule cards: click (or Enter/Space) lights one up in the brand gradient
+    const tcards=[...document.querySelectorAll('.grid3 .card')];
+    tcards.forEach(c=>{
+      const act=()=>{
+        const was=c.classList.contains('on');
+        tcards.forEach(x=>{x.classList.remove('on');x.setAttribute('aria-pressed','false')});
+        if(!was){c.classList.add('on');c.setAttribute('aria-pressed','true')}
+      };
+      c.addEventListener('click',act);
+      c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act()}});
+    });
   })();
 </script>
 </body>
