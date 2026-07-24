@@ -6,6 +6,7 @@ import sys, json
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
+import run as scout_run
 from scout import seniority, filters, scoring, ats
 
 
@@ -81,6 +82,53 @@ def test_scoring_ignores_html_markup():
     v = scoring.score_job(job, cfg)
     assert any("AI-forward" in r for r in v.reasons)
     assert any("b2b" in r for r in v.reasons)
+
+
+def test_sr_posting_detail_parser():
+    detail = {"jobAd": {"sections": {
+        "jobDescription": {"text": "<p>Own the AI roadmap for the platform.</p>"},
+        "qualifications": {"text": "8+ years of product experience."}}}}
+    text = ats.sr_description_from_posting(detail)
+    assert "Own the AI roadmap" in text and "8+ years" in text
+    assert ats.sr_description_from_posting({}) == ""
+
+
+def test_sr_description_backfill_is_gated_and_disclosed():
+    jobs = [
+        # senior SR role with no description -> gets a detail fetch
+        {"source": "smartrecruiters", "company": "acme", "id": "1",
+         "title": "Senior Product Manager", "description": ""},
+        # junior SR role -> title gate fails, no fetch spent on it
+        {"source": "smartrecruiters", "company": "acme", "id": "2",
+         "title": "Junior PM", "description": ""},
+        # senior SR role whose detail fetch fails -> counted, not fatal
+        {"source": "smartrecruiters", "company": "acme", "id": "3",
+         "title": "Staff Product Manager", "description": ""},
+        # non-SR job -> untouched
+        {"source": "greenhouse", "company": "acme", "id": "4",
+         "title": "Senior PM", "description": "already present"},
+    ]
+    calls = []
+    def fake_fetch(company, pid):
+        calls.append(pid)
+        return "" if pid == "3" else f"full text for {pid}"
+    failed = scout_run.backfill_sr_descriptions(jobs, {}, fetch=fake_fetch)
+    assert calls == ["1", "3"]            # junior + greenhouse never fetched
+    assert failed == 1                    # the empty detail is disclosed, not fatal
+    assert jobs[0]["description"] == "full text for 1"
+    assert jobs[1]["description"] == ""
+    assert jobs[3]["description"] == "already present"
+
+
+def test_watchlist_health_threshold():
+    ok, _ = scout_run.watchlist_health(10, 0)
+    assert ok is True
+    ok, _ = scout_run.watchlist_health(10, 3)          # exactly at 30% -> still ok
+    assert ok is True
+    ok, msg = scout_run.watchlist_health(10, 4)        # over 30% -> fail loudly
+    assert ok is False and "watchlist" in msg
+    ok, _ = scout_run.watchlist_health(0, 0)           # empty watchlist -> no divide, no fail
+    assert ok is True
 
 
 def test_ats_normalizers():

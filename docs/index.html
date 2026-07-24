@@ -112,7 +112,7 @@
   @keyframes marq{to{transform:translateX(-50%)}}
 
   .funnel{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  /* animated six-stage funnel */
+  /* animated 6-stage funnel */
   .fseq{max-width:860px;margin:0 auto}
   .frail{position:relative;display:flex;justify-content:space-between;align-items:flex-start;
     margin:8px 4px 28px}
@@ -151,6 +151,24 @@
   .flag{display:inline-block;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
     color:var(--pink);border:1px solid var(--pink);border-radius:6px;padding:2px 8px;margin-bottom:9px}
   @media(max-width:640px){.fpanel{padding:20px 22px}}
+  .fgrid{display:grid;grid-template-columns:1fr 250px;gap:28px;align-items:center}
+  .fviz{width:250px;height:175px;flex:none}
+  .fviz text{font-family:var(--sans);font-size:9.5px;fill:var(--ink-3)}
+  @media(max-width:680px){.fgrid{grid-template-columns:1fr}.fviz{display:none}}
+
+  /* closing CTA */
+  .cta-end{position:relative;padding:96px 0;text-align:center;border-top:1px solid var(--line);
+    overflow:hidden}
+  .cta-end::before{content:'';position:absolute;left:50%;top:-260px;transform:translateX(-50%);
+    width:720px;height:720px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(closest-side,rgba(233,81,143,.13),rgba(124,92,240,.09) 55%,transparent 75%)}
+  .cta-end h2{font-family:var(--display);font-weight:400;font-size:clamp(2rem,5vw,3.2rem);
+    letter-spacing:-.022em;line-height:1.08;margin:14px auto 16px;max-width:18ch}
+  .cta-end h2 em{font-style:italic;background:var(--grad);-webkit-background-clip:text;
+    background-clip:text;color:transparent}
+  .cta-end p{color:var(--ink-2);font-size:1.08rem;max-width:52ch;margin:0 auto}
+  .cta-end .row{justify-content:center;margin-top:30px}
+  @media(max-width:640px){.cta-end{padding:64px 0}}
 
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   @media(max-width:760px){.grid3{grid-template-columns:1fr}}
@@ -162,6 +180,15 @@
   .card:nth-child(3) .ico{background:#fdf1e9;color:var(--orange)}
   .card h4{font-family:var(--display);font-weight:500;font-size:1.2rem;margin-bottom:9px}
   .card p{font-size:.96rem;color:var(--ink-2);line-height:1.55}
+  /* click a rule card to light it up */
+  .grid3 .card{cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s,background .18s}
+  .grid3 .card:hover{transform:translateY(-2px);border-color:var(--violet)}
+  .grid3 .card:focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+  .grid3 .card.on{background:var(--grad);border-color:transparent;transform:translateY(-2px);
+    box-shadow:0 12px 28px rgba(124,92,240,.32)}
+  .grid3 .card.on h4{color:#fff}
+  .grid3 .card.on p{color:rgba(255,255,255,.88)}
+  .grid3 .card.on .ico{background:rgba(255,255,255,.2);color:#fff}
 
   /* getting started */
   .start{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -259,13 +286,12 @@
         <img src="assets/profile.jpg" alt="Portrait of Lucy's builder" onerror="this.remove()">
       </div>
       <div>
-        <p class="lead">I didn't build this because AI agents are having a moment. I built it because
+        <p class="lead">I guess I built this because AI agents are having a moment, but also because
           I know this problem from <em>both sides of the table.</em></p>
-        <p class="body">I've run my own job searches, coached others through theirs, and learned as much
-          from the people I worked with as they did from me. Along the way I've worked across conversational AI,
-          consumer, fintech, and enterprise software, in companies from startups to scale ups. I've hired,
-          and I've been hired, and I've seen the constraints companies and recruiters actually screen against.
-          Lucy turns that experience into a repeatable system.</p>
+        <p class="body">Over the past 11 years I've run my own job searches and coached others
+          through theirs, learning as much from the people I worked with as they did from me, all
+          while switching domains, company sizes, and geographies myself. Lucy is an attempt to turn
+          all of that experience into a repeatable system.</p>
       </div>
     </div>
     <div class="marq">
@@ -300,11 +326,11 @@
     <div class="head">
       <span class="eyebrow">How Lucy works</span>
       <h2>6 stages, 1 conversation.</h2>
-      <p>Say what you need in plain language. Behind the scenes, 1 orchestrator reads the intent and
-        runs the right specialist, 12 in all, then hands you 1 clean result.</p>
+      <p>Say what you need in plain language. 1 orchestrator routes it to the right specialist,
+        12 in all, and hands back 1 clean result.</p>
     </div>
     <div class="fseq">
-      <div class="frail" role="tablist" aria-label="The six stages">
+      <div class="frail" role="tablist" aria-label="The 6 stages">
         <div class="fprog"></div>
         <button class="fnode" role="tab"><span class="fdot">01</span><span class="flab">Discovery</span></button>
         <button class="fnode" role="tab"><span class="fdot">02</span><span class="flab">Fit &amp; tailoring</span></button>
@@ -314,35 +340,162 @@
         <button class="fnode" role="tab"><span class="fdot">06</span><span class="flab">Track &amp; negotiate</span></button>
       </div>
       <div class="fpanel">
-        <h3>Discovery</h3>
-        <p>Sweeps public job boards each morning, drops anything off target before spending a single model call, and scores the rest against a rubric tuned to you.</p>
-        <span class="say"><b>You wake up to:</b> apply first, worth a look, skipped.</span>
+        <div class="fgrid">
+          <div>
+            <h3>Discovery</h3>
+            <p>Sweeps public job boards each morning, drops anything off target before spending a single model call, and scores the rest against a rubric tuned to you.</p>
+            <span class="say"><b>You wake up to:</b> apply first, worth a look, skipped.</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+            <defs><linearGradient id="fg1" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#e9518f"/><stop offset=".5" stop-color="#7c5cf0"/><stop offset="1" stop-color="#f2793f"/>
+            </linearGradient></defs>
+            <text x="14" y="22">apply first</text>
+            <rect x="14" y="30" width="70" height="18" rx="5" fill="url(#fg1)" opacity=".9"/>
+            <rect x="14" y="53" width="70" height="18" rx="5" fill="url(#fg1)" opacity=".55"/>
+            <text x="98" y="22">worth a look</text>
+            <rect x="98" y="30" width="70" height="18" rx="5" fill="none" stroke="#7c5cf0" stroke-width="1.5"/>
+            <rect x="98" y="53" width="70" height="18" rx="5" fill="none" stroke="#7c5cf0" stroke-width="1.5" opacity=".55"/>
+            <rect x="98" y="76" width="70" height="18" rx="5" fill="none" stroke="#7c5cf0" stroke-width="1.5" opacity=".3"/>
+            <text x="182" y="22">skipped</text>
+            <rect x="182" y="30" width="54" height="18" rx="5" fill="#e7e1dc" opacity=".8"/>
+            <rect x="182" y="53" width="54" height="18" rx="5" fill="#e7e1dc" opacity=".55"/>
+            <rect x="182" y="76" width="54" height="18" rx="5" fill="#e7e1dc" opacity=".35"/>
+            <rect x="182" y="99" width="54" height="18" rx="5" fill="#e7e1dc" opacity=".2"/>
+            <text x="14" y="160" opacity=".8">scored while you sleep, sorted before coffee</text>
+          </svg>
+        </div>
       </div>
       <div class="fpanel">
-        <h3>Fit &amp; tailoring</h3>
-        <p>A drafter rewrites your CV and cover letter for the specific role. A second, fresh-eyed reviewer critiques it like a stranger would.</p>
-        <span class="say"><b>You say:</b> tailor my CV for this one.</span>
+        <div class="fgrid">
+          <div>
+            <h3>Fit &amp; tailoring</h3>
+            <p>A drafter rewrites your CV and cover letter for the specific role. A second, fresh-eyed reviewer critiques it like a stranger would.</p>
+            <span class="say"><b>You say:</b> tailor my CV for this one.</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+            <rect x="18" y="30" width="76" height="100" rx="8" fill="#fff" stroke="#e7e1dc"/>
+            <rect x="30" y="46" width="52" height="5" rx="2.5" fill="#e7e1dc"/>
+            <rect x="30" y="58" width="44" height="5" rx="2.5" fill="#e7e1dc"/>
+            <rect x="30" y="70" width="50" height="5" rx="2.5" fill="#e7e1dc"/>
+            <rect x="30" y="82" width="38" height="5" rx="2.5" fill="#e7e1dc"/>
+            <path d="M104 80h34" stroke="#7c5cf0" stroke-width="2" stroke-linecap="round"/>
+            <path d="M132 74l8 6-8 6" fill="none" stroke="#7c5cf0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="150" y="30" width="76" height="100" rx="8" fill="#fff" stroke="#7c5cf0" stroke-width="1.5"/>
+            <rect x="162" y="46" width="52" height="5" rx="2.5" fill="#7c5cf0" opacity=".7"/>
+            <rect x="162" y="58" width="40" height="5" rx="2.5" fill="#e9518f" opacity=".65"/>
+            <rect x="162" y="70" width="50" height="5" rx="2.5" fill="#7c5cf0" opacity=".45"/>
+            <rect x="162" y="82" width="34" height="5" rx="2.5" fill="#7c5cf0" opacity=".3"/>
+            <circle cx="226" cy="130" r="14" fill="#7c5cf0"/>
+            <path d="M219 130l5 5 9-9" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="18" y="160" opacity=".8">your CV, reshaped for the role, then reviewed</text>
+          </svg>
+        </div>
       </div>
       <div class="fpanel">
-        <span class="flag">the part nobody else builds</span>
-        <h3>The warm path in</h3>
-        <p>Scans your own network for mutual connections at the company you're applying to, then drafts the introduction. A referral beats a perfect CV.</p>
-        <span class="say"><b>You say:</b> who do I know at Stripe?</span>
+        <div class="fgrid">
+          <div>
+            <span class="flag">the part nobody else builds</span>
+            <h3>The warm path in</h3>
+            <p>Scans your own network for mutual connections at the company you're applying to, then drafts the introduction. A referral beats a perfect CV.</p>
+            <span class="say"><b>You say:</b> who do I know at Stripe?</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+            <defs><linearGradient id="fg3" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#e9518f"/><stop offset="1" stop-color="#7c5cf0"/>
+            </linearGradient></defs>
+            <path d="M42 92 C 80 30, 150 30, 196 76" fill="none" stroke="url(#fg3)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M42 92 L 196 92" stroke="#e7e1dc" stroke-width="2" stroke-dasharray="4 6" stroke-linecap="round"/>
+            <circle cx="42" cy="92" r="15" fill="#e9518f"/>
+            <text x="42" y="126" text-anchor="middle">you</text>
+            <circle cx="119" cy="46" r="12" fill="#7c5cf0"/>
+            <text x="119" y="26" text-anchor="middle">a mutual</text>
+            <rect x="180" y="76" width="46" height="32" rx="9" fill="#fff" stroke="#7c5cf0" stroke-width="1.5"/>
+            <text x="203" y="126" text-anchor="middle">company</text>
+            <text x="120" y="112" text-anchor="middle" opacity=".8">cold</text>
+            <text x="120" y="160" opacity=".8" text-anchor="middle">the warm route beats the cold one</text>
+          </svg>
+        </div>
       </div>
       <div class="fpanel">
-        <h3>Apply, with your hand on it</h3>
-        <p>Lucy fills the real application and stops at the submit line. It never sends anything without you. 2 locks, 1 deliberate human click.</p>
-        <span class="say"><b>You do:</b> the final submit. Always.</span>
+        <div class="fgrid">
+          <div>
+            <h3>Apply, with your hand on it</h3>
+            <p>Lucy fills the real application and stops at the submit line. It never sends anything without you. 2 locks, 1 deliberate human click.</p>
+            <span class="say"><b>You do:</b> the final submit. Always.</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+            <defs><linearGradient id="fg4" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#e9518f"/><stop offset="1" stop-color="#7c5cf0"/>
+            </linearGradient></defs>
+            <path d="M20 82 H 156" stroke="url(#fg4)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M156 82 H 230" stroke="#e7e1dc" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="36" cy="82" r="6" fill="#e9518f"/>
+            <circle cx="82" cy="82" r="6" fill="#c65ac4"/>
+            <circle cx="126" cy="82" r="6" fill="#7c5cf0"/>
+            <text x="36" y="62" text-anchor="middle">form</text>
+            <text x="82" y="62" text-anchor="middle">answers</text>
+            <text x="126" y="62" text-anchor="middle">review</text>
+            <rect x="146" y="66" width="32" height="32" rx="9" fill="#fff" stroke="#7c5cf0" stroke-width="1.8"/>
+            <rect x="155" y="79" width="14" height="11" rx="2.5" fill="#7c5cf0"/>
+            <path d="M157 79v-4a5 5 0 0 1 10 0v4" fill="none" stroke="#7c5cf0" stroke-width="1.8"/>
+            <circle cx="210" cy="82" r="7" fill="none" stroke="#6f6879" stroke-width="1.6"/>
+            <text x="210" y="62" text-anchor="middle">submit</text>
+            <text x="163" y="120" text-anchor="middle">your click</text>
+            <text x="125" y="160" text-anchor="middle" opacity=".8">automation ends where commitment begins</text>
+          </svg>
+        </div>
       </div>
       <div class="fpanel">
-        <h3>Interview, from the other chair</h3>
-        <p>The coach is fed the hiring side's own playbook: how interviewers score, structure loops, and read a JD. You walk in knowing what they're looking for.</p>
-        <span class="say"><b>You say:</b> get me ready for Thursday.</span>
+        <div class="fgrid">
+          <div>
+            <h3>Interview, from the other chair</h3>
+            <p>The coach is fed the hiring side's own playbook: how interviewers score, structure loops, and read a JD. You walk in knowing what they're looking for.</p>
+            <span class="say"><b>You say:</b> get me ready for Thursday.</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+            <defs><linearGradient id="fg5" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#e9518f"/><stop offset="1" stop-color="#7c5cf0"/>
+            </linearGradient></defs>
+            <g stroke="#e7e1dc" fill="none">
+              <polygon points="125,22 191,66 166,140 84,140 59,66"/>
+              <polygon points="125,48 165,75 150,120 100,120 85,75" opacity=".7"/>
+              <path d="M125 88V22 M125 88L191 66 M125 88L166 140 M125 88L84 140 M125 88L59 66"/>
+            </g>
+            <polygon points="125,34 178,70 152,126 96,118 78,72" fill="url(#fg5)" opacity=".22" stroke="url(#fg5)" stroke-width="2"/>
+            <text x="125" y="14" text-anchor="middle">signal</text>
+            <text x="210" y="66" text-anchor="middle">scope</text>
+            <text x="182" y="154" text-anchor="middle">stories</text>
+            <text x="68" y="154" text-anchor="middle">structure</text>
+            <text x="38" y="66" text-anchor="middle">stakes</text>
+          </svg>
+        </div>
       </div>
       <div class="fpanel">
-        <h3>Track &amp; negotiate</h3>
-        <p>Every application, its stage, and when to follow up, kept as durable memory. When an offer lands, it helps you hold your ground on comp.</p>
-        <span class="say"><b>You ask:</b> what should I chase this week?</span>
+        <div class="fgrid">
+          <div>
+            <h3>Track &amp; negotiate</h3>
+            <p>Every application, its stage, and when to follow up, kept as durable memory. When an offer lands, it helps you hold your ground on comp.</p>
+            <span class="say"><b>You ask:</b> what should I chase this week?</span>
+          </div>
+          <svg class="fviz" viewBox="0 0 250 175" aria-hidden="true">
+            <defs><linearGradient id="fg6" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0" stop-color="#7c5cf0"/><stop offset="1" stop-color="#e9518f"/>
+            </linearGradient></defs>
+            <path d="M20 132 H 236" stroke="#e7e1dc" stroke-width="1.5"/>
+            <rect x="28" y="52" width="34" height="80" rx="6" fill="url(#fg6)" opacity=".9"/>
+            <rect x="80" y="76" width="34" height="56" rx="6" fill="url(#fg6)" opacity=".65"/>
+            <rect x="132" y="94" width="34" height="38" rx="6" fill="url(#fg6)" opacity=".45"/>
+            <rect x="184" y="108" width="34" height="24" rx="6" fill="url(#fg6)" opacity=".9" stroke="#e9518f" stroke-width="1.5"/>
+            <text x="45" y="150" text-anchor="middle">applied</text>
+            <text x="97" y="150" text-anchor="middle">screens</text>
+            <text x="149" y="150" text-anchor="middle">interviews</text>
+            <text x="201" y="150" text-anchor="middle">offers</text>
+            <circle cx="97" cy="62" r="9" fill="none" stroke="#f2793f" stroke-width="1.8"/>
+            <path d="M97 57v5l3.5 2.5" fill="none" stroke="#f2793f" stroke-width="1.8" stroke-linecap="round"/>
+            <text x="118" y="52">follow up due</text>
+          </svg>
+        </div>
       </div>
     </div>
   </div>
@@ -353,7 +506,7 @@
     <div class="head">
       <span class="eyebrow">Getting started</span>
       <h2>How you'd actually use Lucy.</h2>
-      <p>Lucy runs on Claude Code. Set it up once, then just talk to it whenever you're job hunting. 4 steps to your first tailored application.</p>
+      <p>Set it up once in Claude Code, then just talk. 4 steps to your first tailored application.</p>
     </div>
     <div class="quickstart">
       <div class="qs-bar"><span class="qs-dot"></span><span class="qs-dot"></span><span class="qs-dot"></span><span class="qs-label">your terminal</span></div>
@@ -368,7 +521,7 @@ claude
 <span class="c"># 3 · now just talk to Lucy. Start here:</span>
 <span class="p">&gt;</span> run setup</code></pre>
     </div>
-    <p class="qs-note">No slash commands to learn. After setup, you speak plainly, like <em>"tailor my CV for this role"</em> or <em>"who do I know at Stripe?"</em>, and Lucy routes it. Full guide in <a href="https://github.com/HimadriTrying/ai-job-search-agent/blob/main/SETUP.md" target="_blank" rel="noopener">SETUP.md</a>.</p>
+    <p class="qs-note">After setup you speak plainly, like <em>"tailor my CV for this role"</em>, and Lucy routes it. Full guide in <a href="https://github.com/HimadriTrying/ai-job-search-agent/blob/main/SETUP.md" target="_blank" rel="noopener">SETUP.md</a>.</p>
     <div class="steps">
       <div class="step">
         <span class="sn">1</span>
@@ -385,7 +538,7 @@ claude
       <div class="step">
         <span class="sn">3</span>
         <h4>Ask for what you need</h4>
-        <p>No commands to memorize. Talk in plain language and Lucy routes it to the right specialist: discovery, tailoring, a warm intro, interview prep.</p>
+        <p>Talk in plain language and Lucy routes it: discovery, tailoring, a warm intro, interview prep.</p>
         <span class="ex"><b>You say:</b> "find me senior PM roles" · "tailor my CV for this" · "who do I know here?"</span>
       </div>
       <div class="step">
@@ -402,22 +555,22 @@ claude
 <section>
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">3 rules it won't break</span>
-      <h2>What makes it trustworthy?</h2>
+      <span class="eyebrow">Why you can trust it</span>
+      <h2>3 rules it can't break.</h2>
     </div>
     <div class="grid3">
-      <div class="card">
+      <div class="card" role="button" tabindex="0" aria-pressed="false">
         <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
         <h4>Never fabricates</h4>
-        <p>Every generated line is checked in code against a frozen record of your real history. Invent an employer or a metric and the build fails. A promise you can verify.</p></div>
-      <div class="card">
+        <p>Every generated line is checked in code against a frozen record of your real history. Invented claims fail the build.</p></div>
+      <div class="card" role="button" tabindex="0" aria-pressed="false">
         <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V7a5 5 0 0 1 10 0v4"/><rect x="3" y="11" width="18" height="11" rx="2"/></svg></div>
         <h4>You commit, not the agent</h4>
-        <p>It automates everything up to applying, reaching out, or accepting, then stops and hands you the wheel. No message leaves without your say-so.</p></div>
-      <div class="card">
+        <p>It automates everything up to applying, reaching out, or accepting. Then it hands you the wheel.</p></div>
+      <div class="card" role="button" tabindex="0" aria-pressed="false">
         <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6"/><path d="M12 9v6"/></svg></div>
         <h4>Your data stays yours</h4>
-        <p>Your real profile never leaves your machine. The public repo ships only templates, so anyone can fork it and fill in their own.</p></div>
+        <p>Your real profile never leaves your machine. The public repo ships only templates.</p></div>
     </div>
   </div>
 </section>
@@ -465,6 +618,19 @@ claude
         <div class="a">Yes. The whole system is open source on GitHub under the MIT license. Fork it,
           read every prompt and check, and adapt it to your own search.</div>
       </details>
+    </div>
+  </div>
+</section>
+
+<section class="cta-end">
+  <div class="wrap">
+    <span class="eyebrow">Your move</span>
+    <h2>Ready to run the <em>whole</em> search?</h2>
+    <p>Free, open source, and it stops before every real commitment. Start in your browser right now,
+      no install, no sign-up.</p>
+    <div class="row">
+      <a class="btn" href="try.html">Tailor your CV now</a>
+      <a class="btn ghost" href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">Set up the full agent</a>
     </div>
   </div>
 </section>
@@ -538,6 +704,17 @@ claude
     if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
       timer=setInterval(()=>go((cur+1)%nodes.length),3800);
     }
+    // rule cards: click (or Enter/Space) lights one up in the brand gradient
+    const tcards=[...document.querySelectorAll('.grid3 .card')];
+    tcards.forEach(c=>{
+      const act=()=>{
+        const was=c.classList.contains('on');
+        tcards.forEach(x=>{x.classList.remove('on');x.setAttribute('aria-pressed','false')});
+        if(!was){c.classList.add('on');c.setAttribute('aria-pressed','true')}
+      };
+      c.addEventListener('click',act);
+      c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act()}});
+    });
   })();
 </script>
 </body>

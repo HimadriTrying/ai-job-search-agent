@@ -34,6 +34,32 @@ demand (tailoring, outreach, negotiation). On a subscription the binding constra
 limits, not dollars — a heavy overnight job can starve the interactive quota, so scheduling is
 deliberately narrow.
 
+## Landing page: owner decisions (so no session relearns them)
+
+Reference the owner likes: withtitan.com. Numbered pictorial panels, ruthless brevity, and the
+page closes on the same CTA it opened with.
+
+- **Copy rules are enforced in code.** No em or en dashes in `docs/*.html`; quantities as
+  numerals ("11 years"). See `scripts/check-copy-style.sh`, wired as a PostToolUse hook.
+- **The 6 stages keep the numbered rail with 1 panel at a time** (auto-advancing, click a
+  node to pin). A full left-to-right card grid was tried on 2026-07-23 and the owner
+  preferred the rail; do not reintroduce the grid for the stages.
+- **The click-to-light-up interaction lives on the 3 rule cards** ("3 rules it can't
+  break"): clicking a card flips it to the brand gradient. Keyboard accessible
+  (Enter/Space, aria-pressed).
+- **Every stage gets a small SVG diagram** in the brand palette, decorative and aria-hidden,
+  hidden on small screens. No invented numbers inside diagrams: the honesty rule covers
+  pictures too.
+- **Typewriter headline plays once** on load, then rests on the final promise. Deliberate:
+  a headline that keeps rewriting itself steals attention. It also sits out entirely under
+  reduced motion. Do not make it loop without the owner asking.
+- **The page ends on a closing CTA** mirroring the hero (try in browser / set up the agent).
+- **About section is in the owner's own words** (11 years, both sides of the table). Do not
+  replace it with drafted marketing copy. Portrait lives at `docs/assets/profile.jpg`
+  (public by the owner's choice); employer logos in `docs/assets/logos/`.
+- **Previews:** artifact previews are private snapshots for unmerged work; the public
+  preview is GitHub Pages once enabled (Settings → Pages → `main` `/docs`).
+
 ## Open questions still worth resolving
 - Second-degree inference from a first-degree-only export — automate vs. optimise the human ask.
 - Calibrating the rubric against *outcomes* (which applications actually converted) over time.
