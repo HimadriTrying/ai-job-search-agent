@@ -1,0 +1,43 @@
+#!/bin/bash
+# Copy-style guard for the public website (docs/*.html).
+#
+# Rules established by the owner:
+#   1. No em or en dashes in visitor-facing copy. Use a comma, colon, or period.
+#   2. Quantities are written as numerals ("11 years", never "eleven years").
+#      Rhetorical uses ("one agent for the whole search") are fine; the check
+#      only fires on a spelled-out number directly before a unit-like noun.
+#
+# A rule that lives in conversation memory dies with the session; this is the
+# rule as code. Wired as a PostToolUse hook in .claude/settings.json so every
+# edit is checked the moment it happens. Also runnable by hand or in CI:
+#   bash scripts/check-copy-style.sh
+set -uo pipefail
+cd "$(dirname "$0")/.." || exit 0
+
+fail=0
+for f in docs/*.html; do
+  [ -f "$f" ] || continue
+
+  if hits=$(grep -n -e "—" -e "–" "$f"); then
+    {
+      echo "✗ $f: em/en dash in website copy. Rewrite with a comma, colon, or period:"
+      echo "$hits" | head -5
+    } >&2
+    fail=1
+  fi
+
+  if hits=$(grep -niE '\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty|thirty|forty|fifty|hundred|thousand)[- ](years?|months?|weeks?|days?|hours?|minutes?|seconds?|people|persons?|companies|roles?|jobs?|stages?|steps?|teams?|squads?|engineers?|percent|applications?)\b' "$f"); then
+    {
+      echo "✗ $f: spelled-out quantity. Write it as a numeral (e.g. '11 years'):"
+      echo "$hits" | head -5
+    } >&2
+    fail=1
+  fi
+done
+
+if [ "$fail" -ne 0 ]; then
+  # Exit 2 so the PostToolUse hook feeds this back to the session as a blocking
+  # correction instead of scrolling past as ignorable output.
+  exit 2
+fi
+echo "copy style ok"

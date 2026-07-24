@@ -88,6 +88,15 @@ opens the app. So only the genuinely-benefits-from-overnight work is scheduled:
   that solves the problem. This applies to code only — never trim user-facing documents
   (CVs, cover letters, digests) for token reasons.
 
+## Copy rules — owner-established, checked in code
+
+Visitor-facing copy (`docs/*.html`) never uses em or en dashes (use a comma, colon, or
+period) and writes quantities as numerals ("11 years", never "eleven years"). Enforced by
+`scripts/check-copy-style.sh`, which runs automatically as a PostToolUse hook after every
+file edit; also run it by hand before shipping copy changes. A rule that lives only in a
+conversation dies with that session — if the user establishes a new standing rule, write
+it into this file (and a check, if it's checkable) in the same change.
+
 ## Where state lives
 
 - **Frozen truth:** `career_facts.yaml` — the source of truth for the honesty gate. Changes
