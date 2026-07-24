@@ -222,7 +222,8 @@
   .faq-list{max-width:760px}
   .faq{border:1px solid var(--line);border-radius:14px;background:#fff;margin-bottom:12px;
     padding:0 22px}
-  .faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;
+  .faq summary{cursor:pointer;list-style:none;user-select:none;-webkit-user-select:none;
+    -webkit-tap-highlight-color:transparent;display:flex;justify-content:space-between;
     align-items:center;gap:16px;padding:18px 0;font-family:var(--display);font-weight:500;
     font-size:1.08rem;color:var(--ink)}
   .faq summary::-webkit-details-marker{display:none}
@@ -715,6 +716,11 @@ claude
       c.addEventListener('click',act);
       c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act()}});
     });
+    // FAQ accordion: opening one closes the others
+    const faqs=[...document.querySelectorAll('details.faq')];
+    faqs.forEach(d=>d.addEventListener('toggle',()=>{
+      if(d.open)faqs.forEach(o=>{if(o!==d)o.open=false});
+    }));
   })();
 </script>
 </body>
