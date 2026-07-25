@@ -170,10 +170,28 @@
     display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;
     color:#fff;background:var(--violet);border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,.14)}
 
+  /* closing CTA, mirrors the overview page */
+  .cta-end{position:relative;padding:96px 0;text-align:center;border-top:1px solid var(--line);
+    overflow:hidden}
+  .cta-end::before{content:'';position:absolute;left:50%;top:-260px;transform:translateX(-50%);
+    width:720px;height:720px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(closest-side,rgba(233,81,143,.13),rgba(124,92,240,.09) 55%,transparent 75%)}
+  .cta-end h2{font-family:var(--display);font-weight:400;font-size:clamp(2rem,5vw,3.2rem);
+    letter-spacing:-.022em;line-height:1.08;margin:14px auto 16px;max-width:18ch}
+  .cta-end h2 em{font-style:italic;background:var(--grad);-webkit-background-clip:text;
+    background-clip:text;color:transparent}
+  .cta-end p{color:var(--ink-2);font-size:1.08rem;max-width:52ch;margin:0 auto}
+  .cta-end .row{display:flex;gap:13px;flex-wrap:wrap;justify-content:center;margin-top:30px}
+  .cta-end .btn{text-decoration:none}
+  .cta-end .btn:hover{text-decoration:none}
+  .cta-end .btn.ghost{font-size:1rem;padding:14px 26px}
+  @media(max-width:640px){.cta-end{padding:64px 0}}
+
   footer{border-top:1px solid var(--line);padding:30px 0;margin-top:0;color:var(--ink-3);font-size:.85rem}
 
   @media print{
-    nav,header.hero,#form-card,.doc-tabs,.badge,.flags,.fitnote,.doc-actions,footer,.status,.err{display:none!important}
+    nav,header.hero,#form-card,.doc-tabs,.badge,.flags,.fitnote,.doc-actions,footer,.status,.err,
+    .band,.cta-end{display:none!important}
     body{background:#fff}
     .doc{border:none;border-radius:0;padding:0}
     .doc.hidden{display:block!important}
@@ -312,6 +330,19 @@
       <span class="step">Offer &amp; negotiate</span>
     </div>
     <p class="body" style="margin-top:14px">The warm-path step finds a real route into a company through your own network, before you apply.</p>
+  </div>
+</section>
+
+<section class="cta-end">
+  <div class="wrap">
+    <span class="eyebrow">Your move</span>
+    <h2>That was 1 stage. Run the <em>whole</em> search.</h2>
+    <p>The same tailoring you just saw, plus role discovery, warm intros, and interview prep, on repeat.
+      Free, open source, and it still stops before every real commitment.</p>
+    <div class="row">
+      <a class="btn" href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">Set up the full agent</a>
+      <a class="btn ghost" href="index.html#how">See how Lucy works</a>
+    </div>
   </div>
 </section>
 
