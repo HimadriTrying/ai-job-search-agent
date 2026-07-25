@@ -30,6 +30,12 @@
   .eyebrow{font-size:.74rem;font-weight:600;letter-spacing:.14em;
     text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;
     background-clip:text;color:transparent}
+  /* Gradient-filled text is painted inside the inline box, which is shorter and
+     narrower than tall or italic glyphs. Padding grows that box so ascenders,
+     descenders and italic overhangs stay filled; the negative margin keeps the
+     horizontal padding from shifting the text that follows. */
+  .eyebrow,h1 em,.cta-end h2 em{
+    padding-top:.2em;padding-bottom:.2em;padding-right:.09em;margin-right:-.09em}
 
   nav{position:sticky;top:0;z-index:50;background:rgba(251,250,247,.85);
     backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
