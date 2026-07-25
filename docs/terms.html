@@ -27,6 +27,12 @@
   nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;max-width:1000px}
   .logo{font-family:var(--display);font-size:1.5rem;font-weight:500;color:var(--ink)}
   .logo:hover{text-decoration:none}
+  .nav-links{display:flex;align-items:center;gap:18px}
+  .nav-link{font-size:.9rem;font-weight:500;color:var(--ink-2)}
+  .nav-cta{font-family:var(--sans);font-size:.9rem;font-weight:500;padding:9px 18px;
+    border-radius:999px;color:#fff;background:var(--ink);border:1px solid var(--ink);transition:.15s}
+  .nav-cta:hover{text-decoration:none;transform:translateY(-1px);box-shadow:0 4px 14px rgba(124,92,240,.25)}
+  @media(max-width:560px){.nav-link{display:none}}
   header{padding:56px 0 8px}
   .eyebrow{font-size:.74rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
     background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -45,7 +51,11 @@
 <nav>
   <div class="wrap">
     <a class="logo" href="index.html">Lucy</a>
-    <a href="index.html" style="font-size:.9rem">Back to overview</a>
+    <div class="nav-links">
+      <a class="nav-link" href="index.html#how">How Lucy works</a>
+      <a class="nav-link" href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">GitHub</a>
+      <a class="nav-cta" href="try.html">Try it</a>
+    </div>
   </div>
 </nav>
 <header>
