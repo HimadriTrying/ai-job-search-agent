@@ -151,21 +151,14 @@
     padding:7px 15px;border:none;background:transparent;border-radius:7px;cursor:pointer}
   .segbtn.active{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.06)}
 
-  /* about + how-it-works */
+  /* how-it-works */
   .band{border-top:1px solid var(--line);background:var(--paper-2)}
-  .band.plain{background:transparent}
   .band .wrap{padding:56px 32px}
   @media(max-width:640px){.band .wrap{padding:40px 20px}}
   .band h2{font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,4vw,2.4rem);
     letter-spacing:-.02em;line-height:1.1;margin:10px 0 16px;max-width:20ch}
   .band .lead{font-size:1.08rem;color:var(--ink-2);max-width:66ch;line-height:1.6;margin-bottom:8px}
   .band p.body{font-size:.98rem;color:var(--ink-2);max-width:66ch;line-height:1.65;margin-bottom:14px}
-  .ideas{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
-  @media(max-width:720px){.ideas{grid-template-columns:1fr}}
-  .idea{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px}
-  .idea .n{font-family:var(--display);color:var(--pink);font-size:.95rem;margin-bottom:8px}
-  .idea h3{font-family:var(--display);font-weight:500;font-size:1.15rem;margin-bottom:6px}
-  .idea p{font-size:.9rem;color:var(--ink-3);line-height:1.55}
   .steps{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 6px}
   .step{font-size:.85rem;color:var(--ink-2);background:#fff;border:1px solid var(--line);
     border-radius:999px;padding:6px 14px}
@@ -176,8 +169,6 @@
   .checks li::before{content:"✓";position:absolute;left:0;top:0;width:24px;height:24px;
     display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;
     color:#fff;background:var(--violet);border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,.14)}
-  [data-float]{will-change:transform}
-  .band .more{margin-top:24px;font-size:.92rem}
 
   footer{border-top:1px solid var(--line);padding:30px 0;margin-top:0;color:var(--ink-3);font-size:.85rem}
 
@@ -225,9 +216,9 @@
 
       <div class="field">
         <label class="lbl" for="cv">Your CV</label>
-        <div class="hint">Paste the text, or upload a <code>.txt</code> / <code>.md</code> file. (For a PDF, open it and copy the text in.)</div>
+        <div class="hint">Paste the text, or upload a PDF, <code>.txt</code>, or <code>.md</code> file.</div>
         <div class="filerow">
-          <label class="filebtn">Upload file<input type="file" id="cvfile" accept=".txt,.md,.markdown,.text" hidden></label>
+          <label class="filebtn">Upload file<input type="file" id="cvfile" accept=".pdf,.txt,.md,.markdown,.text" hidden></label>
           <span class="filename" id="cvfilename"></span>
         </div>
         <textarea id="cv" class="cv-min" placeholder="Paste your full CV here: roles, dates, achievements, skills…"></textarea>
@@ -244,7 +235,7 @@
         <textarea id="jd" placeholder="Paste the role's title, responsibilities, and requirements…"></textarea>
         <input type="text" id="jdurl" placeholder="https://…  link to the job posting" style="display:none" autocomplete="off" spellcheck="false">
         <div class="filerow" id="jdfilerow" style="display:none">
-          <label class="filebtn">Upload file<input type="file" id="jdfile" accept=".txt,.md,.markdown,.text" hidden></label>
+          <label class="filebtn">Upload file<input type="file" id="jdfile" accept=".pdf,.txt,.md,.markdown,.text" hidden></label>
           <span class="filename" id="jdfilename"></span>
         </div>
       </div>
@@ -324,36 +315,6 @@
   </div>
 </section>
 
-<section class="band plain" id="about">
-  <div class="wrap">
-    <span class="eyebrow">Why this exists</span>
-    <h2>Job hunting is a funnel. Most tools only fix 1 stage.</h2>
-    <p class="lead">You discover roles, judge fit, tailor documents, find a way in, apply, track,
-      prep, and negotiate. Most tools automate one of those and leave you to stitch the rest
-      together by hand. Lucy is a single conversational agent that manages the whole funnel,
-      refuses to fabricate anything about you, and always stops before committing you to anything.</p>
-    <div class="ideas">
-      <div class="idea" data-float="14">
-        <div class="n">/ 01</div>
-        <h3>One agent, not a command list</h3>
-        <p>You say what you need in plain language; it routes to the right specialist. Nothing to memorise.</p>
-      </div>
-      <div class="idea" data-float="24">
-        <div class="n">/ 02</div>
-        <h3>Honesty enforced in code</h3>
-        <p>Every outbound document is checked against a frozen record of your real history before it can leave the system. Invent an employer or a metric and it fails loudly. A promise you can verify beats one you can't.</p>
-      </div>
-      <div class="idea" data-float="14">
-        <div class="n">/ 03</div>
-        <h3>You commit, never the agent</h3>
-        <p>It automates everything up to applying, reaching out, or accepting, then hands you the wheel. The last click is always yours.</p>
-      </div>
-    </div>
-    <p class="more">Built as an open, multi-agent system on Claude Code. Read the full rationale and the
-      code on <a href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">GitHub</a>.</p>
-  </div>
-</section>
-
 <footer>
   <div class="wrap">
     Part of <a href="index.html">Lucy</a>, an open-source, honesty-gated job-search agent. This page sends your CV
@@ -370,13 +331,64 @@
   const results = $('results'), honesty = $('honesty'), fitnote = $('fitnote');
   const docCv = $('doc-cv'), docCl = $('doc-cl');
 
-  // CV file upload
-  $('cvfile').addEventListener('change', e => {
-    const f = e.target.files[0]; if(!f) return;
-    const r = new FileReader();
-    r.onload = () => { cv.value = r.result; $('cvfilename').textContent = f.name + ' loaded'; };
-    r.readAsText(f);
-  });
+  // file reading: plain text directly; PDFs via pdf.js, fetched only when first needed
+  let pdfjsPromise = null;
+  function loadPdfjs(){
+    if(!pdfjsPromise){
+      pdfjsPromise = import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs')
+        .then(m => {
+          m.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';
+          return m;
+        })
+        .catch(() => { pdfjsPromise = null; throw new Error("Couldn't load the PDF reader. Check your connection, or paste the text in instead."); });
+    }
+    return pdfjsPromise;
+  }
+  async function pdfToText(file){
+    const pdfjs = await loadPdfjs();
+    const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+    const pages = [];
+    for(let p = 1; p <= doc.numPages; p++){
+      const content = await (await doc.getPage(p)).getTextContent();
+      let lastY = null, line = [], lines = [];
+      for(const item of content.items){
+        if(!item.str && !item.hasEOL) continue;
+        const y = item.transform[5];
+        if(lastY !== null && Math.abs(y - lastY) > 2){ lines.push(line.join(' ')); line = []; }
+        line.push(item.str);
+        if(item.hasEOL){ lines.push(line.join(' ')); line = []; }
+        lastY = y;
+      }
+      if(line.length) lines.push(line.join(' '));
+      pages.push(lines.join('\n'));
+    }
+    const text = pages.join('\n\n').replace(/[ \t]{2,}/g, ' ').trim();
+    if(text.length < 40) throw new Error('That PDF has no selectable text (probably a scan). Paste the text in instead.');
+    return text;
+  }
+  function wireFile(inputId, nameId, apply){
+    $(inputId).addEventListener('change', async e => {
+      const f = e.target.files[0]; if(!f) return;
+      const nameEl = $(nameId);
+      clearErr();
+      try{
+        let text;
+        if(/\.pdf$/i.test(f.name)){
+          nameEl.textContent = 'Reading ' + f.name + '…';
+          text = await pdfToText(f);
+        } else {
+          text = await f.text();
+        }
+        apply(text);
+        nameEl.textContent = f.name + ' loaded';
+      }catch(ex){
+        nameEl.textContent = '';
+        e.target.value = '';
+        showErr(ex.message || "Couldn't read " + f.name + '. Paste the text in instead.');
+      }
+    });
+  }
+  wireFile('cvfile', 'cvfilename', t => { cv.value = t; });
 
   // job posting: paste / url / upload
   let jdMode = 'paste', jdFileText = '';
@@ -388,12 +400,7 @@
     jdurl.style.display = jdMode === 'url' ? 'block' : 'none';
     $('jdfilerow').style.display = jdMode === 'upload' ? 'flex' : 'none';
   }));
-  $('jdfile').addEventListener('change', e => {
-    const f = e.target.files[0]; if(!f) return;
-    const r = new FileReader();
-    r.onload = () => { jdFileText = r.result; $('jdfilename').textContent = f.name + ' loaded'; };
-    r.readAsText(f);
-  });
+  wireFile('jdfile', 'jdfilename', t => { jdFileText = t; });
 
   // shared API plumbing (browser → Anthropic, user's key)
   const API = "https://api.anthropic.com/v1/messages";
@@ -589,27 +596,6 @@
 
   go.addEventListener('click', run);
 
-  // subtle scroll motion: elements drift a little as they pass through the viewport.
-  // (This is the foundation for animated imagery: any image with data-float behaves the same.)
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(!reduceMotion){
-    const floaters = Array.from(document.querySelectorAll('[data-float]'));
-    let ticking = false;
-    function applyFloat(){
-      const vh = window.innerHeight || 800;
-      floaters.forEach(el => {
-        const r = el.getBoundingClientRect();
-        const dist = Math.max(-.6, Math.min(.6, ((r.top + r.height/2) - vh/2) / vh));
-        const amt = parseFloat(el.dataset.float) || 12;
-        el.style.transform = 'translateY(' + (dist * amt * -1).toFixed(1) + 'px)';
-      });
-      ticking = false;
-    }
-    function onScroll(){ if(!ticking){ ticking = true; requestAnimationFrame(applyFloat); } }
-    window.addEventListener('scroll', onScroll, { passive:true });
-    window.addEventListener('resize', onScroll);
-    applyFloat();
-  }
 })();
 </script>
 </body>
