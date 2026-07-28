@@ -167,6 +167,62 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
 
 ---
 
+## Open, as of 28 Jul 2026
+
+Swept daily. Everything below is a known gap, in priority order.
+
+- 🔨 **The try page is correct in its parts and incoherent as a whole.** It has been patched
+  twice from separate lists of individual defects, which is exactly how a surface ends up
+  right everywhere and wrong overall. Needs one pass with a single point of view, starting
+  from what the page is for, rather than a third defect list.
+  *Hypothesis: a demo that feels disjointed costs more trust than the individual bugs it contains, because incoherence reads as carelessness about the thing being demonstrated.*
+
+- 🔨 **URL reading works in the terminal, not in the browser.** `scout/joburl.py` resolves a
+  job link to its ATS JSON and is wired into `cv-tailor`. `docs/try.html` still cannot,
+  because its fetch runs client-side and depends on those APIs sending permissive CORS
+  headers. Unverified.
+  *Hypothesis: asking someone to paste an entire job posting is the single largest drop-off in the funnel, so the fix only counts where the newcomers actually are.*
+
+- ⬜ **The resolver has never run against the live internet.** The offline suite passes; the
+  hostname-to-board-token guessing is precisely the part tests cannot validate.
+  *Hypothesis: guessing heuristics fail on the long tail, and the long tail is only visible in production.*
+
+- ⬜ **Free first run, behind a hard spend cap.** So somebody without an API key can try the
+  thing once. This cannot live in a static page: anything the page knows, every visitor can
+  read. It needs a small proxy holding the key, per-IP limits, a daily ceiling, and the
+  cheapest model. **If it ships, the "nothing reaches us" claim stops being true for those
+  users and the page has to say so.**
+  *Hypothesis: the API-key field is where non-technical visitors leave, and one free run converts more of them than any amount of copy.*
+
+- ⬜ **PDF extraction quality.** Real CVs come through with letter-spacing and column layout
+  flattened, so the model is fed degraded text and output quality follows it. The extracted
+  text is shown to the user precisely so this is visible rather than silent.
+  *Hypothesis: output quality is capped by input fidelity, and a tailoring engine fed mangled text fails in ways no prompt can fix.*
+
+- ⬜ **Nobody has measured how good the try page's output actually is.** It has been reviewed
+  for defects, never graded against the writing specs on a real role.
+  *Hypothesis: passing every mechanical check is not evidence a document is good, and this page currently has no evidence either way.*
+
+- ⬜ **An inert check is worse than no check**, because it reads as coverage. A count check
+  was found reporting 1 for a list of 12, so its cap had never been enforced. Any cap a
+  checker claims needs a test proving it fails when it should.
+  *Hypothesis: a checker nobody has watched fail is not known to work, and a green run then actively suppresses scrutiny.*
+
+- ⬜ **A rule enforced on one artefact should be enforced on its siblings.** The same style
+  rule was checked in one document type and not the other; the gap stayed invisible until a
+  human-equivalent reader found it.
+  *Hypothesis: rules drift apart per artefact unless something enforces them together, and the un-enforced copy is where regressions live.*
+
+- ⬜ **Watch for facts invented while fixing something else.** A style correction introduced
+  a fabricated date into an otherwise verified document. It was caught on re-read, but no
+  check looks for it.
+  *Hypothesis: fabrication risk is highest during unrelated edits, because attention is on the rule being fixed rather than on the claim being made.*
+
+- ⬜ **"About 60 seconds" is unverified.** Measure it or soften it.
+  *Hypothesis: a first-run promise that the first run misses is worse than no promise.*
+
+---
+
 This roadmap deliberately under-claims. An item is only "Shipped" when it works, not when the code
 merely exists — and the core loop stays "in progress" until it runs end-to-end on a real role. If
 anything here reads as done that isn't yet, treat this line as the correction.
