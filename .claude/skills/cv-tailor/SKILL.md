@@ -13,10 +13,23 @@ and visually checked before it is shown.
 
 ## Inputs
 `profile/05-cv-source.md`, `profile/03-writing-style.md`, `career_facts.yaml`, the target JD
-**as a file** (the gate's `--job` flag needs it). If the posting URL won't fetch —
-JavaScript-only ATS pages and restricted networks make this common — follow `CLAUDE.md` →
-"Getting the JD": ask the user to paste the JD text into `data/jd/<company>-<role>.md` and
-work from that. Never reconstruct a JD from search snippets.
+**as a file** (the gate's `--job` flag needs it).
+
+**Getting the JD from a URL — try this before asking for a paste.** Most job pages are an
+ATS board rendered client-side, so fetching the HTML returns a shell with no posting in it.
+Do not fetch the page. Resolve the link to its board's public JSON instead:
+
+```
+python .claude/skills/job-scout/scout/joburl.py <url> data/jd/<company>-<role>.md
+```
+
+Covers Greenhouse, Lever, Ashby and SmartRecruiters, hosted (`jobs.ashbyhq.com/acme/...`)
+or embedded in a company's own careers page (`acme.com/careers?ashby_jid=...`). No key, no
+login. Exits non-zero with the reason when it cannot resolve the link.
+
+**Only if that fails**, fall back to `CLAUDE.md` → "Getting the JD": ask the user to paste
+the JD text into `data/jd/<company>-<role>.md`. Never reconstruct a JD from search
+snippets, and never tailor against a posting you have not actually read.
 
 ## Flow
 1. Parse the JD; extract must-hit keywords and the real scope behind them.
