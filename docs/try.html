@@ -59,6 +59,7 @@
   h1 em{font-style:italic;background:var(--grad);-webkit-background-clip:text;
     background-clip:text;color:transparent}
   .sub{font-size:clamp(1rem,2vw,1.15rem);color:var(--ink-2);max-width:60ch;line-height:1.55}
+  .sub.note{font-size:.95rem;color:var(--ink-3);margin-top:12px}
   .trust{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
   .pill{display:inline-flex;align-items:center;gap:7px;font-size:.82rem;color:var(--ink-2);
     border:1px solid var(--line);border-radius:999px;padding:6px 13px;background:#fff}
@@ -173,12 +174,6 @@
   .step{font-size:.85rem;color:var(--ink-2);background:#fff;border:1px solid var(--line);
     border-radius:999px;padding:6px 14px}
   .step.hot{border-color:var(--pink);color:var(--pink);font-weight:500}
-  .checks{margin:24px 0 0;padding:0;list-style:none;max-width:70ch;display:grid;gap:16px}
-  .checks li{position:relative;padding-left:40px;font-size:1rem;color:var(--ink-2);line-height:1.55}
-  .checks li b{color:var(--ink)}
-  .checks li::before{content:"✓";position:absolute;left:0;top:0;width:24px;height:24px;
-    display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;
-    color:#fff;background:var(--violet);border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,.14)}
 
   /* closing CTA, mirrors the overview page */
   .cta-end{position:relative;padding:96px 0;text-align:center;border-top:1px solid var(--line);
@@ -225,11 +220,14 @@
 
 <header class="hero">
   <div class="wrap">
-    <span class="eyebrow">Try it · no install</span>
+    <span class="eyebrow">A teaser · no install</span>
     <h1>Tailor your CV to a role, <em>honestly</em>, in about 60 seconds.</h1>
     <p class="sub">Drop in your CV and a job posting. You get back a version of your CV reshaped for
-      that role, plus a matching cover letter. Everything is checked against what you gave, so nothing
-      gets invented. Save either one as a PDF.</p>
+      that role, plus a matching cover letter, checked against what you gave so nothing gets invented.
+      Save either one as a PDF.</p>
+    <p class="sub note">This page is 1 step of Lucy, running in your browser so you can see the output
+      before installing anything. The agent itself runs in your terminal with
+      <a href="https://docs.claude.com/en/docs/claude-code/overview" target="_blank" rel="noopener">Claude Code</a>.</p>
     <div class="trust">
       <span class="pill"><span class="d"></span> Runs in your browser</span>
       <span class="pill"><span class="d"></span> Your key goes straight to Anthropic</span>
@@ -324,16 +322,10 @@
 
 <section class="band" id="how">
   <div class="wrap">
-    <span class="eyebrow">What happens behind the scenes</span>
-    <h2>It's not just rewriting your CV.</h2>
-    <p class="lead">4 rules run before anything reaches you:</p>
-    <ul class="checks">
-      <li><b>Nothing invented.</b> It only reorders and rephrases what's already in your CV. No new employers, titles, dates, or metrics.</li>
-      <li><b>Evidence over keywords.</b> The posting's requirements are matched to what your CV proves. What you can't back up is left out, not padded in.</li>
-      <li><b>Plain human voice.</b> No em-dashes, no "results-driven" filler. It reads like you wrote it.</li>
-      <li><b>Untraceable claims get flagged.</b> Any number or claim it can't tie to your CV is surfaced for you to check, never quietly shipped.</li>
-    </ul>
-    <p class="body" style="margin-top:26px">This is 1 stage of the full agent, which runs the whole funnel:</p>
+    <span class="eyebrow">What this page is</span>
+    <h2>A teaser, not the product.</h2>
+    <p class="lead">You are running 1 of 8 steps, on 1 job, in a browser tab. Set the agent up in your
+      terminal and it runs the whole search instead:</p>
     <div class="steps">
       <span class="step">Discover roles</span>
       <span class="step">Judge fit</span>
@@ -344,7 +336,9 @@
       <span class="step">Interview prep</span>
       <span class="step">Offer &amp; negotiate</span>
     </div>
-    <p class="body" style="margin-top:14px">The warm-path step finds a real route into a company through your own network, before you apply.</p>
+    <p class="body" style="margin-top:16px">Same honesty checks, plus the parts a single page cannot do:
+      finding the roles worth applying to, mapping a warm route in through people you already know, and
+      remembering where every application stands.</p>
   </div>
 </section>
 
