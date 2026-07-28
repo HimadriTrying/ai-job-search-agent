@@ -50,6 +50,12 @@ __pycache__/
 data/jd/*
 !data/jd/.gitkeep
 
+# Company research output — names the companies you're targeting, same rationale as
+# tracker.csv and data/jd. The cover-letter checker requires these files to exist, so they
+# will accumulate; they must not follow you into the public repo.
+data/research/*
+!data/research/.gitkeep
+
 # Your private data repo, cloned in by scripts/sync-private.sh — never commit
 private/
 

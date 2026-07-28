@@ -54,6 +54,24 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
   lines rather than a per-session ruleset) for work on Lucy's own code.
   *Hypothesis: on a subscription the scarce resource is rate-limit quota, not dollars; shrinking what the model reads protects the interactive quota without touching what it writes.*
 
+- ✅ **Cover-letter style checker** — `scripts/check-cover-letter.sh`, the letter-side counterpart
+  to the honesty gate. The gate proves a document doesn't lie; this proves it isn't generic:
+  a four-beat story shape, a callback from the closing beat to the opening one, banned selling
+  registers, dashes barred as punctuation, a 200-280 word band, and every figure traced to
+  `career_facts.yaml`. The house spec it enforces lives in `profile/06-cover-letter-notes.md`.
+  *Hypothesis: a rule stated in a prompt is followed most of the time; a rule that exits non-zero is followed every time.*
+
+- ✅ **Research as a precondition, not a suggestion** — `cover-letter` cannot draft until the
+  `company-research` output exists, and the letter must share distinctive vocabulary with it.
+  Built after a letter passed every style check on a company whose research had never been run,
+  which made the "reference something specific about them" rule decoration.
+  *Hypothesis: requiring the input artefact catches the skipped step, and requiring lexical overlap catches the model writing from its own memory instead; together they are a citation check that costs no model call.*
+
+- ✅ **Failure-mode taxonomy** — `docs/FAILURE-MODES.md`, written from two weeks of real
+  corrections. Of twelve repeat failures, one was a knowledge problem and eleven were structural.
+  The file exists to stop the reflex of answering every correction with another rule.
+  *Hypothesis: an agent that appends a rule per correction converges on a spec that is a memory test; fixing the cause is what makes the spec get shorter over time.*
+
 ---
 
 ## Now

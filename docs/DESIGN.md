@@ -18,6 +18,13 @@ a guarantee that fails loudly on drift. The gate catches invented entities, cred
 metrics; the fresh-context Reviewer catches spin. Neither alone is enough; together they cover
 most of the risk surface.
 
+The same reasoning produced `scripts/check-cover-letter.sh`: the gate proves a document does not
+lie, and the style checker proves it is not generic. Both are floors. Real use has twice
+produced documents that passed every mechanical check and were still returned by the Reviewer
+with content faults, which is why the drafting skills stop rather than let the drafter grade
+itself. The full account is in [FAILURE-MODES.md](FAILURE-MODES.md), including why answering a
+user correction with another rule is usually the wrong fix.
+
 ## Why filters drop instead of downrank
 Scoring an out-of-band role still spends a model call. Dropping it before scoring is cheaper
 and cleaner. The one inversion this candidate needs: the seniority knob drops roles *below*
