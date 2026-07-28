@@ -83,8 +83,12 @@
     border-radius:8px;background:#fff;cursor:pointer;color:var(--ink)}
   .filebtn:hover{border-color:var(--ink)}
   .filename{font-size:.85rem;color:var(--violet)}
+  .filename b{font-weight:500}
+  .filestate{color:var(--ink-3);font-weight:400}
   .keyrow{display:grid;grid-template-columns:1fr 200px;gap:12px}
   @media(max-width:640px){.keyrow{grid-template-columns:1fr}}
+  .remember{display:flex;align-items:center;gap:8px;margin-top:11px;font-size:.87rem;color:var(--ink-2);cursor:pointer}
+  .remember input{width:auto;margin:0;accent-color:var(--violet)}
   details.nokey{margin-top:12px;border:1px dashed var(--line);border-radius:10px;padding:0 14px;background:var(--paper)}
   details.nokey summary{cursor:pointer;padding:12px 0;font-size:.9rem;color:var(--ink-2);font-weight:500;list-style:none}
   details.nokey summary::-webkit-details-marker{display:none}
@@ -228,8 +232,8 @@
       gets invented. Save either one as a PDF.</p>
     <div class="trust">
       <span class="pill"><span class="d"></span> Runs in your browser</span>
-      <span class="pill"><span class="d"></span> Your key never leaves this page</span>
-      <span class="pill"><span class="d"></span> Nothing stored</span>
+      <span class="pill"><span class="d"></span> Your key goes straight to Anthropic</span>
+      <span class="pill"><span class="d"></span> We have no server, so nothing reaches us</span>
     </div>
   </div>
 </header>
@@ -245,6 +249,7 @@
           <label class="filebtn">Upload file<input type="file" id="cvfile" accept=".pdf,.txt,.md,.markdown,.text" hidden></label>
           <span class="filename" id="cvfilename"></span>
         </div>
+        <div class="hint" id="cvnote" style="display:none">This is the text we read out of your file. Worth a glance before you run: PDFs with columns or wide letter-spacing sometimes come out jumbled, and the tailoring is only as good as what we read.</div>
         <textarea id="cv" class="cv-min" placeholder="Paste your full CV here: roles, dates, achievements, skills…"></textarea>
       </div>
 
@@ -252,9 +257,9 @@
         <label class="lbl">The job posting</label>
         <div class="hint">Paste it, drop in a link, or upload a file, whichever you have.</div>
         <div class="seg" id="jdseg">
-          <button type="button" class="segbtn active" data-mode="paste">Paste</button>
-          <button type="button" class="segbtn" data-mode="url">URL</button>
-          <button type="button" class="segbtn" data-mode="upload">Upload</button>
+          <button type="button" class="segbtn active" data-mode="paste">Paste text</button>
+          <button type="button" class="segbtn" data-mode="url">Link</button>
+          <button type="button" class="segbtn" data-mode="upload">Upload file</button>
         </div>
         <textarea id="jd" placeholder="Paste the role's title, responsibilities, and requirements…"></textarea>
         <input type="text" id="jdurl" placeholder="https://…  link to the job posting" style="display:none" autocomplete="off" spellcheck="false">
@@ -266,8 +271,8 @@
 
       <div class="field">
         <label class="lbl" for="key">Your Anthropic API key</label>
-        <div class="hint">Used only to make the request from your browser. It is never sent to us or stored anywhere.
-          Get one at <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>.</div>
+        <div class="hint">Your browser sends this straight to Anthropic. It never reaches us, because there is nothing here to reach.
+          <br><b>To get one:</b> open <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com/settings/keys</a>, sign in, click <b>Create Key</b>, then copy the <code>sk-ant-…</code> string it shows you once.</div>
         <div class="keyrow">
           <input type="password" id="key" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
           <select id="model" title="Model">
@@ -276,10 +281,14 @@
             <option value="claude-haiku-4-5">Haiku 4.5 · cheapest</option>
           </select>
         </div>
+        <label class="remember"><input type="checkbox" id="remember"> Remember this key on this device, so you only paste it once</label>
         <details class="nokey">
           <summary>No Anthropic key?</summary>
-          <div class="body">One is required: this page has no server, so your browser talks to Anthropic
-            directly with your key. Creating one takes a minute and a tailoring costs cents.</div>
+          <div class="body">One is required today. This page is a single file with no server behind it,
+            so your browser has to talk to Anthropic itself, using your key. Creating one takes about a
+            minute and needs a payment method. A tailoring costs a few cents, billed to you by Anthropic.
+            <br><br>If you would rather not set that up, the full agent runs locally instead and does far
+            more than this page: see the <a href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">GitHub repo</a>.</div>
         </details>
       </div>
 
@@ -417,10 +426,13 @@
           text = await f.text();
         }
         apply(text);
-        nameEl.textContent = f.name + ' loaded';
+        nameEl.innerHTML = '<b>' + escapeHtml(f.name) + '</b> <span class="filestate">read</span>';
+        if(inputId === 'cvfile') $('cvnote').style.display = 'block';
+        updateReady();
       }catch(ex){
         nameEl.textContent = '';
         e.target.value = '';
+        updateReady();
         showErr(ex.message || "Couldn't read " + f.name + '. Paste the text in instead.');
       }
     });
@@ -436,6 +448,7 @@
     jd.style.display = jdMode === 'paste' ? 'block' : 'none';
     jdurl.style.display = jdMode === 'url' ? 'block' : 'none';
     $('jdfilerow').style.display = jdMode === 'upload' ? 'flex' : 'none';
+    updateReady();
   }));
   wireFile('jdfile', 'jdfilename', t => { jdFileText = t; });
 
@@ -527,7 +540,7 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   function hideLoading(){ $('loading').style.display = 'none'; stopStages(); }
-  function backToForm(){ hideLoading(); results.style.display = 'none'; $('form-card').style.display = 'block'; }
+  function backToForm(){ hideLoading(); results.style.display = 'none'; $('form-card').style.display = 'block'; updateReady(); }
 
   const SYSTEM = [
     "You are the CV-tailoring and cover-letter engine of an honesty-gated job-application system.",
@@ -567,17 +580,79 @@
     return flags;
   }
 
+  // ---- readiness ------------------------------------------------------------
+  // The button used to be permanently clickable and the complaint arrived underneath it,
+  // after the user had already pasted a CV. Say what is missing while it is still missing.
+  const COST = {
+    'claude-opus-4-8': 'about 10 cents',
+    'claude-sonnet-5': 'about 6 cents',
+    'claude-haiku-4-5': 'about 2 cents'
+  };
+  function jdFilled(){
+    if(jdMode === 'paste')  return !!jd.value.trim();
+    if(jdMode === 'url')    return !!jdurl.value.trim();
+    return !!(jdFileText || '').trim();
+  }
+  function missing(){
+    const m = [];
+    if(!cv.value.trim()) m.push('your CV');
+    if(!jdFilled())      m.push('the job posting');
+    if(!key.value.trim())m.push('your Anthropic API key');
+    return m;
+  }
+  function updateReady(){
+    const m = missing();
+    go.disabled = m.length > 0;
+    statusEl.textContent = m.length
+      ? 'Still needed: ' + m.join(', ')
+      : 'Ready. This run costs ' + (COST[model.value] || 'a few cents') + ', billed by Anthropic to your key.';
+  }
+  [cv, jd, jdurl, key, model].forEach(el => {
+    el.addEventListener('input', updateReady);
+    el.addEventListener('change', updateReady);
+  });
+
+  // ---- remembering the key (opt in, this device only) ------------------------
+  // Off by default on purpose: storing it is the user's call, not ours, and the page
+  // claims nothing reaches us. localStorage never does.
+  const KEY_STORE = 'lucy.anthropic.key';
+  const remember = $('remember');
+  function saveKey(){
+    try{
+      if(remember.checked && key.value.trim()) localStorage.setItem(KEY_STORE, key.value.trim());
+      else localStorage.removeItem(KEY_STORE);
+    }catch(e){ /* private mode: not being able to remember is not an error worth showing */ }
+  }
+  try{
+    const saved = localStorage.getItem(KEY_STORE);
+    if(saved){ key.value = saved; remember.checked = true; }
+  }catch(e){}
+  remember.addEventListener('change', saveKey);
+  key.addEventListener('input', saveKey);
+
+  // A bare link dropped in the paste box is the commonest mistake: nothing stopped it, and
+  // the model was handed the URL string as if it were the posting. Move it, do not scold.
+  const looksLikeUrl = s => /^https?:\/\/\S+$/i.test((s || '').trim());
+
+  updateReady();
+
   async function run(){
     clearErr();
-    if(!cv.value.trim()) return showErr('Add your CV first.');
-    if(!key.value.trim()) return showErr('Add your Anthropic API key. It stays in your browser.');
+
+    if(jdMode === 'paste' && looksLikeUrl(jd.value)){
+      jdurl.value = jd.value.trim();
+      jd.value = '';
+      document.querySelector('#jdseg .segbtn[data-mode="url"]').click();
+      statusEl.textContent = 'That looked like a link, so we moved it to Link and will read it.';
+    }
+
+    const stillMissing = missing();
+    if(stillMissing.length) return showErr('Still needed: ' + stillMissing.join(', ') + '.');
     const apiKey = key.value.trim();
 
     let jdText = '';
     if(jdMode === 'paste') jdText = jd.value.trim();
     else if(jdMode === 'upload') jdText = (jdFileText || '').trim();
-    if(jdMode === 'url' && !jdurl.value.trim()) return showErr('Add the job posting link, or switch to Paste.');
-    if(jdMode !== 'url' && !jdText) return showErr('Add the job posting. Paste it or upload a file.');
 
     showLoading();
     startStages(jdMode === 'url' ? STAGES_FETCH : STAGES_MAIN);
