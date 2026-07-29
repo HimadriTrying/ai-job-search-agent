@@ -131,6 +131,88 @@ def test_watchlist_health_threshold():
     assert ok is True
 
 
+def test_watchlist_health_names_the_real_cause():
+    """A blocked network and a stale watchlist both fail every fetch, and the first live
+    run on a restricted network was told to go fix slugs that were fine. The advice has to
+    follow the failure kind, not the count."""
+    net = [ats.FetchError("network", "greenhouse:x: URLError: tunnel failed")] * 4
+    ok, msg = scout_run.watchlist_health(10, 4, errors=net)
+    assert ok is False
+    assert "network" in msg and "--offline" in msg
+    assert "slug" not in msg              # must NOT send them off to edit the watchlist
+
+    gone = [ats.FetchError("missing", "greenhouse:x: HTTP 404")] * 4
+    ok, msg = scout_run.watchlist_health(10, 4, errors=gone)
+    assert ok is False and "slug" in msg
+
+    bad = [ats.FetchError("config", "bad watchlist entry")] * 4
+    ok, msg = scout_run.watchlist_health(10, 4, errors=bad)
+    assert ok is False and "ats:token" in msg
+
+    ok, msg = scout_run.watchlist_health(10, 4, errors=net[:2] + gone[:2])
+    assert ok is False and "mixed" in msg
+
+    # No classification available -> still fails, just without a specific diagnosis.
+    ok, msg = scout_run.watchlist_health(10, 4, errors=None)
+    assert ok is False and msg
+
+
+def test_classify_exception_separates_network_from_missing():
+    import urllib.error
+    import socket
+
+    def http(code):
+        return urllib.error.HTTPError("http://x", code, "err", {}, None)
+
+    assert ats.classify_exception(http(404)) == "missing"
+    assert ats.classify_exception(http(410)) == "missing"
+    assert ats.classify_exception(http(403)) == "network"   # proxy denying CONNECT
+    assert ats.classify_exception(http(407)) == "network"
+    assert ats.classify_exception(http(500)) == "other"
+    assert ats.classify_exception(
+        urllib.error.URLError("Tunnel connection failed: 403 Forbidden")) == "network"
+    assert ats.classify_exception(
+        urllib.error.URLError(socket.gaierror(-2, "Name or service not known"))) == "network"
+    assert ats.classify_exception(TimeoutError("timed out")) == "network"
+    assert ats.classify_exception(ValueError("bad json")) == "other"
+
+
+def test_vague_penalty_measures_text_not_markup():
+    """Greenhouse ships descriptions as HTML. Measuring raw string length counted tags as
+    content, so an identical threadbare JD scored -2 plain and 0 wrapped in a div, which
+    disabled this penalty for the largest single source of listings."""
+    text = "Own the roadmap."
+    padded = ('<div class="content"><p style="margin:0">' + text + "</p>"
+              + '<span class="x"></span>' * 30 + "</div>")
+    assert len(padded) > 400                      # the markup alone clears the threshold
+
+    def vague(desc):
+        v = scoring.score_job({"title": "Senior Product Manager", "description": desc}, {})
+        return any("vague" in r for r in v.reasons)
+
+    assert vague(text) is True
+    assert vague(padded) is True                  # markup must not buy its way out
+    # A genuinely substantial HTML JD is still not flagged: widening must not overshoot.
+    assert vague("<div>" + ("We own strategy and roadmap for the platform team. " * 10)
+                 + "</div>") is False
+
+
+def test_offline_fixture_ships_and_exercises_every_bucket():
+    """`--offline` is the documented fallback when the network is blocked, so the fixture
+    it names has to exist, and it has to show the pipeline actually sorting."""
+    fixture = Path(__file__).parent / "fixtures" / "jobs.sample.json"
+    assert fixture.exists(), "documented --offline fixture is missing"
+    jobs = json.loads(fixture.read_text())
+    cfg = {"candidate_years": 5,
+           "nice_to_have_keywords": ["platform", "0 to 1", "growth", "b2b"]}
+    buckets, dropped = scout_run.apply_pipeline(jobs, cfg)
+    assert buckets["apply first"], "fixture should surface at least one apply-first role"
+    assert dropped, "fixture should show the hard drops firing"
+    reasons = " ".join(w for _, w in dropped)
+    assert "below floor" in reasons                # seniority floor demonstrated
+    assert "hard-cued minimum" in reasons          # experience gate demonstrated
+
+
 def test_ats_normalizers():
     gh = {"jobs": [{"id": 1, "title": "Senior PM", "location": {"name": "Berlin"},
                     "departments": [{"name": "Product"}], "absolute_url": "http://x", "content": "desc"}]}

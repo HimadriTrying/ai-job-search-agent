@@ -12,11 +12,69 @@ pure normalization logic can be unit-tested offline against fixtures.
 
 from __future__ import annotations
 import json
+import socket
 import urllib.request
 import urllib.error
 
 UA = {"User-Agent": "job-scout/0.1 (personal job search)"}
 TIMEOUT = 20
+
+
+class FetchError:
+    """A failed watchlist fetch, carrying *why* it failed as well as what to print.
+
+    The kind matters because the two common failures need opposite advice, and telling a
+    user to fix their watchlist when their network is blocked sends them to edit a file
+    that was never the problem:
+      "network" — no route to the ATS at all (blocked proxy, VPN, DNS, offline, timeout)
+      "missing" — the ATS answered and said no such board (slug drift)
+      "config"  — the watchlist line itself is malformed
+      "other"   — reached the ATS, but something else went wrong (bad JSON, 5xx)
+    Renders as its message so digest output stays a plain string.
+    """
+
+    __slots__ = ("kind", "message")
+
+    def __init__(self, kind: str, message: str):
+        self.kind = kind
+        self.message = message
+
+    def __str__(self) -> str:
+        return self.message
+
+    def __repr__(self) -> str:  # keeps test failures readable
+        return f"FetchError({self.kind!r}, {self.message!r})"
+
+    def __eq__(self, other):  # so tests can compare against the plain message
+        return str(self) == str(other)
+
+
+def classify_exception(exc: BaseException) -> str:
+    """Map a fetch exception to a FetchError kind.
+
+    URLError wraps the real cause in .reason, which is where a blocked proxy shows up
+    (the tunnel-refused case is what a corporate network or a restricted container
+    actually produces, and it is otherwise indistinguishable from a dead slug).
+    """
+    if isinstance(exc, urllib.error.HTTPError):
+        if exc.code in (404, 410):
+            return "missing"
+        if exc.code in (403, 407):
+            # A proxy denying CONNECT surfaces as 403/407 from the tunnel, not the ATS.
+            return "network"
+        return "other"
+    if isinstance(exc, (urllib.error.URLError, socket.timeout, TimeoutError, OSError)):
+        reason = getattr(exc, "reason", exc)
+        text = str(reason).lower()
+        if "tunnel" in text or "proxy" in text or "forbidden" in text:
+            return "network"
+        if isinstance(reason, (socket.gaierror, socket.timeout, TimeoutError, ConnectionError)):
+            return "network"
+        if any(s in text for s in ("timed out", "name or service", "unreachable",
+                                   "connection refused", "temporary failure", "ssl")):
+            return "network"
+        return "network"
+    return "other"
 
 ENDPOINTS = {
     "greenhouse": "https://boards-api.greenhouse.io/v1/boards/{token}/jobs?content=true",
@@ -155,14 +213,17 @@ def fetch_company(entry: str) -> tuple[list[dict], str | None]:
     try:
         ats, token = entry.split(":", 1)
     except ValueError:
-        return [], f"bad watchlist entry (need ats:token): {entry!r}"
+        return [], FetchError("config", f"bad watchlist entry (need ats:token): {entry!r}")
     if ats not in ENDPOINTS:
-        return [], f"unknown ATS '{ats}' in {entry!r}"
+        return [], FetchError("config", f"unknown ATS '{ats}' in {entry!r}")
     url = ENDPOINTS[ats].format(token=token)
     try:
         raw = fetch_json(url)
     except urllib.error.HTTPError as e:
-        return [], f"{entry}: HTTP {e.code} (slug drift? board moved ATS?)"
+        kind = classify_exception(e)
+        hint = ("blocked before reaching the ATS" if kind == "network"
+                else "slug drift? board moved ATS?")
+        return [], FetchError(kind, f"{entry}: HTTP {e.code} ({hint})")
     except Exception as e:  # noqa: BLE001 - deliberately broad; log and continue
-        return [], f"{entry}: {type(e).__name__}: {e}"
+        return [], FetchError(classify_exception(e), f"{entry}: {type(e).__name__}: {e}")
     return normalize(ats, raw, token), None

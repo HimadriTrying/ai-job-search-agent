@@ -44,7 +44,13 @@ def score_job(job: dict, cfg: dict) -> Verdict:
     score = 0
 
     # ---- Penalties (subtract) --------------------------------------------------
-    vague = job.get("description") and len(job["description"]) < 400
+    # Measure the *visible* text, not the markup. Greenhouse ships descriptions as raw
+    # HTML, so length-on-the-raw-string counted tags and inline styles as content: an
+    # identical 16-character JD scored -2 as plain text and 0 once wrapped in a div,
+    # which silently disabled this penalty for the largest single source of listings.
+    body = _strip_html(job.get("description") or "")
+    body = re.sub(r"\s+", " ", body).strip()
+    vague = job.get("description") and len(body) < 400
     if vague:
         score -= 2; reasons.append("-2 vague/boilerplate JD (very short)")
 

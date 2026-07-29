@@ -1,0 +1,86 @@
+/* Shared card styles for generated social + launch imagery.
+   Kept in one file so every card moves together; the palette mirrors docs/index.html.
+   Regenerate the PNGs with docs/assets/social/render.sh after any change here. */
+
+:root{
+  --ink:#17141a; --ink-2:#443f4b; --ink-3:#6f6879;
+  --paper:#fcfbf9; --paper-2:#f5f2ee; --line:#e7e1dc;
+  --pink:#e9518f; --violet:#7c5cf0; --orange:#f2793f; --sky:#4fb8e8;
+  --grad:linear-gradient(100deg,#e9518f 0%,#7c5cf0 52%,#f2793f 100%);
+  --violet-soft:#f1edfd; --pink-soft:#fdeef4;
+  --display:'Fraunces',Georgia,serif;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+
+/* The card is sized by the screenshot viewport, not by CSS, so each render
+   script sets --w/--h and the card fills it exactly. */
+.card{
+  width:100vw;height:100vh;
+  position:relative;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+
+/* Soft gradient bloom, echoing the landing page hero. */
+.bloom{
+  position:absolute;border-radius:50%;
+  filter:blur(70px);opacity:.5;pointer-events:none;
+}
+.bloom-a{background:radial-gradient(circle,#e9518f 0%,transparent 70%)}
+.bloom-b{background:radial-gradient(circle,#7c5cf0 0%,transparent 70%)}
+.bloom-c{background:radial-gradient(circle,#f2793f 0%,transparent 70%)}
+
+.wordmark{
+  font-family:var(--display);
+  font-weight:500;
+  letter-spacing:-.01em;
+}
+
+.eyebrow{
+  font-size:.78rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  padding-top:.2em;padding-bottom:.2em;padding-right:.09em;margin-right:-.09em;
+}
+
+h1,h2{font-family:var(--display);font-weight:400;letter-spacing:-.02em;line-height:1.06}
+h1 em,h2 em{
+  font-style:italic;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  padding-top:.2em;padding-bottom:.2em;padding-right:.09em;margin-right:-.09em;
+}
+
+.lede{color:var(--ink-2);line-height:1.5}
+.muted{color:var(--ink-3)}
+
+.pill{
+  display:inline-flex;align-items:center;gap:.5em;
+  border:1px solid var(--line);border-radius:999px;
+  background:#fff;
+  font-size:.9rem;font-weight:500;color:var(--ink-2);
+  padding:.5em 1.1em;
+}
+.dot{width:.5em;height:.5em;border-radius:50%;background:var(--violet);flex:none}
+
+.rule{height:1px;background:var(--line);border:0}
+
+/* Terminal-ish block used to show Lucy being talked to in plain language. */
+.term{
+  background:#17141a;border-radius:14px;color:#f5f2ee;
+  font-family:'DejaVu Sans Mono',ui-monospace,monospace;
+  line-height:1.75;
+}
+.term .you{color:#8fd7ff}
+.term .lucy{color:#f7b2d0}
+.term .dim{color:#8b8494}
+.term .ok{color:#7ee0a8}
+.term .no{color:#ff8f8f}

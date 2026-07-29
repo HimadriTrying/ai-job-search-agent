@@ -28,7 +28,7 @@ except ImportError:
     print("pip install pyyaml"); raise
 
 HERE = Path(__file__).parent
-REPO = HERE.parents[2]  # .../ai-job-search-orchestrator
+REPO = HERE.parents[2]  # .../ai-job-search-agent
 DIGESTS = REPO / "data" / "digests"
 
 
@@ -76,16 +76,43 @@ def backfill_sr_descriptions(jobs: list[dict], cfg: dict,
     return failed
 
 
-def watchlist_health(n_entries: int, n_errors: int, threshold: float = 0.3):
+def watchlist_health(n_entries: int, n_errors: int, threshold: float = 0.3, errors=None):
     """A mostly-dead watchlist produces an empty digest that reads like a quiet day.
-    Fail the run loudly instead when too many entries error, so slug drift gets fixed
-    instead of silently starving discovery. Returns (ok, message)."""
-    if n_entries and n_errors / n_entries > threshold:
-        return False, (f"{n_errors}/{n_entries} watchlist entries failed to fetch "
-                       f"(over {int(threshold * 100)}%). The watchlist looks stale — an empty "
-                       "digest would be misleading, so this run fails. Fix the ats:token "
-                       "slugs in watchlist.txt (a 404 usually means the board moved).")
-    return True, ""
+    Fail the run loudly instead when too many entries error, so the cause gets fixed
+    instead of silently starving discovery. Returns (ok, message).
+
+    The message is chosen from *why* the fetches failed, not just how many. The first
+    real run of this on a restricted network reported "the watchlist looks stale" when
+    every request had in fact been blocked before it reached an ATS — advice that sends
+    someone to edit a file that was never broken. `errors` is a list of ats.FetchError
+    (plain strings are tolerated and treated as unclassified).
+    """
+    if not (n_entries and n_errors / n_entries > threshold):
+        return True, ""
+
+    kinds = [getattr(e, "kind", "other") for e in (errors or [])]
+    head = (f"{n_errors}/{n_entries} watchlist entries failed to fetch "
+            f"(over {int(threshold * 100)}%). An empty digest would be misleading, "
+            "so this run fails.")
+
+    if kinds and all(k == "network" for k in kinds):
+        return False, (f"{head} Every failure was a connection that never reached the ATS, "
+                       "so this looks like the network, not your watchlist: check a VPN, "
+                       "corporate proxy, or firewall between you and "
+                       "boards-api.greenhouse.io / api.lever.co / api.ashbyhq.com / "
+                       "api.smartrecruiters.com. To confirm the rest of the pipeline works "
+                       "without a network, run: python run.py --offline "
+                       "tests/fixtures/jobs.sample.json")
+    if kinds and all(k == "config" for k in kinds):
+        return False, (f"{head} Every failure was a malformed watchlist line. Each entry must "
+                       "be 'ats:token' where ats is greenhouse, lever, ashby, or "
+                       "smartrecruiters.")
+    if kinds and all(k == "missing" for k in kinds):
+        return False, (f"{head} Every board answered 'no such company', so the slugs have "
+                       "drifted. Fix the ats:token entries in watchlist.txt — a 404 usually "
+                       "means the board moved.")
+    return False, (f"{head} The failures are mixed — see the 'Fetch errors' section of the "
+                   "digest for the reason on each entry.")
 
 
 def apply_pipeline(jobs: list[dict], cfg: dict):
@@ -184,7 +211,8 @@ def main() -> int:
         print(f"({len(errors)} fetch error(s) — see digest)")
     if not args.offline:
         ok, msg = watchlist_health(n_entries, n_fetch_errors,
-                                   float(cfg.get("max_fetch_error_ratio", 0.3)))
+                                   float(cfg.get("max_fetch_error_ratio", 0.3)),
+                                   errors[:n_fetch_errors])
         if not ok:
             print(f"ERROR: {msg}", file=sys.stderr)
             return 1

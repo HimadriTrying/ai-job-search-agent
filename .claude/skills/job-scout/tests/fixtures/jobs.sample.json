@@ -1,0 +1,79 @@
+[
+  {
+    "id": "sample-1",
+    "title": "Senior Product Manager, AI Platform",
+    "location": "Berlin, Germany",
+    "department": "Product",
+    "url": "https://example.com/jobs/sample-1",
+    "description": "<p>We are looking for a Senior Product Manager to own our AI platform end to end. You will set the strategy for how LLM capabilities are exposed to product teams across the company, and you will be accountable for the roadmap that gets us there.</p><p>This is a 0 to 1 role. The platform exists as an internal prototype today and your job is to turn it into a product that other teams can build on without talking to us first. You will work directly with machine learning engineers, and with the B2B product teams who are our first customers.</p><p>What we are looking for: someone who has taken a developer-facing or platform product from nothing to real adoption, who is comfortable setting direction under genuine ambiguity, and who can hold a technical conversation with the ML team without needing a translator. You should be able to say no to a roadmap request and explain why.</p><p>5+ years of product management experience, at least some of it on platform, infrastructure, or API products.</p>",
+    "comp_max": 135000,
+    "source": "greenhouse",
+    "company": "sample-platform-co"
+  },
+  {
+    "id": "sample-2",
+    "title": "Lead Product Manager, Growth",
+    "location": "Remote, EU",
+    "department": "Growth",
+    "url": "https://example.com/jobs/sample-2",
+    "description": "Own the growth funnel for our B2B product. You will run experiments across activation, onboarding and retention, and you will be responsible for the quarterly roadmap for the growth team. We expect you to bring a point of view on where the funnel leaks and to defend it with data. You will partner with engineering, design, lifecycle marketing and sales to ship changes that move activation rate, and you will report on that number to the leadership team every month. We care about judgement and evidence more than credentials or pedigree. This role suits someone who has owned a growth number before and is comfortable being measured on it.",
+    "comp_max": 145000,
+    "source": "lever",
+    "company": "sample-growth-co"
+  },
+  {
+    "id": "sample-3",
+    "title": "Product Manager",
+    "location": "Berlin, Germany",
+    "department": "Core",
+    "url": "https://example.com/jobs/sample-3",
+    "description": "A generalist product role on our core team. You will work closely with design and engineering to ship improvements to the main product surface, run discovery with customers, and keep the backlog healthy and prioritised against company goals.",
+    "comp_max": null,
+    "source": "ashby",
+    "company": "sample-core-co"
+  },
+  {
+    "id": "sample-4",
+    "title": "Junior Product Manager",
+    "location": "Berlin, Germany",
+    "department": "Product",
+    "url": "https://example.com/jobs/sample-4",
+    "description": "A first product role for someone early in their career. You will be paired with a senior PM who will mentor you, and you will own a small, well-defined part of the product from day one. Structured onboarding and a clear progression framework.",
+    "comp_max": null,
+    "source": "greenhouse",
+    "company": "sample-platform-co"
+  },
+  {
+    "id": "sample-5",
+    "title": "Director of Product, Payments",
+    "location": "San Francisco, CA",
+    "department": "Payments",
+    "url": "https://example.com/jobs/sample-5",
+    "description": "Lead a team of product managers across our payments organisation. You will set the strategy for the payments portfolio, manage a team of six PMs including two managers, and represent payments in company strategy discussions at the executive level. Minimum 12 years of experience required, including 5 years managing managers.",
+    "comp_max": 260000,
+    "source": "lever",
+    "company": "sample-payments-co"
+  },
+  {
+    "id": "sample-6",
+    "title": "Senior Product Manager, Sportsbook",
+    "location": "Malta",
+    "department": "Gaming",
+    "url": "https://example.com/jobs/sample-6",
+    "description": "Own the sportsbook betting experience for our online gambling platform across regulated markets. You will set the roadmap for in-play betting, work with trading and compliance teams, and be responsible for the strategy behind our live odds surface across web and native apps.",
+    "comp_max": 110000,
+    "source": "smartrecruiters",
+    "company": "sample-gaming-co"
+  },
+  {
+    "id": "sample-7",
+    "title": "Senior Product Manager",
+    "location": "Berlin, Germany",
+    "department": "Product",
+    "url": "https://example.com/jobs/sample-7",
+    "description": "<div><p>Senior Product Manager wanted. You will be responsible for the product. Work with stakeholders to deliver value. Manage the backlog. Drive outcomes. Collaborate with teams.</p></div>",
+    "comp_max": null,
+    "source": "greenhouse",
+    "company": "sample-vague-co"
+  }
+]

@@ -46,7 +46,20 @@ Real code lives in `scout/` and `run.py`:
 Config: copy `config.example.yaml` → `config.yaml`, set your real years/seniority/locations.
 Watchlist: copy `watchlist.example.txt` → `watchlist.txt`, one `ats:token` per line.
 
-Run it: `python run.py` (live) or `python run.py --offline jobs.json` (no network).
+Run it live: `python run.py`. With no network at all:
+
+```bash
+python run.py --offline tests/fixtures/jobs.sample.json
+```
+
+That fixture ships with the repo and exercises the whole pipeline — one apply-first, one
+worth-a-look, two skipped, three hard drops, each with its reason — so a first run proves the
+scoring works even when the ATS APIs are unreachable.
+
 Tests: `python tests/test_scout.py` — all green. To run live you need network access from
 wherever this executes (works locally and in the GitHub Action; not in a sandbox with egress
-disabled). Endpoints are current public feeds but slugs drift — a 404 means update the token.
+disabled). Endpoints are current public feeds but slugs drift.
+
+When a live sweep fails, the run names *which* failure it was: a blocked network and a stale
+watchlist both fail every fetch, and they need opposite fixes. Network problems point at the
+offline command above; slug drift points at `watchlist.txt`.
