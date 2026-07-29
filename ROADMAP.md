@@ -96,8 +96,17 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
   missing LaTeX/poppler → HTML+Chromium render fallback; Reviewer unspawnable → hard stop, not
   self-review; and written claims now carry their scope ("live in one pilot market", not "live in
   production") — a Reviewer rule, since the code gate can't catch true-but-unscoped.
+  A second pass, run as a stranger would (clean clone, README followed literally), found three
+  more: the vague-JD penalty measured raw HTML rather than visible text, so it sat inert for
+  Greenhouse, the largest source of listings; a sweep that failed every fetch blamed a stale
+  watchlist when the cause was a blocked network, which needs the opposite fix; and `--offline`,
+  the documented escape hatch from exactly that, shipped with no fixture to run against. All
+  three are fixed with regression tests, and `SETUP.md` now opens with a 30-second offline smoke
+  test so an install can be verified before the hour-long setup interview.
   *Hypothesis: launch visitors run Lucy in hostile environments — blocked networks, missing tools,
   half-set-up clones — so the first-run experience is decided by failure handling, not the happy path.*
+  *Proven so far: clean clone to a scored, fully-explained digest in three offline commands.
+  Still unproven: a live ATS sweep, which needs one run from an unblocked machine.*
 
 ---
 
