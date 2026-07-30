@@ -27,14 +27,11 @@
   @media(max-width:640px){.wrap{padding:0 20px}}
   a{color:var(--violet);text-decoration:none}
   a:hover{text-decoration:underline}
-  .eyebrow{font-size:.74rem;font-weight:600;letter-spacing:.14em;
-    text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;
-    background-clip:text;color:transparent}
   /* Gradient-filled text is painted inside the inline box, which is shorter and
      narrower than tall or italic glyphs. Padding grows that box so ascenders,
      descenders and italic overhangs stay filled; the negative margin keeps the
      horizontal padding from shifting the text that follows. */
-  .eyebrow,h1 em,.cta-end h2 em{
+  h1 em,.cta-end h2 em{
     padding-top:.2em;padding-bottom:.2em;padding-right:.09em;margin-right:-.09em}
 
   nav{position:sticky;top:0;z-index:50;background:rgba(251,250,247,.85);
@@ -167,7 +164,7 @@
   .band .wrap{padding:56px 32px}
   @media(max-width:640px){.band .wrap{padding:40px 20px}}
   .band h2{font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,4vw,2.4rem);
-    letter-spacing:-.02em;line-height:1.1;margin:10px 0 16px;max-width:20ch}
+    letter-spacing:-.02em;line-height:1.1;margin:0 0 16px;max-width:20ch}
   .band .lead{font-size:1.08rem;color:var(--ink-2);max-width:66ch;line-height:1.6;margin-bottom:8px}
   .band p.body{font-size:.98rem;color:var(--ink-2);max-width:66ch;line-height:1.65;margin-bottom:14px}
   .steps{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 6px}
@@ -182,7 +179,7 @@
     width:720px;height:720px;border-radius:50%;pointer-events:none;
     background:radial-gradient(closest-side,rgba(233,81,143,.13),rgba(124,92,240,.09) 55%,transparent 75%)}
   .cta-end h2{font-family:var(--display);font-weight:400;font-size:clamp(2rem,5vw,3.2rem);
-    letter-spacing:-.022em;line-height:1.08;margin:14px auto 16px;max-width:18ch}
+    letter-spacing:-.022em;line-height:1.08;margin:0 auto 16px;max-width:18ch}
   .cta-end h2 em{font-style:italic;background:var(--grad);-webkit-background-clip:text;
     background-clip:text;color:transparent}
   .cta-end p{color:var(--ink-2);font-size:1.08rem;max-width:52ch;margin:0 auto}
@@ -220,7 +217,6 @@
 
 <header class="hero">
   <div class="wrap">
-    <span class="eyebrow">A teaser · no install</span>
     <h1>Tailor your CV to a role, <em>honestly</em>, in about 60 seconds.</h1>
     <p class="sub">Drop in your CV and a job posting. You get back a version of your CV reshaped for
       that role, plus a matching cover letter, checked against what you gave so nothing gets invented.
@@ -322,7 +318,6 @@
 
 <section class="band" id="how">
   <div class="wrap">
-    <span class="eyebrow">What this page is</span>
     <h2>The smallest piece of Lucy.</h2>
     <p class="lead">1 of 8 steps, on 1 job, in a browser tab. Installed in your terminal, the same
       agent runs the whole search:</p>
@@ -344,7 +339,6 @@
 
 <section class="cta-end">
   <div class="wrap">
-    <span class="eyebrow">Your move</span>
     <h2>That was 1 step. Run the <em>whole</em> search.</h2>
     <p>The same tailoring you just saw, plus role discovery, warm intros, and interview prep, on repeat.
       Free, open source, and it still stops before every real commitment.</p>
