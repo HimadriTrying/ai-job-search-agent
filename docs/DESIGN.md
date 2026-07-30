@@ -48,6 +48,12 @@ page closes on the same CTA it opened with.
 
 - **Copy rules are enforced in code.** No em or en dashes in `docs/*.html`; quantities as
   numerals ("11 years"). See `scripts/check-copy-style.sh`, wired as a PostToolUse hook.
+- **No small all-caps eyebrow labels above headings.** Every section used to carry one
+  ("WHY THIS EXISTS", "HOW LUCY WORKS"). They were removed on 2026-07-30: letter-spaced
+  uppercase micro-headers are a widely recognised public tell that a page was generated
+  by an AI, and this page already says outright that it was built with Claude, so it
+  should not also look like the stereotype. Enforced by `scripts/check-copy-style.sh`.
+  If a section needs what the eyebrow carried, put it in the heading, not in a label.
 - **The 6 stages keep the numbered rail with 1 panel at a time** (auto-advancing, click a
   node to pin). A full left-to-right card grid was tried on 2026-07-23 and the owner
   preferred the rail; do not reintroduce the grid for the stages.

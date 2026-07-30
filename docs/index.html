@@ -29,14 +29,11 @@
   @media(max-width:640px){.wrap{padding:0 22px}body{font-size:16px}}
   a{color:var(--violet);text-decoration:none}
   a:hover{text-decoration:underline}
-  .eyebrow{font-family:var(--sans);font-size:.74rem;font-weight:600;letter-spacing:.14em;
-    text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;
-    background-clip:text;color:transparent}
   /* Gradient-filled text is painted inside the inline box, which is shorter and
      narrower than tall or italic glyphs. Padding grows that box so ascenders,
      descenders and italic overhangs stay filled; the negative margin keeps the
      horizontal padding from shifting the text that follows. */
-  .eyebrow,h1 em,.story .turn,.whoami .lead em,.cta-end h2 em{
+  h1 em,.story .turn,.whoami .lead em,.cta-end h2 em{
     padding-top:.2em;padding-bottom:.2em;padding-right:.09em;margin-right:-.09em}
 
   nav{position:sticky;top:0;z-index:50;background:rgba(252,251,249,.85);
@@ -89,7 +86,7 @@
   section{padding:70px 0}
   .head{max-width:640px;margin-bottom:44px}
   .head h2{font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,4.2vw,2.7rem);
-    letter-spacing:-.022em;line-height:1.1;margin:12px 0 14px}
+    letter-spacing:-.022em;line-height:1.1;margin:0 0 14px}
   .head p{color:var(--ink-2);font-size:1.08rem}
 
   /* about me */
@@ -154,8 +151,8 @@
   .fpanel .say{display:inline-block;margin-top:14px;font-size:.84rem;color:var(--violet);
     background:var(--violet-soft);border-radius:7px;padding:5px 11px}
   .fpanel .say b{font-weight:600}
-  .flag{display:inline-block;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--pink);border:1px solid var(--pink);border-radius:6px;padding:2px 8px;margin-bottom:9px}
+  .flag{display:inline-block;font-size:.78rem;font-weight:500;
+    color:var(--pink);border:1px solid var(--pink);border-radius:6px;padding:2px 9px;margin-bottom:9px}
   @media(max-width:640px){.fpanel{padding:20px 22px}}
   .fgrid{display:grid;grid-template-columns:1fr 250px;gap:28px;align-items:center}
   .fviz{width:250px;height:175px;flex:none}
@@ -169,7 +166,7 @@
     width:720px;height:720px;border-radius:50%;pointer-events:none;
     background:radial-gradient(closest-side,rgba(233,81,143,.13),rgba(124,92,240,.09) 55%,transparent 75%)}
   .cta-end h2{font-family:var(--display);font-weight:400;font-size:clamp(2rem,5vw,3.2rem);
-    letter-spacing:-.022em;line-height:1.08;margin:14px auto 16px;max-width:18ch}
+    letter-spacing:-.022em;line-height:1.08;margin:0 auto 16px;max-width:18ch}
   .cta-end h2 em{font-style:italic;background:var(--grad);-webkit-background-clip:text;
     background-clip:text;color:transparent}
   .cta-end p{color:var(--ink-2);font-size:1.08rem;max-width:52ch;margin:0 auto}
@@ -276,8 +273,7 @@
 
 <div class="story">
   <div class="wrap">
-    <span class="eyebrow">Why this exists</span>
-    <p style="margin-top:14px">Applying is the easy half. Everyone can see the posting, and everyone sends the same tailored CV.</p>
+    <p>Applying is the easy half. Everyone can see the posting, and everyone sends the same tailored CV.</p>
     <p>What actually moves the needle is quieter: <span class="turn">knowing someone on the inside.</span>
       A warm introduction changes your odds more than any keyword ever will.</p>
     <div class="pull"><span>The job search is a funnel of 6 stages, and most tools solve exactly 1.</span></div>
@@ -286,8 +282,7 @@
 
 <section class="cred">
   <div class="wrap">
-    <span class="eyebrow">About me</span>
-    <div class="whoami" style="margin-top:26px">
+    <div class="whoami">
       <div class="pfp">
         <div class="disc"></div>
         <img src="assets/profile.jpg" alt="Portrait of Lucy's builder" onerror="this.remove()">
@@ -331,7 +326,6 @@
 <section class="funnel" id="how">
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">How Lucy works</span>
       <h2>6 stages, 1 conversation.</h2>
       <p>Say what you need in plain language. 1 orchestrator routes it to the right specialist,
         12 in all, and hands back 1 clean result.</p>
@@ -511,7 +505,6 @@
 <section class="start" id="start">
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">Getting started</span>
       <h2>How you'd actually use Lucy.</h2>
       <p>Set it up once in Claude Code, then just talk. 4 steps to your first tailored application.</p>
     </div>
@@ -562,7 +555,6 @@ claude
 <section>
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">Why you can trust it</span>
       <h2>3 rules it can't break.</h2>
     </div>
     <div class="grid3">
@@ -585,7 +577,6 @@ claude
 <section id="faq">
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">Good to know</span>
       <h2>FAQs</h2>
     </div>
     <div class="faq-list">
@@ -631,7 +622,6 @@ claude
 
 <section class="cta-end">
   <div class="wrap">
-    <span class="eyebrow">Your move</span>
     <h2>Ready to run the <em>whole</em> search?</h2>
     <p>Free, open source, and it stops before every real commitment. Start in your browser right now,
       no install, no sign-up.</p>
