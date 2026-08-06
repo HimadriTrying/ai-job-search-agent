@@ -48,6 +48,20 @@ FACTS = {
     ],
     "certifications": [],
     "skills": ["sql", "experimentation", "ai product strategy"],
+    "coaching": [
+        {
+            "organisation": "Meridian Row",
+            "role": "Ride coach, Lisbon studios",
+            "cadence": "roughly 4 classes a week",
+            "metrics": ["Coached 229 classes across Meridian Row's Lisbon studios",
+                        "Earned 181 five-star ratings"],
+        }
+    ],
+    "endurance": [
+        "3 Hyrox open races",
+        "2 Super Halves",
+        {"note": "Tracks and adjusts his own training data"},
+    ],
 }
 
 
@@ -164,6 +178,46 @@ def test_job_posting_nouns_and_numbers_are_allowed():
     assert findings_for(letter, ctx) == []
 
 
+# ── Coaching and endurance are claims too ────────────────────────────────────
+# Added 6 Aug 2026. Before this, claim_numbers() and known_strings() read only
+# employers/education/certifications, so a true coaching or race figure sitting
+# in career_facts.yaml was still flagged as a fabrication. A gate that rejects
+# the truth is a gate people learn to wave through.
+
+def test_coaching_metric_passes():
+    assert findings_for("I coach at Meridian Row in Lisbon, 229 classes in.") == []
+
+
+def test_coaching_rating_count_passes():
+    assert findings_for("I have earned 181 five-star ratings as a coach.") == []
+
+
+def test_endurance_numbers_pass():
+    assert findings_for("I have completed 3 Hyrox open races and 2 Super Halves.") == []
+
+
+def test_inflated_coaching_metric_still_fails():
+    # The point of widening the gate is not to stop it counting.
+    assert any("450" in f for f in findings_for("I have coached 450 classes."))
+
+
+def test_shared_numbers_are_allowed_inside_an_employer_sentence():
+    # Documenting a deliberate limit, not an aspiration. Shared numbers (degree
+    # years, coaching, endurance) are employer-independent, so the attribution
+    # check does not bind them to the employer a sentence happens to name:
+    # "At Northwind Analytics I shipped 229 releases" passes. Narrowing this
+    # would also break the legitimate case of citing a degree year alongside an
+    # employer. Employer-owned metrics are still bound — see
+    # test_metric_bound_to_wrong_employer_fails, which is the check that matters.
+    assert findings_for("At Northwind Analytics I shipped 229 releases.") == []
+
+
+if __name__ == "__main__":
+    fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
+    passed = 0
+    for fn in fns:
+        fn(); passed += 1; print(f"  ok  {fn.__name__}")
+    print(f"\n{passed}/{len(fns)} tests passed")
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     passed = 0

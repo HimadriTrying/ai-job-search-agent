@@ -116,7 +116,27 @@ def known_strings(facts: dict) -> set[str]:
     for s in facts.get("skills") or []:
         if s:
             out.add(s.strip().lower())
+    for c in facts.get("coaching") or []:
+        for k in ("organisation", "role"):
+            if c.get(k):
+                out.add(str(c[k]).strip().lower())
+        for line in c.get("metrics") or []:
+            if line:
+                out.add(str(line).strip().lower())
+    for line in _endurance_lines(facts):
+        out.add(line.strip().lower())
     return {s for s in out if s}
+
+
+def _endurance_lines(facts: dict) -> list[str]:
+    """Endurance entries are plain strings, except a trailing {note: ...} dict."""
+    out: list[str] = []
+    for item in facts.get("endurance") or []:
+        if isinstance(item, dict):
+            out += [str(v) for v in item.values() if v]
+        elif item:
+            out.append(str(item))
+    return out
 
 
 NUM_TOKEN = re.compile(r"\d+(?:\.\d+)?%?")
@@ -162,11 +182,18 @@ def claim_numbers(facts: dict) -> tuple[dict[str, set[str]], set[str]]:
 
     Returns (per_employer, shared):
       per_employer["acme corp"] = numbers from THAT employer's metrics/scope/dates/tenure
-      shared                    = employer-independent numbers (education, certifications)
+      shared                    = employer-independent numbers (education, certifications,
+                                  coaching, endurance)
 
     Deliberately excluded: candidate.contact (phone, email, links). Contact digits are
     identity data, not evidence — treating them as metrics is how a phone number ends up
     "supporting" a fake growth percentage.
+
+    Coaching and endurance are shared, not per-employer: they are claims about the
+    candidate that no employer owns. They were absent here until 6 Aug 2026, which made
+    the gate fail true facts — "204 classes" and "3 Hyrox open races" were in the facts
+    file and still flagged. A gate that rejects the truth teaches people to override it,
+    so this omission was a safety bug, not a conservative default.
     """
     per: dict[str, set[str]] = {}
     for e in facts.get("employers") or []:
@@ -179,6 +206,10 @@ def claim_numbers(facts: dict) -> tuple[dict[str, set[str]], set[str]]:
         shared |= _nums_in(ed.get("year"), ed.get("credential"), ed.get("institution"))
     for c in facts.get("certifications") or []:
         shared |= _nums_in(c.get("year"), c.get("name"))
+    for c in facts.get("coaching") or []:
+        shared |= _nums_in(*(c.get("metrics") or []),
+                           c.get("period"), c.get("cadence"), c.get("role"))
+    shared |= _nums_in(*_endurance_lines(facts))
     return per, shared
 
 
