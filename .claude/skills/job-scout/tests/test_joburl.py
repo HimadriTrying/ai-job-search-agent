@@ -160,6 +160,85 @@ def test_every_board_failing_reports_what_was_tried():
     assert "getmoss" in err and "moss" in err
 
 
+
+# ---------------------------------------------------------------------------------------
+# Regressions from real pasted links, 21 Aug 2026.
+#
+# Reported symptom: "every time I put in an Ashby or Greenhouse URL the details are not
+# picked up and I have to paste the job description separately." Four separate causes, all
+# reproducible offline. Each test below is one of them, and each fails on the code as it
+# was. The paste-the-JD fallback was doing its job; it was just being reached far too often.
+# ---------------------------------------------------------------------------------------
+
+
+def test_apply_button_links_still_resolve_the_posting():
+    """Copying the link from the Apply button is normal. The id is the segment BEFORE it."""
+    uuid = "2f1a9c33-4b21-4a7e-9c11-9f0e2b8d7a55"
+    for url in (
+        f"https://jobs.ashbyhq.com/moss/{uuid}/application",
+        f"https://jobs.ashbyhq.com/moss/{uuid}/application/form",
+        f"https://jobs.lever.co/acme/{uuid}/apply",
+        f"https://jobs.lever.co/acme/{uuid}/thanks",
+    ):
+        assert joburl.job_id(url) == uuid, url
+
+
+def test_greenhouse_embed_links_resolve_board_and_posting():
+    """The iframe shape a company's own careers page uses. Neither value is in the path."""
+    url = "https://boards.greenhouse.io/embed/job_app?for=acme&token=4012345"
+    parsed = joburl.parse(url)
+    assert parsed["ats"] == "greenhouse"
+    assert parsed["tokens"][0] == "acme", "board came from ?for=, not the path"
+    assert parsed["job_id"] == "4012345", "posting came from ?token="
+
+
+def test_a_long_board_name_is_not_mistaken_for_a_job_id():
+    """The first path segment on a hosted board is the board, never the posting."""
+    assert joburl.job_id("https://boards.greenhouse.io/getmoss/jobs") is None
+    assert joburl.job_id("https://jobs.ashbyhq.com/getmoss") is None
+
+
+def test_ordinary_links_are_unaffected():
+    """Widening the parser must not move any case that already worked."""
+    uuid = "2f1a9c33-4b21-4a7e-9c11-9f0e2b8d7a55"
+    assert joburl.job_id("https://job-boards.greenhouse.io/acme/jobs/4012345") == "4012345"
+    assert joburl.job_id(f"https://jobs.ashbyhq.com/moss/{uuid}") == uuid
+    assert joburl.job_id(f"https://www.getmoss.com/careers?ashby_jid={uuid}") == uuid
+    assert joburl.job_id("https://acme.com/careers/job?gh_jid=4012345") == "4012345"
+
+
+def test_an_id_with_a_title_slug_appended_still_matches():
+    jobs = [{"id": "744000012345678", "url": "https://x/744000012345678"}]
+    assert joburl.select(jobs, "744000012345678-senior-product-manager") is jobs[0]
+
+
+_SR_LIST = {"content": [{"id": "744000012345678", "name": "Senior PM",
+                         "location": {"city": "Berlin", "country": "de"},
+                         "department": {"label": "Product"},
+                         "ref": "https://careers.smartrecruiters.com/Acme/744000012345678"}]}
+_SR_FULL = {"jobAd": {"sections": {"jobDescription": {
+    "title": "About", "text": "<p>You will own reconciliation end to end.</p>"}}}}
+_SR_URL = "https://careers.smartrecruiters.com/Acme/744000012345678"
+
+
+def test_smartrecruiters_postings_carry_their_description():
+    """The list endpoint has no posting text. ats.py leaves it empty to keep the sweep cheap,
+    which is right for a sweep and wrong here, where the text is the entire point."""
+    job, err = joburl.fetch_posting(
+        _SR_URL, fetcher=lambda u: _SR_FULL if "/postings/744" in u else _SR_LIST)
+    assert err is None, err
+    assert "reconciliation" in job["description"]
+
+
+def test_an_empty_description_fails_loudly_rather_than_silently():
+    """The worst outcome is a link that 'resolves' and hands the tailor nothing: a document
+    written against an empty JD is confidently wrong, and nothing announces it."""
+    job, err = joburl.fetch_posting(
+        _SR_URL, fetcher=lambda u: _SR_LIST if "/postings/744" not in u else {})
+    assert job is None
+    assert "no description" in err and "Paste the posting" in err
+
+
 if __name__ == "__main__":
     import traceback
     passed = failed = 0

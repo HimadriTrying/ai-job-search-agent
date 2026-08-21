@@ -66,11 +66,23 @@ disables the honesty gate; never do it.
 ### Getting the JD — applies to every skill that needs a posting
 
 The JD is load-bearing: `cv-tailor`, `cover-letter`, and the gate's `--job` flag all need
-the posting's real text as a file. When the user gives a posting URL, try to fetch it —
-but many ATS pages (Ashby especially) are JavaScript-only or blocked outright on
-restricted networks, so a failed fetch is normal, not exceptional. On failure: ask the
-user to paste the JD text, save it verbatim to `data/jd/<company>-<role>.md` (gitignored),
-and work from the file. **Never reconstruct a JD from search snippets, aggregator
+the posting's real text as a file.
+
+**Given a URL, resolve it. Do not fetch the page.** Most ATS postings are rendered
+client-side, so fetching the HTML returns a shell with no job in it, and that is the normal
+case rather than the exception. The same boards serve every posting as public, keyless JSON:
+
+```
+python .claude/skills/job-scout/scout/joburl.py <url> data/jd/<company>-<role>.md
+```
+
+Greenhouse, Lever, Ashby and SmartRecruiters, hosted or embedded in a company's own careers
+page, including links copied from the Apply button. It exits non-zero with the reason when
+it genuinely cannot resolve one.
+
+**Only then** ask the user to paste the JD text, saved verbatim to
+`data/jd/<company>-<role>.md` (gitignored). Asking for a paste when the resolver would have
+worked is the single most annoying thing this tool can do, so try it first, every time. **Never reconstruct a JD from search snippets, aggregator
 summaries, or memory** — tailoring against a guessed posting produces confidently wrong
 documents, which is worse than stopping to ask.
 
@@ -128,6 +140,20 @@ stands, run `learn` in the same session — it stores the rule in the user's own
 skills read those rules back before writing and enforce them after.
 
 Full procedure, including when a new rule is the wrong fix: `.claude/skills/learn/SKILL.md`.
+
+## The gates run themselves
+
+Writing a draft under `applications/` or `data/drafts/` triggers Lucy's gates automatically:
+the learned rules, the letter checker (which carries the research gate), and the honesty gate.
+You do not run them, and you cannot skip them. A failure comes back as a blocking error, and
+the turn will not end while a draft has never passed or a correction is unresolved.
+
+This does not replace the steps in the skills: keep running the gates yourself, so the failure
+arrives while you are still drafting rather than after. It replaces *relying* on them.
+
+They live in `gates/`, not in the hooks. The hooks are adapters, so the guarantees survive Lucy
+running outside Claude Code. A gate that cannot run (no `career_facts.yaml` yet) reports and
+does not block. `LUCY_GATES_OFF=1` disables them.
 
 ## Where state lives
 

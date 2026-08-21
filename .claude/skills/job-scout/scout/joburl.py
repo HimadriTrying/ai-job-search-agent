@@ -59,6 +59,20 @@ _EMBED_PARAMS = {
     "lever-jid": "lever",
 }
 
+# Greenhouse's embeddable board is its own shape: boards.greenhouse.io/embed/job_app
+# carries the board in `for` and the posting in `token`, and neither is in the path. It is
+# what a company's own careers page iframes, so it is one of the commonest links a human
+# actually copies out of the address bar.
+_GH_EMBED_BOARD = "for"
+_GH_EMBED_JOB = "token"
+
+# Trailing path segments that are an action, not the posting. Copying a link from the apply
+# button rather than the posting itself is normal, and used to make the id unresolvable.
+_ACTION_SEGMENTS = {
+    "application", "applications", "apply", "application_form", "form",
+    "submit", "thanks", "confirmation", "success",
+}
+
 # Subdomains that are the ATS product, not the customer's board token.
 _NOT_A_TOKEN = {"jobs", "job-boards", "boards", "careers", "www", "api", "apply", "my"}
 
@@ -98,6 +112,11 @@ def candidate_tokens(url: str) -> list[str]:
     host, parts, _ = _host_and_parts(url)
     ats_name = detect_ats(url)
 
+    # Greenhouse embed states the board in `for`; the path says "embed/job_app".
+    _, _, query = _host_and_parts(url)
+    if ats_name == "greenhouse" and query.get(_GH_EMBED_BOARD):
+        return [query[_GH_EMBED_BOARD][0]]
+
     hosted = any(host == f or host.endswith("." + f) for f in _HOSTED)
     if hosted:
         # smartrecruiters puts the company in the subdomain on some boards
@@ -133,16 +152,40 @@ def candidate_tokens(url: str) -> list[str]:
 _UUID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", re.I)
 
 
+def _looks_like_an_id(segment: str) -> bool:
+    return bool(_UUID.fullmatch(segment)) or segment.isdigit() or (
+        len(segment) > 6 and segment.lower() not in ("jobs", "careers", "openings")
+    )
+
+
 def job_id(url: str) -> str | None:
-    """The posting's own id, from the embed query param or the last path segment."""
-    _, parts, query = _host_and_parts(url)
+    """
+    The posting's own id.
+
+    Three sources, in order: an embed query parameter, Greenhouse's embed `token`, then the
+    path. The path is walked from the end and **skips action segments**, because a link
+    copied from an Apply button ends `/apply` or `/application` and the id is the segment
+    before it. Taking the last segment blindly returned "application" as the posting id,
+    which matched nothing and sent the user back to pasting the whole posting by hand.
+
+    On a hosted board the first path segment is the board token, never the posting, so it is
+    excluded: otherwise a board whose name is longer than six characters ("getmoss") was read
+    as a job id on any listing URL.
+    """
+    host, parts, query = _host_and_parts(url)
     for param in _EMBED_PARAMS:
         if param in query and query[param] and query[param][0]:
             return query[param][0]
-    if parts:
-        last = parts[-1]
-        if _UUID.fullmatch(last) or last.isdigit() or (len(last) > 6 and last != "jobs"):
-            return last
+    if query.get(_GH_EMBED_BOARD) and query.get(_GH_EMBED_JOB):
+        return query[_GH_EMBED_JOB][0]
+
+    hosted = any(host == f or host.endswith("." + f) for f in _HOSTED)
+    candidates = parts[1:] if hosted else parts
+    for segment in reversed(candidates):
+        if segment.lower() in _ACTION_SEGMENTS:
+            continue
+        if _looks_like_an_id(segment):
+            return segment
     return None
 
 
@@ -170,8 +213,28 @@ def select(jobs: list[dict], wanted_id: str | None) -> dict | None:
         for j in jobs:
             if wanted_id in (j.get("url") or ""):
                 return j
+        # SmartRecruiters and some Greenhouse links append a title slug to the numeric id
+        # ("744000012345678-senior-product-manager"). The board still keys on the number.
+        for j in jobs:
+            jid = str(j.get("id") or "")
+            if jid and (wanted_id.startswith(jid + "-") or jid.startswith(wanted_id + "-")):
+                return j
         return None
     return jobs[0] if len(jobs) == 1 else None
+
+
+def _sr_description(token: str, posting_id: str | None, fetch_json) -> str:
+    """Fetch one SmartRecruiters posting's full text. Returns "" when it cannot."""
+    if not posting_id:
+        return ""
+    try:
+        data = fetch_json(ats.SR_POSTING.format(token=token, id=posting_id))
+    except Exception:  # noqa: BLE001 - a failed enrichment is reported by the caller
+        return ""
+    try:
+        return ats.sr_description_from_posting(data) or ""
+    except Exception:  # noqa: BLE001
+        return ""
 
 
 def fetch_posting(url: str, fetcher=None) -> tuple[dict | None, str | None]:
@@ -208,6 +271,20 @@ def fetch_posting(url: str, fetcher=None) -> tuple[dict | None, str | None]:
             tried.append(f"{token} (board empty)")
             continue
         job = select(jobs, parsed["job_id"])
+        if job is not None and parsed["ats"] == "smartrecruiters" and not job.get("description"):
+            # SmartRecruiters' list endpoint carries no posting text at all: ats.py leaves the
+            # description empty on purpose to keep the daily sweep cheap. That is right for a
+            # sweep and wrong here, where the whole point is the posting text. Without this the
+            # link "resolved" successfully and handed the tailor an empty JD, which is worse
+            # than a clean failure because nothing announces it.
+            job = dict(job)
+            job["description"] = _sr_description(token, job.get("id"), fetch_json)
+        if job is not None and not (job.get("description") or "").strip():
+            return None, (
+                f"resolved the posting on the {parsed['ats']} board but it carries no "
+                f"description text. Paste the posting instead: an empty JD produces a "
+                f"confidently wrong document."
+            )
         if job is None:
             return None, (
                 f"found the {token} board ({len(jobs)} open roles) but no posting matching "

@@ -25,6 +25,40 @@ with content faults, which is why the drafting skills stop rather than let the d
 itself. The full account is in [FAILURE-MODES.md](FAILURE-MODES.md), including why answering a
 user correction with another rule is usually the wrong fix.
 
+## Why the gates are code that runs itself, not steps in a skill
+
+Every check in this repo already exits non-zero. The weakness was never the checks. It was that
+running them was a **step a model performs**, and a skipped step leaves no trace, so a document
+nobody checked looks exactly like one that passed. A cover letter went out green on a company
+whose research had never been run; the rule requiring research had been in the spec the whole
+time.
+
+Sort the guarantees by who is responsible for making them happen:
+
+| Who runs it | Example | Strength |
+|---|---|---|
+| The harness, unconditionally | git pre-commit privacy guard, PostToolUse hooks | Cannot be skipped |
+| Code, if something invokes it | `honesty/verify.py`, `check-cover-letter.sh` | Real teeth, no trigger |
+| Prose in a spec | "spawn the Reviewer", "research first" | Followed most of the time |
+
+Before this change the repo had exactly one unconditional content guarantee, and it was spent
+on em dashes in the marketing page, while the honesty gate sat in the middle row. So the
+mechanism was already proven; it was pointed at the least important rule in the system.
+
+Now: writing a draft runs its gates, and the turn cannot end while a draft has never passed or a
+user correction is unresolved. Three things this deliberately does **not** do. It does not
+replace the steps in the skills, which still run the checks explicitly so failures arrive during
+drafting rather than after: the gates are the backstop, not the plan. It does not block when a
+gate *cannot* run, because locking a half-set-up user out of their own drafts is a worse failure
+than the one it prevents. And it stops blocking after three refusals, because a gate that can
+never be satisfied burns quota in a loop the user did not ask for and cannot see.
+
+**The gates live in `gates/`, not in the hooks.** Hooks are Claude Code's affordance; the day
+Lucy runs on an API loop or a hosted surface, `.claude/settings.json` is not there and every
+guarantee written into it silently evaporates. `.claude/hooks/gate-on-write.sh` and
+`close-the-loop.sh` are nine-line adapters that parse the hook payload and call `gates/run.py`.
+Adapters are disposable. Gates are not.
+
 ## Why filters drop instead of downrank
 Scoring an out-of-band role still spends a model call. Dropping it before scoring is cheaper
 and cleaner. The one inversion this candidate needs: the seniority knob drops roles *below*
