@@ -1,6 +1,6 @@
 ---
 name: learn
-description: Capture a correction the user made on a draft as a standing rule in their own profile, so it is honoured next session instead of being re-corrected. Runs when the user pushes back on generated writing and the pushback sounds like a rule rather than a one-off. Also used to list, retire, or make a stored rule mechanical.
+description: Store a correction the user made on a draft as a standing rule, so it is honoured next session instead of re-corrected. Use when they push back on how something is written.
 invocation: user
 ---
 

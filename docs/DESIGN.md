@@ -111,6 +111,16 @@ So a correction is treated as a product input, not as chat:
   are still stored and still reach the drafter. Inventing a fragile regex to make a rule look
   enforced is worse than storing it as prose, because one false positive teaches the user to
   ignore the whole store.
+- **Its context cost is bounded on purpose.** The loop runs on every session and before every
+  draft, so an unmeasured version of it would quietly eat the user's rate-limit quota, which is
+  the binding constraint on a subscription. What it costs: about 160 tokens of `CLAUDE.md` per
+  session, a 43-token skill description, a nudge of roughly 120 tokens at most once per fifteen
+  minutes, and a brief that is scoped to the document type and prints the rule without its
+  reason (the drafter needs the instruction; the reason is for the human deciding whether to
+  retire it). That last choice roughly halves the recurring cost. The `learn` skill's 1,700-token
+  body loads only when a correction is actually being stored. Past 25 rules in one scope the
+  brief says so and asks for consolidation, because a store that only grows is both a memory
+  test and a per-draft tax.
 - **Tested by mutation.** Every check is proved twice, once firing and once staying quiet,
   including that widening a rule does not overshoot its legitimate neighbours. Two checks in the
   cover-letter checker shipped silently inert before this was a habit.

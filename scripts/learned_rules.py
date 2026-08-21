@@ -67,6 +67,9 @@ VALID_CHECK_TYPES = ("forbid", "require")
 # A document big enough to hang a pathological regex is not a document anyone is drafting.
 MAX_DOC_BYTES = 2_000_000
 
+# Rules in one scope, above which the brief starts costing more context than it saves.
+CONSOLIDATE_ABOVE = 25
+
 
 # --------------------------------------------------------------------------- loading
 
@@ -161,7 +164,17 @@ def applies_to(rule: dict, scope: str | None) -> bool:
 
 
 def cmd_brief(args) -> int:
-    """What the drafter reads before writing. Prose and mechanical rules alike."""
+    """What the drafter reads before writing. Prose and mechanical rules alike.
+
+    This runs before every draft, so its size is a recurring cost on the user's context, not
+    a one-off. Two things keep it small:
+
+    *Scope.* Only the rules governing the document being written are printed.
+
+    *No `why` by default.* The reason a rule exists matters to the human deciding whether to
+    retire it; the drafter only needs the instruction. Dropping it roughly halves the brief.
+    `--why` puts it back when someone is auditing the store rather than drafting from it.
+    """
     rules = [r for r in load_store(Path(args.store)) if applies_to(r, args.scope)]
     if not rules:
         return 0
@@ -172,9 +185,18 @@ def cmd_brief(args) -> int:
     print()
     for rule in rules:
         print(f"- {rule['rule']}".rstrip())
-        why = rule.get("why")
-        if why:
-            print(f"    (why: {why})")
+        if args.why and rule.get("why"):
+            print(f"    (why: {rule['why']})")
+
+    # A store that only ever grows becomes a memory test the model fails in a new shape each
+    # week, and it is read before every draft, so it costs context every time. Past this many
+    # rules in one scope, say so: the fix is consolidation or retirement, not a bigger brief.
+    if len(rules) > CONSOLIDATE_ABOVE:
+        print()
+        print(f"# NOTE: {len(rules)} rules in this scope, above the {CONSOLIDATE_ABOVE} where a")
+        print("# store starts costing more than it saves. Before adding another, offer to merge")
+        print("# overlapping rules or retire ones that keep being overridden. A healthy set of")
+        print("# rules gets shorter over time. See docs/FAILURE-MODES.md.")
     return 0
 
 
@@ -324,6 +346,9 @@ def main(argv: list[str] | None = None) -> int:
 
     p_brief = sub.add_parser("brief", help="Print the rules a drafter should read first.")
     p_brief.add_argument("--scope", choices=VALID_SCOPES[:-1], default=None)
+    p_brief.add_argument("--why", action="store_true",
+                         help="Include each rule's reason. Off by default: the drafter needs the "
+                              "instruction, not the history, and this runs before every draft.")
     p_brief.set_defaults(func=cmd_brief)
 
     p_check = sub.add_parser("check", help="Enforce the mechanical rules against a document.")

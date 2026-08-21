@@ -120,28 +120,14 @@ it into this file (and a check, if it's checkable) in the same change.
 ## When the user corrects a draft
 
 A correction is an input to the product, not a remark in a conversation. Fixing only the draft
-means the same correction arrives again next week, and it reads to the user as you forgetting.
+means the same correction returns next week and reads to the user as you forgetting.
 
-1. **Ask which kind it is** — one-off for this document, or a standing rule? One question, then
-   act. Never promote an objection to a permanent rule without asking; never quietly drop one
-   either.
-2. **Write a standing rule into the user's own file, in the same session.** Run the `learn`
-   skill; it stores the rule in `profile/learned-rules.yaml` (gitignored, theirs) via
-   `scripts/learned_rules.py add`. Never into the house spec above the YOURS line, and never
-   into a single document or company folder — the test is *would this still be true for another
-   company?* A rule that would be true for **any** user belongs in the shipped house spec
-   instead, and should be proposed there rather than stored for one person.
-3. **Prefer a check to a sentence.** Give the stored rule a `--pattern` when it has an honest
-   mechanical form. A rule stated in a prompt is followed most of the time; a rule that exits
-   non-zero is followed every time. Prose-only rules are still read back by
-   `learned_rules.py brief`, which every drafting skill runs before it writes.
-4. **Fix the cause, not just the instance.** Before adding a rule, check
-   `docs/FAILURE-MODES.md`: most repeat corrections are structural (a spec re-derived instead of
-   linked, a missing template, a review that came too late, the drafter grading itself), and for
-   those a new rule is the fix that works least often. Widen an instance to its behaviour rather
-   than naming the token you happened to catch.
-5. **When a shared rule changes, sweep** — re-run the checker across every document it governs,
-   not only the one that triggered the correction.
+Ask one question: **one-off for this document, or a standing rule?** Never infer it. If it
+stands, run `learn` in the same session — it stores the rule in the user's own
+`profile/learned-rules.yaml` and, where the rule is checkable, gives it a check. The drafting
+skills read those rules back before writing and enforce them after.
+
+Full procedure, including when a new rule is the wrong fix: `.claude/skills/learn/SKILL.md`.
 
 ## Where state lives
 
