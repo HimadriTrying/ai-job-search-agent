@@ -47,6 +47,7 @@ the useful thing. Chain skills when the request spans stages.
 | Draft an outreach / intro-request message | `outreach-drafter` → honesty gate | on-demand |
 | Prepare for an interview | `interview-coach` | on-demand |
 | Log an application / "what should I follow up on?" | `tracker` | **scheduled** + on-demand |
+| Push back on how a draft is written ("never say that", "not my voice") | `learn` | on-demand |
 | Close a skill gap / learning plan | `upskill` | on-demand |
 | Handle an offer / negotiate comp | `negotiator` | on-demand |
 | Actually fill and submit a real application form | `submit` | **on-demand, human-gated only** |
@@ -116,10 +117,25 @@ file edit; also run it by hand before shipping copy changes. A rule that lives o
 conversation dies with that session — if the user establishes a new standing rule, write
 it into this file (and a check, if it's checkable) in the same change.
 
+## When the user corrects a draft
+
+A correction is an input to the product, not a remark in a conversation. Fixing only the draft
+means the same correction returns next week and reads to the user as you forgetting.
+
+Ask one question: **one-off for this document, or a standing rule?** Never infer it. If it
+stands, run `learn` in the same session — it stores the rule in the user's own
+`profile/learned-rules.yaml` and, where the rule is checkable, gives it a check. The drafting
+skills read those rules back before writing and enforce them after.
+
+Full procedure, including when a new rule is the wrong fix: `.claude/skills/learn/SKILL.md`.
+
 ## Where state lives
 
 - **Frozen truth:** `career_facts.yaml` — the source of truth for the honesty gate. Changes
   only when the user's actual history changes.
+- **What you have been taught:** `profile/learned-rules.yaml` — the user's own corrections,
+  stored as standing rules. Read with `learned_rules.py brief` before drafting; enforced with
+  `learned_rules.py check` after. This is the only reason a correction survives a session.
 - **The brain:** `profile/*.md` — filled by the user via `setup`. Determines output quality
   more than any prompt. A thin profile produces generic output; invest here.
 - **Pipeline state:** `data/tracker.csv` — every application, its stage, and dates. This is

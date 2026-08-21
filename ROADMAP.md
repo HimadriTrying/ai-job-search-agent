@@ -72,9 +72,29 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
   The file exists to stop the reflex of answering every correction with another rule.
   *Hypothesis: an agent that appends a rule per correction converges on a spec that is a memory test; fixing the cause is what makes the spec get shorter over time.*
 
+- ✅ **The correction loop** — a correction you make on a draft is stored as a standing rule
+  in your own `profile/learned-rules.yaml`, then read back before every draft and enforced
+  after it. A `UserPromptSubmit` hook notices correction-shaped language and reminds the agent
+  to ask the one question that gates the whole thing: one-off, or from now on? Nothing is
+  inferred, every learned rule is a line you can read and delete, and 14 mutation tests prove
+  each check both fires and stays quiet. Rationale in `docs/DESIGN.md`; the skill is `learn`.
+  Built, tested end to end, and not yet worn in by real use: whether the hook's phrase list
+  catches real corrections is only knowable from watching it miss some.
+  *Hypothesis: nobody can state their writing rules up front, because they discover them by
+  rejecting drafts; a profile that cannot grow after setup stays as thin as the day setup ran,
+  and the agent looks like it is forgetting when in fact it was never told.*
+
 ---
 
 ## Now
+
+- ⬜ **Get it used by people who are not the owner.** The whole spec so far was paid for by one
+  person dogfooding it on his own job search. That is the right way to find the rules and the wrong
+  way to know which of them generalise. Before any further polish: put it in a handful of real
+  hands, watch where a stranger's first run breaks, and treat what they correct as the same kind of
+  signal the owner's corrections were.
+  *Hypothesis: a tool tuned by one user against his own taste cannot tell which of its rules are
+  universal and which are his; only a second user can, and that answer changes what ships.*
 
 - 🔨 **Finish the core loop** — get discovery → fit → tailored CV and cover letter working
   end-to-end on a first real role, with the honesty gate passing on real output. In progress; not yet proven end-to-end.
@@ -102,6 +122,28 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
 ---
 
 ## Next
+
+- ⬜ **CV house spec, split the way the letter spec already is.**
+  `profile/06-cover-letter-notes.example.md` ships a universal house spec above the line and empty
+  **YOURS** sections below it, filled per user. The CV side has neither half: no house spec, no
+  design asset, no `check-resume.sh`. So every session re-derives the layout and the content rules
+  from whatever CV happens to be lying around, and drifts differently on each rebuild. The
+  universal half is real and worth shipping — a heading larger than the subheading under it, a
+  page that spills instead of silently clipping its last bullets, quantities written with symbols
+  rather than spelled-out units, a before/after metric that keeps both sides rather than only the
+  after, one flagship per role instead of three at equal weight, links verified in the rendered PDF
+  rather than the HTML. The personal half — fonts, colours, which roles lead — belongs in YOURS and
+  in a theme file the user's own setup fills.
+  *Hypothesis: a spec written in prose is re-implemented from the description every time, so the
+  drift is structural; a design asset the agent links cannot be got wrong, and it retires the
+  checks that only existed to catch the re-implementation.*
+
+- ⬜ **Approve the words before anything renders.** A plain-text content sheet — headline, summary,
+  bullets, and the cut list — shown and agreed before a single page is laid out. Then the rendered
+  page is reviewed as an inline image, not as a PDF download.
+  *Hypothesis: reviewing a finished artefact collapses "is this the right content" and "does this
+  look right" into one question, so every correction costs a full rebuild; splitting them makes the
+  expensive half cheap.*
 
 - ⬜ **Network mapper** — warm-intro paths into a target company, built from your own LinkedIn
   connections export. Scaffolded as a skill; not yet validated on real connection data.

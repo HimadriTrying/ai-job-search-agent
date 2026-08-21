@@ -19,6 +19,9 @@ profile/04-job-evaluation.md
 profile/05-cv-source.md
 profile/06-cover-letter-notes.md
 profile/07-interview-prep.md
+# Rules you have taught Lucy about your own documents (the correction loop). Yours, and
+# only yours: the *.example version ships, this one never does.
+profile/learned-rules.yaml
 
 # ...but DO keep the templates + the README so the repo is usable by others.
 !profile/00-README.md

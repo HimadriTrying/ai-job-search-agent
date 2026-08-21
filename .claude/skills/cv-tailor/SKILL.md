@@ -32,6 +32,10 @@ the JD text into `data/jd/<company>-<role>.md`. Never reconstruct a JD from sear
 snippets, and never tailor against a posting you have not actually read.
 
 ## Flow
+0. **Read the rules the user has already taught you**, before drafting a line:
+   `python scripts/learned_rules.py brief --scope cv`. These are their own corrections from
+   earlier drafts. Re-making a correction they already made is the commonest way this skill
+   looks like it has no memory.
 1. Parse the JD; extract must-hit keywords and the real scope behind them.
 2. Draft the CV by **selecting and reordering** from the master source — never adding.
 3. **Relevance-weighted cutting** when it overflows 2 pages: score each line by
@@ -50,7 +54,11 @@ snippets, and never tailor against a posting you have not actually read.
    Chromium (`chromium --headless --print-to-pdf=…`). If no PDF renderer exists at all,
    present the markdown and say a PDF could not be produced here — never let a missing
    toolchain silently skip the visual check.
-7. Present with a verification checklist. Applying stays the human's job.
+7. **Learned-rule check** on the draft:
+   `python scripts/learned_rules.py check <draft> --scope cv` — must exit 0.
+8. Present with a verification checklist. Applying stays the human's job.
+9. **If they correct the draft, run `learn`.** One question: one-off, or from now on? A
+   standing rule gets written to their profile in this session, not remembered by intention.
 
 ## Hard rules
 Every claim traces to `career_facts.yaml`. The gate is not optional.
