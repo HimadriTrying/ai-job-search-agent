@@ -129,6 +129,20 @@ skills read those rules back before writing and enforce them after.
 
 Full procedure, including when a new rule is the wrong fix: `.claude/skills/learn/SKILL.md`.
 
+## The gates run themselves
+
+Writing a draft under `applications/` or `data/drafts/` triggers Lucy's gates automatically:
+the learned rules, the letter checker (which carries the research gate), and the honesty gate.
+You do not run them, and you cannot skip them. A failure comes back as a blocking error, and
+the turn will not end while a draft has never passed or a correction is unresolved.
+
+This does not replace the steps in the skills: keep running the gates yourself, so the failure
+arrives while you are still drafting rather than after. It replaces *relying* on them.
+
+They live in `gates/`, not in the hooks. The hooks are adapters, so the guarantees survive Lucy
+running outside Claude Code. A gate that cannot run (no `career_facts.yaml` yet) reports and
+does not block. `LUCY_GATES_OFF=1` disables them.
+
 ## Where state lives
 
 - **Frozen truth:** `career_facts.yaml` — the source of truth for the honesty gate. Changes

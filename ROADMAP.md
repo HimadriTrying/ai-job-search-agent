@@ -72,6 +72,17 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
   The file exists to stop the reflex of answering every correction with another rule.
   *Hypothesis: an agent that appends a rule per correction converges on a spec that is a memory test; fixing the cause is what makes the spec get shorter over time.*
 
+- ✅ **Gates that run themselves** — writing a draft under `applications/` or `data/drafts/`
+  triggers the learned rules, the letter checker and the honesty gate automatically, and the
+  turn cannot end while a draft has never passed or a correction is unresolved. The checks were
+  always there; what changed is that running them stopped being a step a model could skip. They
+  live in `gates/` with the hooks as thin adapters, so the guarantees survive Lucy running
+  outside Claude Code. Skips rather than blocks when a gate cannot run, and stops blocking after
+  three refusals.
+  *Hypothesis: a check that something has to remember to run is a promise, not a guarantee; the
+  same check triggered by the write is what makes the difference between an agent that intends
+  to close a loop and one that cannot leave it open.*
+
 - ✅ **The correction loop** — a correction you make on a draft is stored as a standing rule
   in your own `profile/learned-rules.yaml`, then read back before every draft and enforced
   after it. A `UserPromptSubmit` hook notices correction-shaped language and reminds the agent

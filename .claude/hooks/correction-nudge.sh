@@ -73,6 +73,12 @@ if [ -f "$MARKER" ]; then
 fi
 touch "$MARKER" 2>/dev/null || true
 
+# Tell the ledger. The Stop hook reads it, and refuses to end the turn while a correction is
+# still unresolved. That is what turns this reminder into something the model cannot walk past.
+ROOT="${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "$0")/../.." && pwd)}"
+python3 "$ROOT/gates/session.py" record --session "$SESSION" \
+    --event correction-noticed >/dev/null 2>&1 || true
+
 cat <<'NUDGE'
 [correction loop] That prompt reads like a correction to generated writing. Before you fix the
 draft and move on: ask whether it is a one-off for this document or a standing rule. If it is
