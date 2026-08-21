@@ -26,6 +26,10 @@ checker, the Reviewer and the honesty gate.
    not ready to draft. Do not substitute the model's own memory of the company: a letter
    that cites a company fact nobody researched will pass every style check and still be
    wrong, which is exactly the failure this step exists to prevent.
+0b. **Read the rules the user has already taught you.** Before drafting a word:
+    `python scripts/learned_rules.py brief --scope letter`. These are corrections they made
+    on earlier drafts and asked to stand. Honouring them here is the whole point of having
+    stored them; making the same correction twice is what the store exists to stop.
 1. **Pick the spine, not the angle.** One thing the research surfaced that your own
    experience answers. It must relate to the role or the domain, and it must be something
    only real research would find. Check it against the four tests in the notes file.
@@ -33,6 +37,8 @@ checker, the Reviewer and the honesty gate.
    turn, callback. In the user's voice (writing-style file). 200 to 280 words.
 3. **Run the style checker** and fix everything it reports:
    `bash scripts/check-cover-letter.sh <draft.md> --company "<Company>"`
+   Its last step re-checks the user's own learned rules, so a stored correction fails the
+   letter rather than being quietly reintroduced.
 4. **Reviewer subagent** (fresh context) critiques against `profile/06-cover-letter-notes.md`,
    which it should be given along with the draft and nothing else. It is looking for what the
    checker cannot see: two flagships where the spec allows one, a closer that would be true
@@ -46,6 +52,9 @@ checker, the Reviewer and the honesty gate.
    the gate which company/JD the letter legitimately references, so only true fabrications
    fail. If PDF: render, check one page, signature visible, fonts match.
 6. Present. Sending stays the human's job.
+7. **If they push back on the draft, run `learn`.** Ask whether the correction is a one-off
+   or a standing rule, and store a standing one in the same session. A correction that only
+   fixes this letter arrives again on the next one.
 
 ## What passing means
 

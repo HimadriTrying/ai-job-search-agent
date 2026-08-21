@@ -89,6 +89,32 @@ So a correction is treated as a product input, not as chat:
   loop asks which class of failure a correction represents, so the fix can go at the cause. A
   healthy spec gets shorter over time, not longer.
 
+### How it is actually wired
+
+- **The event.** There is no "the user rejected the draft" event to subscribe to. The closest
+  real one is the user submitting a prompt, so `.claude/hooks/correction-nudge.sh` listens on
+  `UserPromptSubmit`, matches a tight list of correction-shaped phrases, and injects a reminder
+  at the moment of the correction. `CLAUDE.md` carries the same rule, but a rule near the top of
+  a long session competes with everything since; a line injected at the moment does not. It is a
+  nudge, not a guarantee, and it is rate-limited to once every 15 minutes so it cannot become
+  nagging. A prompt that always fires is one that gets ignored, the same way a checker that is
+  always red gets ignored.
+- **The store.** `profile/learned-rules.yaml`, gitignored, with a shipped `.example` carrying
+  the schema. Each entry has an id, a date, a scope (cv / letter / outreach / all), the rule in
+  one sentence, why it exists, optionally which failure class it was, and optionally a
+  mechanical `check:`.
+- **Both halves, or neither.** `learned_rules.py brief` is read by the drafting skills *before*
+  writing; `learned_rules.py check` runs *after*, wired into `scripts/check-cover-letter.sh` as
+  its last step. Only reading them means they are followed most of the time. Only checking them
+  means the model writes the wrong thing and then patches it.
+- **Prose is a first-class citizen.** Most real corrections have no honest mechanical form. They
+  are still stored and still reach the drafter. Inventing a fragile regex to make a rule look
+  enforced is worse than storing it as prose, because one false positive teaches the user to
+  ignore the whole store.
+- **Tested by mutation.** Every check is proved twice, once firing and once staying quiet,
+  including that widening a rule does not overshoot its legitimate neighbours. Two checks in the
+  cover-letter checker shipped silently inert before this was a habit.
+
 ### What this does not mean
 
 It does not mean the agent tunes itself quietly in the background. Every rule it learns is a

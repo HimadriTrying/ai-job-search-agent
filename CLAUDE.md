@@ -47,6 +47,7 @@ the useful thing. Chain skills when the request spans stages.
 | Draft an outreach / intro-request message | `outreach-drafter` → honesty gate | on-demand |
 | Prepare for an interview | `interview-coach` | on-demand |
 | Log an application / "what should I follow up on?" | `tracker` | **scheduled** + on-demand |
+| Push back on how a draft is written ("never say that", "not my voice") | `learn` | on-demand |
 | Close a skill gap / learning plan | `upskill` | on-demand |
 | Handle an offer / negotiate comp | `negotiator` | on-demand |
 | Actually fill and submit a real application form | `submit` | **on-demand, human-gated only** |
@@ -124,15 +125,16 @@ means the same correction arrives again next week, and it reads to the user as y
 1. **Ask which kind it is** — one-off for this document, or a standing rule? One question, then
    act. Never promote an objection to a permanent rule without asking; never quietly drop one
    either.
-2. **Write a standing rule into the user's own file, in the same session.** Voice and register go
-   to `profile/03-writing-style.md`; letter rules to the **YOURS** half of
-   `profile/06-cover-letter-notes.md`; CV rules to the CV spec's YOURS half. Never into the house
-   spec above the line, and never into a company folder — the test is *would this still be true
-   for another company, or another user?* If yes it is theirs and it is general; if it is only
-   the owner's taste it does not belong in shipped copy at all.
-3. **Prefer a check to a sentence.** If the rule is mechanically checkable, add it to the relevant
-   checker too. A rule stated in a prompt is followed most of the time; a rule that exits non-zero
-   is followed every time.
+2. **Write a standing rule into the user's own file, in the same session.** Run the `learn`
+   skill; it stores the rule in `profile/learned-rules.yaml` (gitignored, theirs) via
+   `scripts/learned_rules.py add`. Never into the house spec above the YOURS line, and never
+   into a single document or company folder — the test is *would this still be true for another
+   company?* A rule that would be true for **any** user belongs in the shipped house spec
+   instead, and should be proposed there rather than stored for one person.
+3. **Prefer a check to a sentence.** Give the stored rule a `--pattern` when it has an honest
+   mechanical form. A rule stated in a prompt is followed most of the time; a rule that exits
+   non-zero is followed every time. Prose-only rules are still read back by
+   `learned_rules.py brief`, which every drafting skill runs before it writes.
 4. **Fix the cause, not just the instance.** Before adding a rule, check
    `docs/FAILURE-MODES.md`: most repeat corrections are structural (a spec re-derived instead of
    linked, a missing template, a review that came too late, the drafter grading itself), and for
@@ -145,6 +147,9 @@ means the same correction arrives again next week, and it reads to the user as y
 
 - **Frozen truth:** `career_facts.yaml` — the source of truth for the honesty gate. Changes
   only when the user's actual history changes.
+- **What you have been taught:** `profile/learned-rules.yaml` — the user's own corrections,
+  stored as standing rules. Read with `learned_rules.py brief` before drafting; enforced with
+  `learned_rules.py check` after. This is the only reason a correction survives a session.
 - **The brain:** `profile/*.md` — filled by the user via `setup`. Determines output quality
   more than any prompt. A thin profile produces generic output; invest here.
 - **Pipeline state:** `data/tracker.csv` — every application, its stage, and dates. This is

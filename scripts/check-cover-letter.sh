@@ -271,6 +271,21 @@ sys.exit(1 if fails else 0)
 PYEOF
 [ $? -ne 0 ] && FAIL=1
 
+# 13. The rules the user taught Lucy themselves (the correction loop).
+#     Everything above this line is the house spec: universal, shipped, the same for
+#     everyone. This step is the other half — the rules this particular user asked for after
+#     rejecting a draft, stored in profile/learned-rules.yaml. Without it a correction fixes
+#     one letter and dies with the session, and the same correction arrives again next week.
+#     A store that does not exist yet is not a failure: a new user has taught it nothing.
+echo "-- learned rules (yours, from profile/learned-rules.yaml)"
+if command -v python3 >/dev/null 2>&1 && [ -f "scripts/learned_rules.py" ]; then
+  python3 "scripts/learned_rules.py" --store "profile/learned-rules.yaml" \
+      check "$LETTER" --scope letter | sed 's/^/  /'
+  [ "${PIPESTATUS[0]}" -ne 0 ] && FAIL=1
+else
+  echo "  SKIP python3 or scripts/learned_rules.py unavailable"
+fi
+
 echo
 if [ "$FAIL" = "0" ]; then
   echo "Mechanical checks passed. This is a floor, not a verdict: now run the Reviewer"

@@ -72,20 +72,21 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
   The file exists to stop the reflex of answering every correction with another rule.
   *Hypothesis: an agent that appends a rule per correction converges on a spec that is a memory test; fixing the cause is what makes the spec get shorter over time.*
 
+- ✅ **The correction loop** — a correction you make on a draft is stored as a standing rule
+  in your own `profile/learned-rules.yaml`, then read back before every draft and enforced
+  after it. A `UserPromptSubmit` hook notices correction-shaped language and reminds the agent
+  to ask the one question that gates the whole thing: one-off, or from now on? Nothing is
+  inferred, every learned rule is a line you can read and delete, and 14 mutation tests prove
+  each check both fires and stays quiet. Rationale in `docs/DESIGN.md`; the skill is `learn`.
+  Built, tested end to end, and not yet worn in by real use: whether the hook's phrase list
+  catches real corrections is only knowable from watching it miss some.
+  *Hypothesis: nobody can state their writing rules up front, because they discover them by
+  rejecting drafts; a profile that cannot grow after setup stays as thin as the day setup ran,
+  and the agent looks like it is forgetting when in fact it was never told.*
+
 ---
 
 ## Now
-
-- ⬜ **The correction loop — the product learns your rules instead of shipping ours**.
-  Today a correction you make on a draft fixes that draft and then dies with the session, so
-  the same correction arrives again the following week. The loop makes a correction a product
-  input: when you push back on a draft, Lucy asks whether that is a one-off or a standing rule,
-  and a standing rule is written into your own profile file in the same session, plus a
-  mechanical check where the rule is checkable. Rationale and the decisions behind it are in
-  `docs/DESIGN.md` → "Why the product learns your style instead of shipping one".
-  *Hypothesis: nobody can state their own writing rules up front, because they discover them by
-  rejecting drafts; a profile that cannot grow after setup stays as thin as the day setup ran, and
-  the agent looks like it is forgetting when in fact it was never told.*
 
 - ⬜ **Get it used by people who are not the owner.** The whole spec so far was paid for by one
   person dogfooding it on his own job search. That is the right way to find the rules and the wrong

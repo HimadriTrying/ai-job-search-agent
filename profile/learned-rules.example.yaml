@@ -1,0 +1,78 @@
+# Learned rules — what Lucy has been told about your documents, and remembers.
+#
+# Copy this to profile/learned-rules.yaml (gitignored) or let the `learn` skill create it.
+#
+# WHY THIS FILE EXISTS
+#
+# Nobody can state their own writing rules up front. You discover them by rejecting drafts.
+# Without somewhere to put a correction, it fixes one draft and dies with the session, and
+# the same correction arrives again next week. That reads as the agent forgetting; really
+# the rule was never written anywhere it would be read again.
+#
+# So: every time you push back on a draft and say the rule should stand, it lands here.
+# Lucy reads this file before drafting anything, and `scripts/learned_rules.py check` turns
+# the mechanical ones into checks that exit non-zero.
+#
+# This file is yours. It is gitignored, it lives on your machine, and every line in it is
+# readable and deletable. Nothing is learned that you cannot see here.
+#
+# HOW IT DIFFERS FROM THE HOUSE SPEC
+#
+# The house specs (profile/06-cover-letter-notes.md above the YOURS line, the CV spec) are
+# universal, shipped, and the same for everyone. This file is only ever yours. If a rule
+# would be true for any user of Lucy, it belongs in the house spec and should be proposed
+# upstream instead of living here.
+#
+# FIELDS
+#
+#   id       Required. Short kebab-case handle, unique in this file.
+#   added    Required. ISO date, so an old rule can be found and questioned later.
+#   scope    Required. Which documents it governs. Any of: cv, letter, outreach, all.
+#   rule     Required. One sentence, stated as an instruction. This is what Lucy reads.
+#   why      Strongly recommended. The draft or moment that caused it. A rule whose reason
+#            nobody remembers is a rule nobody can safely retire.
+#   class    Optional. Which failure class this was, from docs/FAILURE-MODES.md. Recording
+#            it is how the spec gets shorter over time instead of only ever growing.
+#   check    Optional. The mechanical form, if there is one. A rule stated in prose is
+#            followed most of the time; a rule that exits non-zero is followed every time.
+#     type       forbid  — the pattern must NOT appear in the document
+#                require — the pattern MUST appear at least once
+#     pattern    Python regex, matched case-insensitively against the document text.
+#     message    What to print when it fires. Say what to do, not just what is wrong.
+#
+# Delete anything here you disagree with. Lucy will not put it back on its own.
+
+rules: []
+
+# ---------------------------------------------------------------------------------------
+# Worked examples. Delete these, or move them up into `rules:` and edit them. They are here
+# to show the shape, not because they are recommended.
+#
+# rules:
+#   - id: numerals-not-words
+#     added: 2026-08-21
+#     scope: [cv, letter]
+#     rule: Write quantities with numerals and symbols, never spelled out. 30%, not thirty percent.
+#     why: Caught on the Revolut draft, which spelled out "percent" and "dollars".
+#     class: instance-scoped
+#     check:
+#       type: forbid
+#       pattern: '\b(per ?cent|percent|dollars|euros)\b'
+#       message: spelled-out unit; use %, $ or EUR
+#
+#   - id: keep-the-baseline
+#     added: 2026-08-21
+#     scope: [cv, letter]
+#     rule: A before/after metric keeps both sides. "From 60 days to 30", never just "to 30 days".
+#     why: A draft dropped the baseline and the improvement became unreadable.
+#     class: rule-followed-effect-missed
+#
+#   - id: no-passionate
+#     added: 2026-08-21
+#     scope: all
+#     rule: Never describe yourself as passionate about anything.
+#     why: Standing hard no.
+#     check:
+#       type: forbid
+#       pattern: '\bpassionate\b'
+#       message: banned register; state what you did instead of how you feel about it

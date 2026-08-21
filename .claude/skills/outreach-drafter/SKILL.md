@@ -21,3 +21,15 @@ the target role.
 3. Present 1-2 variants. The user sends it — never you.
 
 Keep it human. A generic "I'd love to connect" performs worse than nothing.
+
+## The user's own rules
+Read them before drafting and check the draft against them afterwards:
+
+```bash
+python scripts/learned_rules.py brief --scope outreach
+python scripts/learned_rules.py check <draft> --scope outreach
+```
+
+Outreach is where a standing "never say that" is most likely to have been stated and most
+costly to forget, because the message goes to a real person in the user's own network. If
+they correct a draft, run `learn` before moving on.

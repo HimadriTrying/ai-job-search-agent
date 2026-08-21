@@ -14,6 +14,11 @@ Build them in this order (this is also what the `/setup` skill walks you through
 6. `06-cover-letter-notes.md` — angles, stories, things you refuse to say
 7. `07-interview-prep.md` — STAR stories from real experience
 
+Plus one file you do not write by hand: `learned-rules.yaml`. It fills itself as you correct
+drafts, because nobody can state their writing rules up front and `setup` asks you for them on
+day one, when you know them least. Every entry is a rule you agreed to out loud, and you can
+read, edit or delete any of them. See `learned-rules.example.yaml`.
+
 **Dual purpose:** because you are building publicly while job-searching, an honest,
 well-structured profile is also the *first artifact in the public repo* — the reasoning is
 more interesting to read than the code. Redact anything private before publishing; keep the
