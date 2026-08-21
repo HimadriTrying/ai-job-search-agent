@@ -66,11 +66,23 @@ disables the honesty gate; never do it.
 ### Getting the JD — applies to every skill that needs a posting
 
 The JD is load-bearing: `cv-tailor`, `cover-letter`, and the gate's `--job` flag all need
-the posting's real text as a file. When the user gives a posting URL, try to fetch it —
-but many ATS pages (Ashby especially) are JavaScript-only or blocked outright on
-restricted networks, so a failed fetch is normal, not exceptional. On failure: ask the
-user to paste the JD text, save it verbatim to `data/jd/<company>-<role>.md` (gitignored),
-and work from the file. **Never reconstruct a JD from search snippets, aggregator
+the posting's real text as a file.
+
+**Given a URL, resolve it. Do not fetch the page.** Most ATS postings are rendered
+client-side, so fetching the HTML returns a shell with no job in it, and that is the normal
+case rather than the exception. The same boards serve every posting as public, keyless JSON:
+
+```
+python .claude/skills/job-scout/scout/joburl.py <url> data/jd/<company>-<role>.md
+```
+
+Greenhouse, Lever, Ashby and SmartRecruiters, hosted or embedded in a company's own careers
+page, including links copied from the Apply button. It exits non-zero with the reason when
+it genuinely cannot resolve one.
+
+**Only then** ask the user to paste the JD text, saved verbatim to
+`data/jd/<company>-<role>.md` (gitignored). Asking for a paste when the resolver would have
+worked is the single most annoying thing this tool can do, so try it first, every time. **Never reconstruct a JD from search snippets, aggregator
 summaries, or memory** — tailoring against a guessed posting produces confidently wrong
 documents, which is worse than stopping to ask.
 
