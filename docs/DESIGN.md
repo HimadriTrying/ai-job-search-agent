@@ -41,6 +41,60 @@ demand (tailoring, outreach, negotiation). On a subscription the binding constra
 limits, not dollars — a heavy overnight job can starve the interactive quota, so scheduling is
 deliberately narrow.
 
+## Why the product learns your style instead of shipping one
+
+Every style rule in this repo was paid for, one correction at a time, by one person using the
+tool on his own job search. That is the right way to *find* the rules and the wrong way to know
+which of them belong in a product. Dogfooding produces two kinds of rule and they are
+indistinguishable in the moment: rules that are true of any good document, and rules that are
+this owner's taste. Only one question separates them, and it has to be asked every time — *would
+this still be true for someone else?*
+
+So the specs ship in two halves, and `profile/06-cover-letter-notes.example.md` is the reference
+implementation of the split. Above the line is the house spec: the four-beat shape, what counts
+as a researched point, the rules the checker enforces. Universal, committed, and the same for
+everyone. Below the line are sections marked **YOURS** — recurring angles, signature stories,
+hard nos — shipped empty and gitignored once filled. **A new user's own file is the only place
+their taste is allowed to live.** Anything the owner's taste touches (typefaces, colours, which
+roles lead) belongs below that line or in a theme file, never in the shipped spec.
+
+### The half that was missing: nothing ever fills YOURS in
+
+`setup` asks for voice once, in a single question, at the beginning — which is the moment the
+user knows least about their own rules. Nobody can state their writing rules up front. They
+discover them by rejecting drafts. The owner's own cover-letter spec took six rounds of
+correction to arrive at, and it exists today only because each correction was written into the
+governing file in the same session it was made.
+
+The product had no equivalent of that step. A user corrects a draft, the draft gets fixed, the
+correction dies with the session, and the same correction arrives again the following week. That
+reads to the user as the agent forgetting. It is not forgetting: the rule was never written
+anywhere it would be read again.
+
+So a correction is treated as a product input, not as chat:
+
+- **Ask, do not infer.** On a pushback, Lucy asks whether this is a one-off for this document or
+  a standing rule. Silently promoting every objection to permanent law accumulates contradictions
+  and one-off preferences that nobody can later explain, which is the same failure as a spec that
+  only ever grows.
+- **Write it where it will be read.** A standing rule goes into the user's own profile file in
+  the same session, in the YOURS half. The repo already states this principle for its own copy
+  rules ("a rule that lives only in a conversation dies with that session"); this generalises it
+  to the user's documents.
+- **Prefer a check to a sentence.** Where the rule is mechanically checkable, it is added to the
+  checker as well, because a rule stated in prose is followed most of the time and a rule that
+  exits non-zero is followed every time.
+- **Record the class, not only the fix.** [FAILURE-MODES.md](FAILURE-MODES.md) exists because
+  answering every correction with another rule converges on a spec that is a memory test. The
+  loop asks which class of failure a correction represents, so the fix can go at the cause. A
+  healthy spec gets shorter over time, not longer.
+
+### What this does not mean
+
+It does not mean the agent tunes itself quietly in the background. Every rule it learns is a
+line in a file the user can read, edit, and delete, in their own copy, on their own machine.
+The learning is legible or it is not trustworthy.
+
 ## Landing page: owner decisions (so no session relearns them)
 
 Reference the owner likes: withtitan.com. Numbered pictorial panels, ruthless brevity, and the

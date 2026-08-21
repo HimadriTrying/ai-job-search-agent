@@ -76,6 +76,25 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
 
 ## Now
 
+- ⬜ **The correction loop — the product learns your rules instead of shipping ours**.
+  Today a correction you make on a draft fixes that draft and then dies with the session, so
+  the same correction arrives again the following week. The loop makes a correction a product
+  input: when you push back on a draft, Lucy asks whether that is a one-off or a standing rule,
+  and a standing rule is written into your own profile file in the same session, plus a
+  mechanical check where the rule is checkable. Rationale and the decisions behind it are in
+  `docs/DESIGN.md` → "Why the product learns your style instead of shipping one".
+  *Hypothesis: nobody can state their own writing rules up front, because they discover them by
+  rejecting drafts; a profile that cannot grow after setup stays as thin as the day setup ran, and
+  the agent looks like it is forgetting when in fact it was never told.*
+
+- ⬜ **Get it used by people who are not the owner.** The whole spec so far was paid for by one
+  person dogfooding it on his own job search. That is the right way to find the rules and the wrong
+  way to know which of them generalise. Before any further polish: put it in a handful of real
+  hands, watch where a stranger's first run breaks, and treat what they correct as the same kind of
+  signal the owner's corrections were.
+  *Hypothesis: a tool tuned by one user against his own taste cannot tell which of its rules are
+  universal and which are his; only a second user can, and that answer changes what ships.*
+
 - 🔨 **Finish the core loop** — get discovery → fit → tailored CV and cover letter working
   end-to-end on a first real role, with the honesty gate passing on real output. In progress; not yet proven end-to-end.
   *Hypothesis: every other feature depends on the discovery→tailored-CV loop working end-to-end on real data first.*
@@ -102,6 +121,28 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
 ---
 
 ## Next
+
+- ⬜ **CV house spec, split the way the letter spec already is.**
+  `profile/06-cover-letter-notes.example.md` ships a universal house spec above the line and empty
+  **YOURS** sections below it, filled per user. The CV side has neither half: no house spec, no
+  design asset, no `check-resume.sh`. So every session re-derives the layout and the content rules
+  from whatever CV happens to be lying around, and drifts differently on each rebuild. The
+  universal half is real and worth shipping — a heading larger than the subheading under it, a
+  page that spills instead of silently clipping its last bullets, quantities written with symbols
+  rather than spelled-out units, a before/after metric that keeps both sides rather than only the
+  after, one flagship per role instead of three at equal weight, links verified in the rendered PDF
+  rather than the HTML. The personal half — fonts, colours, which roles lead — belongs in YOURS and
+  in a theme file the user's own setup fills.
+  *Hypothesis: a spec written in prose is re-implemented from the description every time, so the
+  drift is structural; a design asset the agent links cannot be got wrong, and it retires the
+  checks that only existed to catch the re-implementation.*
+
+- ⬜ **Approve the words before anything renders.** A plain-text content sheet — headline, summary,
+  bullets, and the cut list — shown and agreed before a single page is laid out. Then the rendered
+  page is reviewed as an inline image, not as a PDF download.
+  *Hypothesis: reviewing a finished artefact collapses "is this the right content" and "does this
+  look right" into one question, so every correction costs a full rebuild; splitting them makes the
+  expensive half cheap.*
 
 - ⬜ **Network mapper** — warm-intro paths into a target company, built from your own LinkedIn
   connections export. Scaffolded as a skill; not yet validated on real connection data.

@@ -116,6 +116,31 @@ file edit; also run it by hand before shipping copy changes. A rule that lives o
 conversation dies with that session — if the user establishes a new standing rule, write
 it into this file (and a check, if it's checkable) in the same change.
 
+## When the user corrects a draft
+
+A correction is an input to the product, not a remark in a conversation. Fixing only the draft
+means the same correction arrives again next week, and it reads to the user as you forgetting.
+
+1. **Ask which kind it is** — one-off for this document, or a standing rule? One question, then
+   act. Never promote an objection to a permanent rule without asking; never quietly drop one
+   either.
+2. **Write a standing rule into the user's own file, in the same session.** Voice and register go
+   to `profile/03-writing-style.md`; letter rules to the **YOURS** half of
+   `profile/06-cover-letter-notes.md`; CV rules to the CV spec's YOURS half. Never into the house
+   spec above the line, and never into a company folder — the test is *would this still be true
+   for another company, or another user?* If yes it is theirs and it is general; if it is only
+   the owner's taste it does not belong in shipped copy at all.
+3. **Prefer a check to a sentence.** If the rule is mechanically checkable, add it to the relevant
+   checker too. A rule stated in a prompt is followed most of the time; a rule that exits non-zero
+   is followed every time.
+4. **Fix the cause, not just the instance.** Before adding a rule, check
+   `docs/FAILURE-MODES.md`: most repeat corrections are structural (a spec re-derived instead of
+   linked, a missing template, a review that came too late, the drafter grading itself), and for
+   those a new rule is the fix that works least often. Widen an instance to its behaviour rather
+   than naming the token you happened to catch.
+5. **When a shared rule changes, sweep** — re-run the checker across every document it governs,
+   not only the one that triggered the correction.
+
 ## Where state lives
 
 - **Frozen truth:** `career_facts.yaml` — the source of truth for the honesty gate. Changes
