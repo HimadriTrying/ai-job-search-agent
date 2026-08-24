@@ -40,7 +40,7 @@ Two rules are enforced in code, not prompts:
 - Node.js (to install Claude Code)
 - Python 3 with `pyyaml`
 
-## Installation
+## Quick start
 
 ```bash
 npm install -g @anthropic-ai/claude-code
@@ -49,6 +49,19 @@ cd ai-job-search-agent
 pip install pyyaml
 claude
 ```
+
+**Already tried it in the browser?** [The try page](https://himadritrying.github.io/ai-job-search-agent/try.html)
+can hand you a `lucy-profile-seed.json` built from the CV you pasted there. Import it and skip
+the longest part of setup:
+
+```bash
+python scripts/import-seed.py ~/Downloads/lucy-profile-seed.json
+```
+
+It writes `career_facts.yaml` and `profile/05-cv-source.md`, and marks the facts
+`verified: false` until you have read them line by line. Those facts are what the honesty gate
+checks every document against, so an error there becomes an error the gate cannot see. Read
+them, then set `verified: true`.
 
 To use the scheduled scout, you will need a **private copy** of this repo (not a fork —
 forks of public repos are always public). See [Scheduled scout](#scheduled-scout-optional).

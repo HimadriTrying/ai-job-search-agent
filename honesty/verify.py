@@ -358,6 +358,18 @@ def main() -> int:
         ctx = Context(targets=args.target)
 
     facts = load_facts(facts_path)
+
+    # An imported seed is a model's reading of a CV, not a verified record. The gate checks
+    # every document against this file, so an unread facts file makes the strongest guarantee
+    # in the system into a guess wearing its uniform. Say so, loudly, on every run until a
+    # human has read it. It is a warning and not a failure: blocking here would strand a new
+    # user at the exact moment the tool is supposed to be showing them it works.
+    if facts.get("verified") is False:
+        sys.stderr.write(
+            "⚠  career_facts.yaml is marked `verified: false` — imported, not yet read by you.\n"
+            "   The gate is checking this document against facts nobody has confirmed. Read the\n"
+            "   file line by line, delete anything you would not say under oath, then set\n"
+            "   `verified: true`.\n\n")
     findings = check(doc_path.read_text(encoding="utf-8"), facts, context=ctx)
 
     if findings:

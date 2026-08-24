@@ -135,6 +135,18 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
   that shows what Lucy is and why it's built this way. Being built and polished in a parallel session.
   *Hypothesis: an open-source agent is only as credible as its front door; a clear explainer page is what turns a passing reader into someone who tries it.*
 
+- ✅ **The try page hands your profile forward** — the demo already asks for the most valuable
+  thing a new user has, their whole CV, and then threw it away when the tab closed while the
+  installed agent opened by asking for the same material again across several sessions of
+  interview. It now offers a seed file, built in the browser from the CV already pasted in, that
+  `scripts/import-seed.py` turns into `career_facts.yaml` and `profile/05-cv-source.md`. The
+  facts are stamped `verified: false` and the honesty gate warns on every run until a human has
+  read them, because a model's reading of a CV is a good starting point and a bad source of
+  truth.
+  *Hypothesis: a funnel that asks for hours of interview before showing any output loses people
+  who would have stayed; handing back what they already gave inverts the order to value first,
+  investment second.*
+
 - 🔨 **Try-it demo** — an interactive page (`docs/try.html`) that lets someone watch Lucy run in
   ~30 seconds without installing anything. Under construction alongside the web page.
   *Hypothesis: letting someone see Lucy run in 30 seconds without installing anything bridges the gap between "read about it" and "use it."*

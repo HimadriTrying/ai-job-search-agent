@@ -187,6 +187,10 @@
     background-clip:text;color:transparent}
   .cta-end p{color:var(--ink-2);font-size:1.08rem;max-width:52ch;margin:0 auto}
   .cta-end .row{display:flex;gap:13px;flex-wrap:wrap;justify-content:center;margin-top:30px}
+  .seednote{display:none;margin-top:18px;padding:16px 18px;border:1px solid var(--line);
+    border-radius:12px;font-size:.9rem;line-height:1.6;color:var(--ink-3);background:#fbfbfd}
+  .seednote b{color:var(--ink)}
+  .seednote a{color:inherit}
   .cta-end .btn{text-decoration:none}
   .cta-end .btn:hover{text-decoration:none}
   .cta-end .btn.ghost{font-size:1rem;padding:14px 26px}
@@ -314,7 +318,26 @@
       <div class="doc hidden" id="doc-cl"></div>
       <div class="doc-actions">
         <button class="btn ghost" onclick="window.print()">Save as PDF</button>
+        <button class="btn ghost" id="takeprofile">
+          <span class="spin" id="seedspin"></span><span id="seedlabel">Take your profile with you</span>
+        </button>
         <button class="btn ghost" id="startover">Start over</button>
+      </div>
+      <div class="seednote" id="seednote">
+        <b>What that button does.</b> Everything above was built from the CV you pasted in, and
+        when this tab closes it all goes with it. The full agent opens by interviewing you about
+        your career, which takes real time and asks you for things you already typed here.
+        <br><br>
+        So: it reads your CV once more and hands you a small file, on your machine, that a fresh
+        install turns into a working profile. You skip the part you already did.
+        <a href="https://github.com/HimadriTrying/ai-job-search-agent#quick-start" target="_blank" rel="noopener">Then one command sets it up</a>
+        and the agent starts from your history rather than from nothing.
+        <br><br>
+        <b>Read it before you trust it.</b> The file is plain text and it is yours alone. Nothing
+        is uploaded, because there is no server here. But it is a model reading your CV, so a date
+        can land wrong or a number can sit under the wrong job, and those become the facts every
+        later document is checked against. The agent will keep telling you it is unverified until
+        you have read it through.
       </div>
     </div>
   </div>
@@ -493,6 +516,85 @@
     docCv.classList.toggle('hidden', which !== 'cv');
     docCl.classList.toggle('hidden', which !== 'cl');
   }));
+
+  // ── Take your profile with you ────────────────────────────────────────────────
+  //
+  // The page already holds the most valuable thing a new user has: their whole CV. It tailors
+  // it, renders it, and then the tab closes and all of it is gone, while the installed agent
+  // opens by asking for the same material again across several sessions of interview. This
+  // hands it forward instead.
+  //
+  // Deliberately a SECOND call, made only on click. Everyone who does not want the file pays
+  // nothing for it, and the seed is read from the ORIGINAL pasted CV rather than the tailored
+  // one: the tailored version is shaped for a single posting and is the wrong thing to freeze
+  // as a permanent record.
+  const SEED_PROMPT =
+    "Read the CV below and return ONLY a JSON object, no prose and no code fence, shaped:\n" +
+    '{"career_facts": {"candidate": {"name": "", "location": "", "work_authorization": "", ' +
+    '"contact": {"email": "", "phone": "", "linkedin": ""}}, "employers": [{"company": "", ' +
+    '"title": "", "start": "YYYY-MM", "end": "YYYY-MM or present", "metrics": [], "scope": []}], ' +
+    '"education": [{"institution": "", "credential": "", "year": ""}], ' +
+    '"certifications": [{"name": "", "issuer": "", "year": ""}], "skills": []}, ' +
+    '"cv_source": ""}\n\n' +
+    "Rules, and they matter more than completeness:\n" +
+    "- Copy only what the CV states. Never infer, round, or complete a number. An absent value " +
+    "is an empty string, which is correct and useful; a guessed value is a fabrication that a " +
+    "later honesty check will treat as fact.\n" +
+    "- A metric belongs to the employer it appears under, never a neighbouring one.\n" +
+    "- Keep every qualifier attached to its claim. 'in one pilot market' is part of the claim.\n" +
+    "- cv_source is the CV restated as clean markdown, in full and uncut, keeping every detail.";
+
+  const seedBtn = $('takeprofile'), seedSpin = $('seedspin'),
+        seedLabel = $('seedlabel'), seedNote = $('seednote');
+
+  function seedBusy(on, label){
+    seedBtn.disabled = on;
+    seedSpin.style.display = on ? 'inline-block' : 'none';
+    seedLabel.textContent = label;
+  }
+
+  seedBtn.addEventListener('click', async () => {
+    if(seedNote.style.display !== 'block'){ seedNote.style.display = 'block'; }
+    clearErr();
+    seedBusy(true, 'Reading your CV\u2026');
+    try{
+      const data = await callApi({
+        model: model.value,
+        max_tokens: 8000,
+        messages: [{ role: 'user',
+          content: SEED_PROMPT + "\n\n=== MY CV ===\n" + cv.value.trim() }]
+      }, key.value.trim());
+
+      const block = (data.content || []).find(b => b.type === 'text');
+      if(!block) throw new Error('No profile came back. Try again.');
+      let raw = block.text.trim()
+        .replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+      const first = raw.indexOf('{'), last = raw.lastIndexOf('}');
+      if(first < 0 || last < 0) throw new Error('That did not come back as a profile. Try again.');
+      const seed = JSON.parse(raw.slice(first, last + 1));
+      if(!seed.career_facts) throw new Error('That did not come back as a profile. Try again.');
+
+      // Stamped false here as well as by the importer. A user who opens the file should see
+      // that nobody has checked it, before anything asks them to trust it.
+      seed.career_facts.verified = false;
+      seed.generated_by = 'lucy try page';
+
+      const blob = new Blob([JSON.stringify(seed, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'lucy-profile-seed.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      const n = (seed.career_facts.employers || []).length;
+      statusEl.textContent = 'Saved lucy-profile-seed.json with ' + n + ' role' +
+        (n === 1 ? '' : 's') + '. Read it, then import it into your install.';
+      seedBusy(false, 'Saved. Download again');
+    }catch(e){
+      showErr(e.message || 'Could not build the profile file.');
+      seedBusy(false, 'Take your profile with you');
+    }
+  });
 
   $('startover').addEventListener('click', () => {
     results.style.display = 'none';
