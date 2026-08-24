@@ -1,0 +1,79 @@
+<!doctype html>
+<!--
+  resume.html — the CV skeleton. COPY THIS to start a resume.
+
+  Never template off a previously generated CV. A prior output carries that application's
+  tailoring decisions along with its layout, and copying one is how the content rules quietly
+  get lost: the new document inherits a shape that was right for a different posting.
+
+  The design system is LINKED, not pasted. Do not add a <style> block that re-implements
+  sizes, colours or spacing; change templates/resume.css instead, so every CV moves together
+  or none does. scripts/check-resume.sh fails a document that inlines the design system.
+
+  Render:
+    chromium --headless --disable-gpu --print-to-pdf=out.pdf --no-pdf-header-footer resume.html
+  Check:
+    bash scripts/check-resume.sh applications/<company>/resume.html
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Your Name — Role</title>
+  <!-- Relative path from the document to the shared stylesheet. Keep it a link. -->
+  <link rel="stylesheet" href="../../templates/resume.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="name">Your Name</p>
+  <p class="headline">The role you are applying for, in the posting's own words</p>
+  <p class="contact">
+    city · <a href="mailto:you@example.com">you@example.com</a> ·
+    <a href="https://www.linkedin.com/in/you">linkedin.com/in/you</a> ·
+    <a href="https://github.com/you">github.com/you</a>
+  </p>
+
+  <p class="section-title">Summary</p>
+  <p>
+    Two or three lines. What you do, at what altitude, with the one proof that matters most
+    for THIS posting. Not a mission statement.
+  </p>
+
+  <p class="section-title">Experience</p>
+
+  <div class="role">
+    <p class="role-title">Job Title, Company</p>
+    <p class="role-meta">City · Mon YYYY to Mon YYYY</p>
+    <ul>
+      <li class="flagship">
+        The one achievement this role is here for. Outcome first, and if it is a change, keep
+        both sides of it: "from 60 days to 30", never just "to 30 days".
+      </li>
+      <li>Supporting work, stated as what happened rather than what you were responsible for.</li>
+      <li>Name the specifics. "Shopify, Stripe and Adyen" carries weight that "three major
+        platforms" throws away.</li>
+    </ul>
+  </div>
+
+  <div class="role">
+    <p class="role-title">Earlier Title, Company</p>
+    <p class="role-meta">City · Mon YYYY to Mon YYYY</p>
+    <ul>
+      <li class="flagship">Older roles get shorter, not thinner. One line each is fine.</li>
+    </ul>
+  </div>
+
+  <p class="section-title">Education</p>
+  <div class="role">
+    <p class="role-title">Degree, Institution</p>
+    <p class="role-meta">YYYY</p>
+  </div>
+
+  <p class="section-title">Skills</p>
+  <p class="skills">
+    Grouped, not listed flat. Only what you would be happy to be questioned on.
+  </p>
+
+</div>
+</body>
+</html>

@@ -59,6 +59,41 @@ guarantee written into it silently evaporates. `.claude/hooks/gate-on-write.sh` 
 `close-the-loop.sh` are nine-line adapters that parse the hook payload and call `gates/run.py`.
 Adapters are disposable. Gates are not.
 
+## Why the CV spec is an asset and the Reviewer is a gate
+
+Two halves of the same finding, from the failure taxonomy.
+
+**The design system is a file, not a description.** `templates/resume.css` holds the sizes,
+colours and spacing once, and a CV links it. The alternative, a spec describing the layout in
+prose, gets re-implemented from the description on every rebuild, so no single CV is wrong and
+no two agree. Making it an asset removes the whole class at a stroke: a document that links the
+stylesheet cannot hold its own copy to get wrong. `check-resume.sh` therefore fails a CV that
+inlines the design system, which is the one rule that keeps the asset load-bearing rather than
+decorative. And because a prohibition with nothing to copy instead is a trap, `templates/
+resume.html` ships alongside it: "never template off a previous CV" only works if there is
+something else to start from.
+
+Two details in that stylesheet are not taste. A page uses `min-height` and `overflow: visible`,
+because `overflow: hidden` on a fixed-height page silently deletes the content that does not
+fit while still reporting the page count you wanted, so the document lies about being finished.
+And an explicit `@page { margin: 0 }` stops the browser adding its own print margin on top of
+the page box, which made a one-page CV render as two and put every page-count check off by one.
+That one was found by rendering, not by reading.
+
+**The Reviewer is the last thing that was still only asked for.** Every mechanical check in
+this repo exits non-zero, and after the gates they all run whether or not anything remembers
+them. The Reviewer did not: every reference to it in code was a comment telling somebody to run
+it. That matters because the mechanical checks bound the floor and the faults that actually
+cost rounds are above it, where no script can see: a bullet stating a duty rather than an
+outcome, three achievements at equal weight, a claim true only inside a scope it never names.
+
+So a draft that has passed every check but has never been read is now an open item, and the
+turn does not end. The receipt is the critique itself; a one-word note is refused, and editing
+the draft invalidates it, since the Reviewer is only useful on the text that will actually be
+sent. **This is a forcing function, not a signature.** It cannot prove the Reviewer ran. What
+it guarantees is that nobody can call a draft finished while nothing at all has been filed,
+which is a smaller claim and the honest one.
+
 ## Why filters drop instead of downrank
 Scoring an out-of-band role still spends a model call. Dropping it before scoring is cheaper
 and cleaner. The one inversion this candidate needs: the seniority knob drops roles *below*

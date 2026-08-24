@@ -47,6 +47,8 @@ checker, the Reviewer and the honesty gate.
    drafter never reviews its own work as a substitute; in real use, a draft that passed all
    eight mechanical checks came back from the Reviewer with ten violations of the spec its
    own author had written.
+   **File what it found** before moving on, or the turn will not end:
+   `python gates/session.py record --event draft-reviewed --path <draft> --note "<findings>"`.
 5. **Honesty gate** must pass:
    `python honesty/verify.py <draft> --target "<Company>" --job <jd-file>` — the flags tell
    the gate which company/JD the letter legitimately references, so only true fabrications

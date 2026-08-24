@@ -72,6 +72,26 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
   The file exists to stop the reflex of answering every correction with another rule.
   *Hypothesis: an agent that appends a rule per correction converges on a spec that is a memory test; fixing the cause is what makes the spec get shorter over time.*
 
+- ✅ **The Reviewer is a step, not a suggestion** — a draft that has passed every mechanical
+  check but has never been read by the fresh-context Reviewer is still unfinished, and the turn
+  will not end. The receipt is the critique itself: a one-word note is refused, and editing the
+  draft afterwards invalidates it, because the Reviewer is only useful on the text that will
+  actually be sent. It cannot prove the Reviewer ran; it does mean nobody can call a draft
+  finished while nothing has been filed.
+  *Hypothesis: mechanical checks bound the floor and the faults that cost the most rounds are
+  the ones no script can see, so the judgment layer is the one that most needed to stop being
+  optional.*
+
+- ✅ **CV house spec, split the way the letter spec already is** — `profile/08-cv-notes.md`
+  carries the universal rules above the line and **YOURS** sections below it;
+  `templates/resume.css` and `templates/resume.html` are the design system, linked and never
+  pasted; `scripts/check-resume.sh` enforces the mechanical half with an `--all` sweep. The CV
+  side had none of this, so every session re-derived the layout and the content rules from
+  whatever CV was lying around.
+  *Hypothesis: a spec written in prose is re-implemented from the description every time, so
+  the drift is structural; a design asset the agent links cannot be got wrong, and it retires
+  the checks that only existed to catch the re-implementation.*
+
 - ✅ **Gates that run themselves** — writing a draft under `applications/` or `data/drafts/`
   triggers the learned rules, the letter checker and the honesty gate automatically, and the
   turn cannot end while a draft has never passed or a correction is unresolved. The checks were
@@ -133,49 +153,6 @@ Each item carries a one-line hypothesis: the bet we're making by building it.
 ---
 
 ## Next
-
-- ⬜ **CV house spec, split the way the letter spec already is.**
-  `profile/06-cover-letter-notes.example.md` ships a universal house spec above the line and empty
-  **YOURS** sections below it, filled per user. The CV side has neither half: no house spec, no
-  design asset, no `check-resume.sh`. So every session re-derives the layout and the content rules
-  from whatever CV happens to be lying around, and drifts differently on each rebuild. The
-  universal half is real and worth shipping — a heading larger than the subheading under it, a
-  page that spills instead of silently clipping its last bullets, quantities written with symbols
-  rather than spelled-out units, a before/after metric that keeps both sides rather than only the
-  after, one flagship per role instead of three at equal weight, links verified in the rendered PDF
-  rather than the HTML. The personal half — fonts, colours, which roles lead — belongs in YOURS and
-  in a theme file the user's own setup fills.
-  *Hypothesis: a spec written in prose is re-implemented from the description every time, so the
-  drift is structural; a design asset the agent links cannot be got wrong, and it retires the
-  checks that only existed to catch the re-implementation.*
-
-- ⬜ **Approve the words before anything renders.** A plain-text content sheet — headline, summary,
-  bullets, and the cut list — shown and agreed before a single page is laid out. Then the rendered
-  page is reviewed as an inline image, not as a PDF download.
-  *Hypothesis: reviewing a finished artefact collapses "is this the right content" and "does this
-  look right" into one question, so every correction costs a full rebuild; splitting them makes the
-  expensive half cheap.*
-
-- ⬜ **Network mapper** — warm-intro paths into a target company, built from your own LinkedIn
-  connections export. Scaffolded as a skill; not yet validated on real connection data.
-  *Hypothesis: a warm intro changes conversion more than a perfect CV, so surfacing who you already know is the highest-leverage unbuilt piece.*
-
-- ⬜ **Answer bank** — a validated, honesty-checked store for the repetitive questions application
-  forms ask, so they're answered once and reused.
-  *Hypothesis: repetitive application questions are pure friction; a validated, honesty-checked answer store removes it without risking fabrication.*
-
-- ⬜ **Launch video (15–20s explainer)** — a short film showing Lucy actually working.
-  *Hypothesis: a short, honest film showing Lucy actually working communicates the product faster than any copy, and doubles as the launch asset.*
-
-- ⬜ **Workday + Gem fetchers** — extend `scout/ats.py` beyond Greenhouse/Lever/Ashby/SmartRecruiters
-  to Workday (server-side pre-filtering + pagination) and Gem, plus a per-company seniority override
-  for companies with non-standard title ladders (e.g. "Lead" where others say "Director").
-  Workday pattern proven in [strategic-copilot](https://github.com/jordanmilner-lgtm/strategic-copilot).
-  *Hypothesis: Workday is where enterprise and F500 postings live; without it the daily sweep is blind to a large share of senior roles.*
-
-- ⬜ **"Business pain" line in scout digests** — for every apply-first role, one sentence on what
-  problem the company is trying to solve with this hire, carried from scoring into the digest.
-  *Hypothesis: the cover-letter rule says open with the company's problem; if discovery already names that problem, every downstream document starts from a running head start.*
 
 ---
 
