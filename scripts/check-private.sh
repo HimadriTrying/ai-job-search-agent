@@ -20,7 +20,11 @@ cd "$(git rev-parse --show-toplevel)"
 fail=0
 
 # 1) Private paths that must never be committed (mirrors .gitignore; catches `git add -f`).
-PRIVATE_PATHS_RE='^(career_facts\.yaml|profile/0[1-7]-[a-z0-9-]+\.md|data/tracker\.csv|data/connections/.+\.csv|data/digests/.+\.md|data/research/.+\.md|\.private-guard)$'
+# Kept in step with .gitignore by hand. When a new private file is added there, add it here
+# too: .gitignore stops an accident, this stops `git add -f`, and only the pair is a guard.
+# The numbered profile range is 01-09 rather than 01-07 so a new brain file is covered the day
+# it is created rather than the day someone notices.
+PRIVATE_PATHS_RE='^(career_facts\.yaml|profile/0[1-9]-[a-z0-9-]+\.md|profile/learned-rules\.yaml|data/tracker\.csv|data/connections/.+\.csv|data/digests/.+\.md|data/research/.+\.md|data/jd/.+|applications/.+|private/.+|\.private-guard)$'
 while IFS= read -r f; do
   [ -z "$f" ] && continue
   if printf '%s\n' "$f" | grep -Eq "$PRIVATE_PATHS_RE"; then

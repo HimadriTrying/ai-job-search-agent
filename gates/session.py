@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import hashlib
 import os
 import re
 import sys
@@ -37,6 +38,7 @@ EVENTS = (
     "draft-written",       # a document the gates care about was written
     "draft-passed",        # ...and its gates passed
     "draft-failed",        # ...and its gates failed
+    "draft-reviewed",      # ...and a fresh-context Reviewer critiqued THIS version of it
     "correction-noticed",  # the user said something that reads like a correction
     "correction-resolved", # ...and it was stored as a rule, or recorded as a one-off
     "blocked",             # a Stop hook refused to end the turn
@@ -46,6 +48,19 @@ EVENTS = (
 # never be satisfied is worse than one that can be skipped: it burns the user's quota in a
 # loop they did not ask for and cannot see.
 MAX_BLOCKS = 3
+
+
+def content_hash(path: str) -> str:
+    """Hash of a draft's current bytes.
+
+    A review receipt is tied to the version that was reviewed. Without this the drafter could
+    be critiqued once, then rewrite the document five times, and the receipt would still say
+    "reviewed". The Reviewer's whole value is that it read *this* text.
+    """
+    try:
+        return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:16]
+    except OSError:
+        return ""
 
 
 def rule_count() -> int:
@@ -93,16 +108,29 @@ def cmd_record(args) -> int:
     data = load(args.session)
     ev = args.event
 
-    if ev in ("draft-written", "draft-passed", "draft-failed"):
+    if ev in ("draft-written", "draft-passed", "draft-failed", "draft-reviewed"):
         if not args.path:
             sys.stderr.write(f"{ev} needs --path\n")
             return 2
         entry = data["drafts"].setdefault(args.path, {"status": "written"})
-        entry["status"] = {"draft-written": "written",
-                           "draft-passed": "passed",
-                           "draft-failed": "failed"}[ev]
-        if args.note:
-            entry["note"] = args.note[:500]
+        if ev == "draft-reviewed":
+            # The critique itself is the receipt. Requiring it to be substantive is not proof
+            # the Reviewer ran, and this file does not pretend otherwise: it is a forcing
+            # function, not a signature. What it does guarantee is that the turn cannot end
+            # while nothing at all has been filed.
+            if not args.note or len(args.note.strip()) < 40:
+                sys.stderr.write(
+                    "draft-reviewed needs --note carrying the Reviewer's actual findings "
+                    "(at least a sentence). File the critique, not a checkmark.\n")
+                return 2
+            entry["reviewed_hash"] = content_hash(args.path)
+            entry["review"] = args.note[:1000]
+        else:
+            entry["status"] = {"draft-written": "written",
+                               "draft-passed": "passed",
+                               "draft-failed": "failed"}[ev]
+            if args.note:
+                entry["note"] = args.note[:500]
     elif ev == "correction-noticed":
         data["corrections"]["noticed"] += 1
         # Snapshot the store, so a rule stored later counts as the resolution by itself.
@@ -126,8 +154,24 @@ def open_items(data: dict) -> list[str]:
         if entry.get("status") == "failed":
             note = entry.get("note", "")
             items.append(f"{path} last failed its gates{': ' + note if note else ''}")
-        elif entry.get("status") == "written":
+            continue
+        if entry.get("status") == "written":
             items.append(f"{path} was written but never passed its gates")
+            continue
+        # Passed the mechanical gates. That is a floor, not a verdict: the faults that cost
+        # the most rounds are the ones no script can see, and they only surface when something
+        # that did not write the draft reads it against the spec.
+        reviewed = entry.get("reviewed_hash")
+        current = content_hash(path)
+        if not reviewed:
+            items.append(
+                f"{path} passed its checks but no Reviewer has read it. Spawn the fresh-context "
+                f"Reviewer with the spec and the draft, then file what it found with "
+                f"`gates/session.py record --event draft-reviewed --path {path} --note '...'`")
+        elif current and reviewed != current:
+            items.append(
+                f"{path} changed after it was reviewed. The Reviewer read an earlier version; "
+                f"re-run it on this one and file the new findings")
 
     c = data.get("corrections", {})
     # A rule stored since the correction was noticed resolves it, with nothing else to run.

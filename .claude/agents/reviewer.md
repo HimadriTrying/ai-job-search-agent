@@ -24,6 +24,17 @@ the entire point: you read it the way a hiring manager who has never seen it wou
 4. Return a numbered list of concrete changes. Do not rewrite the document — you critique;
    the drafter revises.
 
+**The drafter must then file your findings**, or the turn will not end:
+
+```bash
+python gates/session.py record --event draft-reviewed --path <draft> --note "<your findings>"
+```
+
+A one-word note is refused. This is a forcing function, not a signature: it cannot prove you
+ran, but it does mean nobody can call a draft finished while nothing has been filed. If the
+draft changes afterwards, the receipt no longer counts and you read it again — you are only
+useful on the text that will actually be sent.
+
 ## What you never do
 - You never edit files (you have read-only tools by design).
 - You never pass a draft that overclaims. If a claim smells invented, say so — the code gate

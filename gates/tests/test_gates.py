@@ -11,6 +11,8 @@ The contract:
   - the classifier is conservative about both directory and file extension
   - a missing career_facts.yaml SKIPS the honesty gate rather than blocking a new user
   - the ledger reports a draft that failed, and one written but never passed
+  - a draft that passed its checks but was never READ is still unfinished
+  - a review receipt with no findings is refused, and editing a draft invalidates its review
   - storing a rule resolves a noticed correction on its own, with nothing else to run
   - an explicit one-off also resolves it
   - after MAX_BLOCKS the ledger stops blocking and reports instead
@@ -103,12 +105,72 @@ def test_ledger_reports_a_draft_written_but_never_passed():
     fresh(s)
 
 
-def test_a_passing_draft_leaves_nothing_open():
+def _draft(tmp, text="A draft that passes its mechanical checks.\n"):
+    p = Path(tmp) / "cover-x.md"
+    p.write_text(text, encoding="utf-8")
+    return str(p)
+
+
+FINDINGS = ("Two flagships at equal weight in beat 2; the closer would be true of any "
+            "competitor; the opening explains the company to itself.")
+
+
+def test_passing_the_checks_is_not_being_finished():
+    """Mechanical checks bound the floor. The faults that cost the most rounds are the ones no
+    script can see, so a draft nothing has READ is still unfinished."""
     s = "test-passed"
     fresh(s)
-    ledger.main(["record", "--session", s, "--event", "draft-passed",
-                 "--path", "applications/x/cover-x.md"])
-    assert ledger.open_items(ledger.load(s)) == []
+    with tempfile.TemporaryDirectory() as d:
+        doc = _draft(d)
+        ledger.main(["record", "--session", s, "--event", "draft-passed", "--path", doc])
+        items = ledger.open_items(ledger.load(s))
+        assert len(items) == 1 and "no Reviewer has read it" in items[0]
+    fresh(s)
+
+
+def test_a_reviewed_draft_leaves_nothing_open():
+    s = "test-reviewed"
+    fresh(s)
+    with tempfile.TemporaryDirectory() as d:
+        doc = _draft(d)
+        ledger.main(["record", "--session", s, "--event", "draft-passed", "--path", doc])
+        ledger.main(["record", "--session", s, "--event", "draft-reviewed",
+                     "--path", doc, "--note", FINDINGS])
+        assert ledger.open_items(ledger.load(s)) == []
+    fresh(s)
+
+
+def test_a_receipt_without_findings_is_refused():
+    """A checkmark is not a critique. This cannot prove the Reviewer ran; it does mean nobody
+    can call a draft finished while nothing at all has been filed."""
+    s = "test-thin-receipt"
+    fresh(s)
+    with tempfile.TemporaryDirectory() as d:
+        doc = _draft(d)
+        ledger.main(["record", "--session", s, "--event", "draft-passed", "--path", doc])
+        assert ledger.main(["record", "--session", s, "--event", "draft-reviewed",
+                            "--path", doc, "--note", "looks good"]) == 2
+        assert ledger.main(["record", "--session", s, "--event", "draft-reviewed",
+                            "--path", doc]) == 2
+        assert "no Reviewer has read it" in ledger.open_items(ledger.load(s))[0]
+    fresh(s)
+
+
+def test_editing_a_draft_invalidates_its_review():
+    """The Reviewer is only useful on the text that will actually be sent. Without this, a
+    draft could be reviewed once and then rewritten five times behind the receipt."""
+    s = "test-stale-review"
+    fresh(s)
+    with tempfile.TemporaryDirectory() as d:
+        doc = _draft(d)
+        ledger.main(["record", "--session", s, "--event", "draft-passed", "--path", doc])
+        ledger.main(["record", "--session", s, "--event", "draft-reviewed",
+                     "--path", doc, "--note", FINDINGS])
+        assert ledger.open_items(ledger.load(s)) == []
+
+        Path(doc).write_text("Rewritten from scratch after the review.\n", encoding="utf-8")
+        items = ledger.open_items(ledger.load(s))
+        assert len(items) == 1 and "changed after it was reviewed" in items[0]
     fresh(s)
 
 

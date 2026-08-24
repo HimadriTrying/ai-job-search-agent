@@ -1,0 +1,169 @@
+/*
+ * resume.css — the CV design system. ONE copy, linked, never pasted into a document.
+ *
+ * WHY THIS FILE EXISTS
+ *
+ * A spec that describes a layout in prose ("11pt body, 4mm between roles, headings in the
+ * accent colour") gets re-implemented from the description every time a CV is generated, and
+ * drifts differently on each rebuild. Nothing is wrong with any single rebuild; they just stop
+ * agreeing with each other, and no one notices until two CVs are side by side.
+ *
+ * Making it an asset removes the whole class of failure: a document that LINKS this cannot
+ * hold its own copy to get wrong. It also retires the checks that only existed to catch the
+ * re-implementation.
+ *
+ * So: never inline these rules into a resume's <style> block. scripts/check-resume.sh fails a
+ * document that does.
+ *
+ * ---------------------------------------------------------------------------------------
+ * YOURS TO CHANGE: the block directly below, and nothing else.
+ * ---------------------------------------------------------------------------------------
+ * Typeface and colour are taste. Everything under "STRUCTURE" is not: it is what keeps a page
+ * readable when skimmed in ten seconds, and changing it is how a CV stops working without
+ * looking any different.
+ */
+
+:root {
+  /* Type. A system stack by default: it renders identically everywhere and embeds nothing.
+     Swap in a webfont if you want one, but embed it rather than linking a CDN, or the PDF
+     will render with a fallback on someone else's machine. */
+  --font-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: Georgia, "Times New Roman", serif;
+
+  /* Colour. Deliberately restrained: a CV is read, not looked at. One accent, used for the
+     name and the section rules, is enough. */
+  --ink: #1a1a1a;
+  --ink-muted: #55585c;
+  --accent: #1f3a5f;
+  --rule: #d8dce1;
+  --paper: #ffffff;
+
+  /* Scale. Keep the ORDER even if you change the values: see the type-hierarchy rule below. */
+  --size-name: 24pt;
+  --size-section: 12pt;
+  --size-role: 11pt;
+  --size-body: 10pt;
+  --size-meta: 9pt;
+
+  --page-width: 210mm;      /* A4. US Letter: 216mm x 279mm */
+  --page-height: 297mm;
+  --page-margin: 14mm;
+  --gap-section: 6mm;
+  --gap-role: 4mm;
+}
+
+/* =======================================================================================
+ * STRUCTURE. Change with care; each rule below is load-bearing for legibility or for the
+ * document telling the truth about its own length.
+ * ======================================================================================= */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--size-body);
+  line-height: 1.42;
+}
+
+/*
+ * THE PAGE MUST SPILL, NEVER CLIP.
+ *
+ * `overflow: hidden` on a fixed-height page is the single nastiest bug this template can
+ * have: content that does not fit is silently deleted from the render, the last bullets of
+ * the last role disappear, and the page count still reports the number you wanted. The
+ * document lies to you about being finished.
+ *
+ * `overflow: visible` means an overlong CV LOOKS overlong. That is the point: the page count
+ * is only useful if it can be wrong. check-resume.sh fails any page that sets overflow to
+ * hidden or clip.
+ */
+.page {
+  width: var(--page-width);
+  min-height: var(--page-height);       /* min-height, not height: it may grow */
+  overflow: visible;
+  padding: var(--page-margin);
+  margin: 0 auto;
+  background: var(--paper);
+}
+
+.name {
+  font-family: var(--font-heading);
+  font-size: var(--size-name);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+  margin: 0 0 1mm;
+}
+
+.headline {
+  font-family: var(--font-heading);
+  font-size: var(--size-role);
+  color: var(--ink-muted);
+  margin: 0 0 2mm;
+}
+
+.contact {
+  font-family: var(--font-heading);
+  font-size: var(--size-meta);
+  color: var(--ink-muted);
+  margin: 0 0 var(--gap-section);
+}
+.contact a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule); }
+
+/*
+ * TYPE HIERARCHY. A section heading is strictly larger than the role heading under it, which
+ * is strictly larger than body text. When a subheading is the same size as its heading, the
+ * page reads as one flat block and a ten-second skim finds nothing. Checked mechanically.
+ */
+.section-title {
+  font-family: var(--font-heading);
+  font-size: var(--size-section);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1mm;
+  margin: var(--gap-section) 0 2mm;
+}
+
+.role { margin-bottom: var(--gap-role); break-inside: avoid; }
+.role-title {
+  font-family: var(--font-heading);
+  font-size: var(--size-role);
+  font-weight: 700;
+  margin: 0;
+}
+.role-meta {
+  font-family: var(--font-heading);
+  font-size: var(--size-meta);
+  color: var(--ink-muted);
+  margin: 0 0 1mm;
+}
+
+/* The flagship bullet of a role. One per role: see profile/08-cv-notes.md. */
+.flagship { font-weight: 600; }
+
+ul { margin: 0; padding-left: 4.5mm; }
+li { margin-bottom: 0.8mm; }
+
+.skills { font-size: var(--size-meta); color: var(--ink-muted); }
+
+/*
+ * The page box already carries its own margin (--page-margin as padding). Without an @page
+ * rule the browser adds ITS default print margin on top, so a one-page CV renders as two and
+ * every page-count check is off by one. Setting it to 0 makes the rendered PDF agree with the
+ * page you designed.
+ */
+@page { size: A4; margin: 0; }
+
+@media print {
+  body { background: none; }
+  .page { margin: 0; box-shadow: none; }
+  /* Links must remain real links in the PDF: a printed CV is read on screen far more often
+     than on paper, and a dead portfolio link is a lost signal. */
+  a { text-decoration: none; }
+}

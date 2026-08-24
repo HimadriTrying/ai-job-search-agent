@@ -148,6 +148,13 @@ the learned rules, the letter checker (which carries the research gate), and the
 You do not run them, and you cannot skip them. A failure comes back as a blocking error, and
 the turn will not end while a draft has never passed or a correction is unresolved.
 
+**Passing the checks is not being finished.** A draft that has cleared every mechanical gate
+still has to be read by the fresh-context Reviewer, which is the only layer that catches what a
+script cannot: two flagships where the spec allows one, a closer that would be true of any
+competitor, an opening that explains the company to itself. Spawn it, then file what it found
+with `gates/session.py record --event draft-reviewed`. The turn will not end otherwise, and a
+draft edited after its review needs reading again.
+
 This does not replace the steps in the skills: keep running the gates yourself, so the failure
 arrives while you are still drafting rather than after. It replaces *relying* on them.
 

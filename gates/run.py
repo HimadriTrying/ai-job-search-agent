@@ -133,6 +133,22 @@ def gate_letter_style(path: Path) -> Result:
     return Result("letter-style", "fail", _tail(out, only_failures=True))
 
 
+def gate_cv_style(path: Path) -> Result:
+    script = REPO / "scripts" / "check-resume.sh"
+    if not script.exists():
+        return Result("cv-style", "skip", "scripts/check-resume.sh missing")
+    if path.suffix.lower() not in (".html", ".htm"):
+        # The structural checks read HTML. A markdown CV is a legitimate intermediate step,
+        # so this is a skip, not a failure.
+        return Result("cv-style", "skip", "not HTML: structural checks need the rendered shape")
+    # --no-render here: the gate fires on every write, and spawning Chromium on each one is a
+    # cost the user never asked for. Page count is checked when the checker is run directly.
+    code, out = run(["bash", str(script), str(path), "--no-render"])
+    if code == 0:
+        return Result("cv-style", "pass")
+    return Result("cv-style", "fail", _tail(out, only_failures=True))
+
+
 def gate_honesty(path: Path) -> Result:
     verify = REPO / "honesty" / "verify.py"
     facts = REPO / "career_facts.yaml"
@@ -168,7 +184,7 @@ def _tail(text: str, limit: int = 6, only_failures: bool = False) -> str:
 
 GATES_BY_KIND = {
     "letter":   [gate_letter_style, gate_honesty],
-    "cv":       [gate_honesty],
+    "cv":       [gate_cv_style, gate_honesty],
     "outreach": [gate_honesty],
 }
 
