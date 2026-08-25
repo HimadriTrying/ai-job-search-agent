@@ -289,6 +289,10 @@
           <div class="body">One is required today. This page is a single file with no server behind it,
             so your browser has to talk to Anthropic itself, using your key. Creating one takes about a
             minute and needs a payment method. A tailoring costs a few cents, billed to you by Anthropic.
+            <br><br><b>A Claude Pro or Max subscription is not an API key.</b> They are separate things and a
+            subscription does not carry over to this page. If you have one, you are better off skipping this
+            page entirely: your subscription already pays for the full agent, which does far more than this
+            single step.
             <br><br>If you would rather not set that up, the full agent runs locally instead and does far
             more than this page: see the <a href="https://github.com/HimadriTrying/ai-job-search-agent" target="_blank" rel="noopener">GitHub repo</a>.</div>
         </details>
@@ -484,6 +488,12 @@
       try{ detail = (await resp.json()).error?.message || ''; }catch(e){}
       if(resp.status === 401) throw new Error('That API key was rejected. Check it and try again.');
       if(resp.status === 429) throw new Error('Rate limited by Anthropic. Wait a moment and retry.');
+      // A brand new key with no billing set up fails here, and Anthropic's raw message reads
+      // like a fault in this page rather than an empty account. Say what it actually is.
+      if(resp.status === 400 && /credit|billing|quota/i.test(detail)){
+        throw new Error('That key has no credit on it. Add a payment method at ' +
+          'console.anthropic.com/settings/billing, then try again. A run costs a few cents.');
+      }
       throw new Error('Request failed (' + resp.status + '). ' + (detail || ''));
     }
     return resp.json();
